@@ -93,10 +93,6 @@ public class TransactionDTO implements Serializable {
      * One Transaction has Many Confidence entries
      */
     @ApiModelProperty(value = "One Transaction has Many Confidence entries")
-    /**
-     * Many Transaction can be done by One User
-     */
-    @ApiModelProperty(value = "Many Transaction can be done by One User")
     private Long userId;
 
     private Long blockId;

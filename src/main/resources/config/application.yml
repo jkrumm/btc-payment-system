@@ -162,4 +162,8 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+wallet:
+  network: 'testnet'
+  filePrefix: 'dev'
+  btcFileLocation: '/Users/johanneskrumm/btc-payment-system'
 # application:
