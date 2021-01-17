@@ -1,0 +1,37 @@
+{
+  "name": "Confidence",
+  "fields": [
+    {
+      "fieldName": "confidenceType",
+      "fieldType": "ConfidenceType",
+      "javadoc": "Current state of a transaction",
+      "fieldValues": "INCOMING,BUILDING,DEAD,UNKNOWN,CONFIRMED"
+    },
+    {
+      "fieldName": "confirmations",
+      "fieldType": "Integer",
+      "javadoc": "Amount of confirmations through new blocks"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "transaction",
+      "otherEntityRelationshipName": "confidence",
+      "relationshipName": "transaction",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210117092455",
+  "javadoc": "Store history of a Trasaction confidence",
+  "entityTableName": "confidence",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

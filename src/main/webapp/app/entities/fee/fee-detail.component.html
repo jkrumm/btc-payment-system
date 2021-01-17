@@ -1,0 +1,38 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="fee">
+            <h2><span jhiTranslate="btcPaymentSystemApp.fee.detail.title">Fee</span> {{ fee.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="btcPaymentSystemApp.fee.feeType" [ngbTooltip]="'btcPaymentSystemApp.fee.help.feeType' | translate">Fee Type</span></dt>
+                <dd>
+                    <span jhiTranslate="{{ 'btcPaymentSystemApp.FeeType.' + fee.feeType }}">{{ fee.feeType }}</span>
+                </dd>
+                <dt><span jhiTranslate="btcPaymentSystemApp.fee.percent" [ngbTooltip]="'btcPaymentSystemApp.fee.help.percent' | translate">Percent</span></dt>
+                <dd>
+                    <span>{{ fee.percent }}</span>
+                </dd>
+                <dt><span jhiTranslate="btcPaymentSystemApp.fee.percentSecure" [ngbTooltip]="'btcPaymentSystemApp.fee.help.percentSecure' | translate">Percent Secure</span></dt>
+                <dd>
+                    <span>{{ fee.percentSecure }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/fee', fee.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

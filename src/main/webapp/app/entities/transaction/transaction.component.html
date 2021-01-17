@@ -1,0 +1,91 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="btcPaymentSystemApp.transaction.home.title">Transactions</span>
+
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-transaction" [routerLink]="['/transaction/new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span  jhiTranslate="btcPaymentSystemApp.transaction.home.createLabel">
+            Create a new Transaction
+            </span>
+        </button>
+    </h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <jhi-alert></jhi-alert>
+
+    <div class="alert alert-warning" id="no-result" *ngIf="transactions?.length === 0">
+        <span jhiTranslate="btcPaymentSystemApp.transaction.home.notFound">No transactions found</span>
+    </div>
+
+    <div class="table-responsive" id="entities" *ngIf="transactions && transactions.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="reset.bind(this)">
+                    <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="initiatedAt"><span jhiTranslate="btcPaymentSystemApp.transaction.initiatedAt">Initiated At</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="transactionType"><span jhiTranslate="btcPaymentSystemApp.transaction.transactionType">Transaction Type</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="isMempool"><span jhiTranslate="btcPaymentSystemApp.transaction.isMempool">Is Mempool</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="txHash"><span jhiTranslate="btcPaymentSystemApp.transaction.txHash">Tx Hash</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="fromAddress"><span jhiTranslate="btcPaymentSystemApp.transaction.fromAddress">From Address</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="toAddress"><span jhiTranslate="btcPaymentSystemApp.transaction.toAddress">To Address</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="expectedAmount"><span jhiTranslate="btcPaymentSystemApp.transaction.expectedAmount">Expected Amount</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="amount"><span jhiTranslate="btcPaymentSystemApp.transaction.amount">Amount</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="serviceFee"><span jhiTranslate="btcPaymentSystemApp.transaction.serviceFee">Service Fee</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="btcPrice"><span jhiTranslate="btcPaymentSystemApp.transaction.btcPrice">Btc Price</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="isWithdrawed"><span jhiTranslate="btcPaymentSystemApp.transaction.isWithdrawed">Is Withdrawed</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="userId"><span jhiTranslate="btcPaymentSystemApp.transaction.user">User</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="blockId"><span jhiTranslate="btcPaymentSystemApp.transaction.block">Block</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+                <tr *ngFor="let transaction of transactions ;trackBy: trackId">
+                    <td><a [routerLink]="['/transaction', transaction.id, 'view']">{{ transaction.id }}</a></td>
+                    <td>{{ transaction.initiatedAt | date:'medium' }}</td>
+                    <td jhiTranslate="{{ 'btcPaymentSystemApp.TransactionType.' + transaction.transactionType }}">{{ transaction.transactionType }}</td>
+                    <td>{{ transaction.isMempool }}</td>
+                    <td>{{ transaction.txHash }}</td>
+                    <td>{{ transaction.fromAddress }}</td>
+                    <td>{{ transaction.toAddress }}</td>
+                    <td>{{ transaction.expectedAmount }}</td>
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.serviceFee }}</td>
+                    <td>{{ transaction.btcPrice }}</td>
+                    <td>{{ transaction.isWithdrawed }}</td>
+                    <td>
+                        {{ transaction.userId }}
+                    </td>
+                    <td>
+                        <div *ngIf="transaction.blockId">
+                            <a [routerLink]="['/block', transaction.blockId , 'view']" >{{ transaction.blockId }}</a>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/transaction', transaction.id, 'view']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                            </button>
+
+                            <button type="submit"
+                                    [routerLink]="['/transaction', transaction.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                            </button>
+
+                            <button type="submit" (click)="delete(transaction)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

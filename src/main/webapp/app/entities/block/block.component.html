@@ -1,0 +1,71 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="btcPaymentSystemApp.block.home.title">Blocks</span>
+
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-block" [routerLink]="['/block/new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span  jhiTranslate="btcPaymentSystemApp.block.home.createLabel">
+            Create a new Block
+            </span>
+        </button>
+    </h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <jhi-alert></jhi-alert>
+
+    <div class="alert alert-warning" id="no-result" *ngIf="blocks?.length === 0">
+        <span jhiTranslate="btcPaymentSystemApp.block.home.notFound">No blocks found</span>
+    </div>
+
+    <div class="table-responsive" id="entities" *ngIf="blocks && blocks.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="reset.bind(this)">
+                    <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="minedAt"><span jhiTranslate="btcPaymentSystemApp.block.minedAt">Mined At</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="block"><span jhiTranslate="btcPaymentSystemApp.block.block">Block</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="available"><span jhiTranslate="btcPaymentSystemApp.block.available">Available</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="estimated"><span jhiTranslate="btcPaymentSystemApp.block.estimated">Estimated</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="availableSpendable"><span jhiTranslate="btcPaymentSystemApp.block.availableSpendable">Available Spendable</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="estimatedSpendable"><span jhiTranslate="btcPaymentSystemApp.block.estimatedSpendable">Estimated Spendable</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+                <tr *ngFor="let block of blocks ;trackBy: trackId">
+                    <td><a [routerLink]="['/block', block.id, 'view']">{{ block.id }}</a></td>
+                    <td>{{ block.minedAt | date:'medium' }}</td>
+                    <td>{{ block.block }}</td>
+                    <td>{{ block.available }}</td>
+                    <td>{{ block.estimated }}</td>
+                    <td>{{ block.availableSpendable }}</td>
+                    <td>{{ block.estimatedSpendable }}</td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/block', block.id, 'view']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                            </button>
+
+                            <button type="submit"
+                                    [routerLink]="['/block', block.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                            </button>
+
+                            <button type="submit" (click)="delete(block)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

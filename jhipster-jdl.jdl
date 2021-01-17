@@ -1,0 +1,93 @@
+/** Central table to persist transaction details. All holdings will be derived from it. */
+entity Transaction {
+	initiatedAt Instant required /** Transaction initiated at */
+	transactionType TransactionType required /** Transaction enum type */
+    isMempool Boolean required /** Is Transaction still in the Mempool */
+    txHash String unique /** Transaction hash */
+	fromAddress String /** Transaction send from address */
+    toAddress String required /** Transaction send to address */
+    expectedAmount Long required /** Expected BTC amount from the customer */
+    amount Long /** Actual BTC amount of the transaction */
+    serviceFee Long required /** Service fee */
+    btcPrice Long required /** BTC price at intiation */
+    isWithdrawed Boolean required /** Transaction BTC amount has been forwarded **/
+}
+
+enum TransactionType {
+	INCOMING_UNKNOWN, INCOMING_CUSTOMER, FORWARD_MERCHANT, FORWARD_HOLDINGS
+}
+
+/** Store history of a Trasaction confidence */
+entity Confidence {
+	confidenceType ConfidenceType /** Current state of a transaction */
+    confirmations Integer /** Amount of confirmations through new blocks */
+}
+
+enum ConfidenceType {
+	INCOMING, BUILDING, DEAD, UNKNOWN, CONFIRMED
+}
+
+
+/** Merchant informations */
+entity Merchant {
+	name String required unique /** Merchant name */
+    email String required unique pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)
+}
+
+/** Associated Merchant Fee */
+entity Fee {
+	feeType FeeType required /** Fees can be ZERO, LOW, HIGH */
+    percent BigDecimal required /** Percentage for a small amount transaction */
+    percentSecure BigDecimal required /** Percentage for a high amount transaction */
+}
+
+enum FeeType {
+	ZERO, LOW, HIGH
+}
+
+/** Wallet status after each added Block */
+entity Block {
+	minedAt Instant required /** Timestamp new block was added */
+	block Long unique /** Block ID */
+    available Long required
+    estimated Long required
+    availableSpendable Long required
+    estimatedSpendable Long required
+}
+
+entity MerchantUser {}
+
+relationship OneToOne {
+	/** One Merchant has One Fee associated */
+	Merchant{fee} to Fee
+  	MerchantUser{user} to User
+}
+
+relationship OneToMany {
+	/** One Transaction has Many Confidence entries */
+	Transaction to Confidence{transaction},
+    /** One Block holds Many Transactions */
+    Block to Transaction{block},
+    /** One Merchant has Many Users */
+    Merchant to MerchantUser{merchant}
+}
+
+relationship ManyToOne {
+	/** Many Transaction can be done by One User */
+	Transaction{user} to User
+}
+
+// Set pagination options
+paginate Transaction, Block, Confidence with infinite-scroll
+paginate Fee, Merchant, MerchantUser with pagination
+
+// Use Data Transfer Objects (DTO)
+dto * with mapstruct
+
+// Set service options
+// Fee, Merchant, Confidence will also be serviceImpl
+service Transaction with serviceClass
+service Block, Fee, Merchant, Confidence, MerchantUser with serviceImpl
+
+// Set an angular suffix
+// angularSuffix * with mySuffix

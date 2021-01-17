@@ -1,0 +1,28 @@
+{
+  "btcPaymentSystemApp": {
+    "merchant": {
+      "home": {
+        "title": "Merchants",
+        "createLabel": "Merchant erstellen",
+        "createOrEditLabel": "Merchant erstellen oder bearbeiten",
+        "notFound": "No Merchants found"
+      },
+      "created": "Merchant erstellt mit ID {{ param }}",
+      "updated": "Merchant aktualisiert mit ID {{ param }}",
+      "deleted": "Merchant gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Merchant {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Merchant"
+      },
+      "name": "Name",
+      "email": "Email",
+      "fee": "Fee",
+      "merchantUser": "Merchant User",
+      "help": {
+        "name": "Merchant name"
+      }
+    }
+  }
+}

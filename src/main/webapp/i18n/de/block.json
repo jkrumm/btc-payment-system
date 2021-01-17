@@ -1,0 +1,32 @@
+{
+  "btcPaymentSystemApp": {
+    "block": {
+      "home": {
+        "title": "Blocks",
+        "createLabel": "Block erstellen",
+        "createOrEditLabel": "Block erstellen oder bearbeiten",
+        "notFound": "No Blocks found"
+      },
+      "created": "Block erstellt mit ID {{ param }}",
+      "updated": "Block aktualisiert mit ID {{ param }}",
+      "deleted": "Block gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Block {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Block"
+      },
+      "minedAt": "Mined At",
+      "block": "Block",
+      "available": "Available",
+      "estimated": "Estimated",
+      "availableSpendable": "Available Spendable",
+      "estimatedSpendable": "Estimated Spendable",
+      "transaction": "Transaction",
+      "help": {
+        "minedAt": "Timestamp new block was added",
+        "block": "Block ID"
+      }
+    }
+  }
+}

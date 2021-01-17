@@ -1,0 +1,32 @@
+{
+  "name": "MerchantUser",
+  "fields": [],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "merchantUser",
+      "relationshipName": "user",
+      "otherEntityField": "id",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "merchant",
+      "otherEntityRelationshipName": "merchantUser",
+      "relationshipName": "merchant",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210117092855",
+  "entityTableName": "merchant_user",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

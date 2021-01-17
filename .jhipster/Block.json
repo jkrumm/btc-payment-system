@@ -1,0 +1,58 @@
+{
+  "name": "Block",
+  "fields": [
+    {
+      "fieldName": "minedAt",
+      "fieldType": "Instant",
+      "javadoc": "Timestamp new block was added",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "block",
+      "fieldType": "Long",
+      "javadoc": "Block ID",
+      "fieldValidateRules": ["unique"]
+    },
+    {
+      "fieldName": "available",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "estimated",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "availableSpendable",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "estimatedSpendable",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "transaction",
+      "otherEntityRelationshipName": "block",
+      "javadoc": "One Block holds Many Transactions",
+      "relationshipName": "transaction"
+    }
+  ],
+  "changelogDate": "20210117092755",
+  "javadoc": "Wallet status after each added Block",
+  "entityTableName": "block",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

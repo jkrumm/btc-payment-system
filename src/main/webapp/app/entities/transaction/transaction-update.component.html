@@ -1,0 +1,179 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-transaction-heading" jhiTranslate="btcPaymentSystemApp.transaction.home.createOrEditLabel">Create or edit a Transaction</h2>
+
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.initiatedAt" for="field_initiatedAt" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.initiatedAt' | translate">Initiated At</label>
+                    <div class="d-flex">
+                        <input id="field_initiatedAt" type="datetime-local" class="form-control" name="initiatedAt" formControlName="initiatedAt" placeholder="YYYY-MM-DD HH:mm"/>
+                    </div>
+                    <div *ngIf="editForm.get('initiatedAt')!.invalid && (editForm.get('initiatedAt')!.dirty || editForm.get('initiatedAt')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('initiatedAt')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('initiatedAt')?.errors?.ZonedDateTimelocal" jhiTranslate="entity.validation.ZonedDateTimelocal">
+                            This field should be a date and time.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.transactionType" for="field_transactionType" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.transactionType' | translate">Transaction Type</label>
+                    <select class="form-control" name="transactionType" formControlName="transactionType" id="field_transactionType">
+                        <option value="INCOMING_UNKNOWN">{{ 'btcPaymentSystemApp.TransactionType.INCOMING_UNKNOWN' | translate }}</option>
+                        <option value="INCOMING_CUSTOMER">{{ 'btcPaymentSystemApp.TransactionType.INCOMING_CUSTOMER' | translate }}</option>
+                        <option value="FORWARD_MERCHANT">{{ 'btcPaymentSystemApp.TransactionType.FORWARD_MERCHANT' | translate }}</option>
+                        <option value="FORWARD_HOLDINGS">{{ 'btcPaymentSystemApp.TransactionType.FORWARD_HOLDINGS' | translate }}</option>
+                    </select>
+                    <div *ngIf="editForm.get('transactionType')!.invalid && (editForm.get('transactionType')!.dirty || editForm.get('transactionType')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('transactionType')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.isMempool" for="field_isMempool" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.isMempool' | translate">Is Mempool</label>
+                    <input type="checkbox" class="form-control" name="isMempool" id="field_isMempool"
+                           formControlName="isMempool"/>
+                    <div *ngIf="editForm.get('isMempool')!.invalid && (editForm.get('isMempool')!.dirty || editForm.get('isMempool')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('isMempool')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.txHash" for="field_txHash" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.txHash' | translate">Tx Hash</label>
+                    <input type="text" class="form-control" name="txHash" id="field_txHash"
+                           formControlName="txHash"/>
+                    <div *ngIf="editForm.get('txHash')!.invalid && (editForm.get('txHash')!.dirty || editForm.get('txHash')!.touched)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.fromAddress" for="field_fromAddress" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.fromAddress' | translate">From Address</label>
+                    <input type="text" class="form-control" name="fromAddress" id="field_fromAddress"
+                           formControlName="fromAddress"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.toAddress" for="field_toAddress" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.toAddress' | translate">To Address</label>
+                    <input type="text" class="form-control" name="toAddress" id="field_toAddress"
+                           formControlName="toAddress"/>
+                    <div *ngIf="editForm.get('toAddress')!.invalid && (editForm.get('toAddress')!.dirty || editForm.get('toAddress')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('toAddress')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.expectedAmount" for="field_expectedAmount" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.expectedAmount' | translate">Expected Amount</label>
+                    <input type="number" class="form-control" name="expectedAmount" id="field_expectedAmount"
+                           formControlName="expectedAmount"/>
+                    <div *ngIf="editForm.get('expectedAmount')!.invalid && (editForm.get('expectedAmount')!.dirty || editForm.get('expectedAmount')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('expectedAmount')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('expectedAmount')?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.amount" for="field_amount" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.amount' | translate">Amount</label>
+                    <input type="number" class="form-control" name="amount" id="field_amount"
+                           formControlName="amount"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.serviceFee" for="field_serviceFee" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.serviceFee' | translate">Service Fee</label>
+                    <input type="number" class="form-control" name="serviceFee" id="field_serviceFee"
+                           formControlName="serviceFee"/>
+                    <div *ngIf="editForm.get('serviceFee')!.invalid && (editForm.get('serviceFee')!.dirty || editForm.get('serviceFee')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('serviceFee')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('serviceFee')?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.btcPrice" for="field_btcPrice" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.btcPrice' | translate">Btc Price</label>
+                    <input type="number" class="form-control" name="btcPrice" id="field_btcPrice"
+                           formControlName="btcPrice"/>
+                    <div *ngIf="editForm.get('btcPrice')!.invalid && (editForm.get('btcPrice')!.dirty || editForm.get('btcPrice')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('btcPrice')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('btcPrice')?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.isWithdrawed" for="field_isWithdrawed" [ngbTooltip]="'btcPaymentSystemApp.transaction.help.isWithdrawed' | translate">Is Withdrawed</label>
+                    <input type="checkbox" class="form-control" name="isWithdrawed" id="field_isWithdrawed"
+                           formControlName="isWithdrawed"/>
+                    <div *ngIf="editForm.get('isWithdrawed')!.invalid && (editForm.get('isWithdrawed')!.dirty || editForm.get('isWithdrawed')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('isWithdrawed')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.user" for="field_user">User</label>
+                    <select class="form-control" id="field_user" name="user" formControlName="userId">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="userOption.id" *ngFor="let userOption of users; trackBy: trackById">{{ userOption.id }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.transaction.block" for="field_block">Block</label>
+                    <select class="form-control" id="field_block" name="block" formControlName="blockId">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="blockOption.id" *ngFor="let blockOption of blocks; trackBy: trackById">{{ blockOption.id }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

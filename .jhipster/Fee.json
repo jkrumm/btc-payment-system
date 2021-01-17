@@ -1,0 +1,37 @@
+{
+  "name": "Fee",
+  "fields": [
+    {
+      "fieldName": "feeType",
+      "fieldType": "FeeType",
+      "javadoc": "Fees can be ZERO, LOW, HIGH",
+      "fieldValues": "ZERO,LOW,HIGH",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "percent",
+      "fieldType": "BigDecimal",
+      "javadoc": "Percentage for a small amount transaction",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "percentSecure",
+      "fieldType": "BigDecimal",
+      "javadoc": "Percentage for a high amount transaction",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [],
+  "changelogDate": "20210117092655",
+  "javadoc": "Associated Merchant Fee",
+  "entityTableName": "fee",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

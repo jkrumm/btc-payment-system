@@ -47,6 +47,15 @@ public class CacheConfiguration {
             createCache(cm, com.jkrumm.btcpay.domain.User.class.getName());
             createCache(cm, com.jkrumm.btcpay.domain.Authority.class.getName());
             createCache(cm, com.jkrumm.btcpay.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.jkrumm.btcpay.domain.Transaction.class.getName());
+            createCache(cm, com.jkrumm.btcpay.domain.Transaction.class.getName() + ".confidences");
+            createCache(cm, com.jkrumm.btcpay.domain.Confidence.class.getName());
+            createCache(cm, com.jkrumm.btcpay.domain.Merchant.class.getName());
+            createCache(cm, com.jkrumm.btcpay.domain.Merchant.class.getName() + ".merchantUsers");
+            createCache(cm, com.jkrumm.btcpay.domain.Fee.class.getName());
+            createCache(cm, com.jkrumm.btcpay.domain.Block.class.getName());
+            createCache(cm, com.jkrumm.btcpay.domain.Block.class.getName() + ".transactions");
+            createCache(cm, com.jkrumm.btcpay.domain.MerchantUser.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

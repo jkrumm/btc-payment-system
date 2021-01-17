@@ -1,0 +1,47 @@
+{
+  "name": "Merchant",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "javadoc": "Merchant name",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique", "pattern"],
+      "fieldValidateRulesPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "fee",
+      "otherEntityRelationshipName": "merchant",
+      "javadoc": "One Merchant has One Fee associated",
+      "relationshipName": "fee",
+      "otherEntityField": "id",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "merchantUser",
+      "otherEntityRelationshipName": "merchant",
+      "javadoc": "One Merchant has Many Users",
+      "relationshipName": "merchantUser"
+    }
+  ],
+  "changelogDate": "20210117092555",
+  "javadoc": "Merchant informations",
+  "entityTableName": "merchant",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

@@ -1,0 +1,73 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-fee-heading" jhiTranslate="btcPaymentSystemApp.fee.home.createOrEditLabel">Create or edit a Fee</h2>
+
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.fee.feeType" for="field_feeType" [ngbTooltip]="'btcPaymentSystemApp.fee.help.feeType' | translate">Fee Type</label>
+                    <select class="form-control" name="feeType" formControlName="feeType" id="field_feeType">
+                        <option value="ZERO">{{ 'btcPaymentSystemApp.FeeType.ZERO' | translate }}</option>
+                        <option value="LOW">{{ 'btcPaymentSystemApp.FeeType.LOW' | translate }}</option>
+                        <option value="HIGH">{{ 'btcPaymentSystemApp.FeeType.HIGH' | translate }}</option>
+                    </select>
+                    <div *ngIf="editForm.get('feeType')!.invalid && (editForm.get('feeType')!.dirty || editForm.get('feeType')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('feeType')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.fee.percent" for="field_percent" [ngbTooltip]="'btcPaymentSystemApp.fee.help.percent' | translate">Percent</label>
+                    <input type="number" class="form-control" name="percent" id="field_percent"
+                           formControlName="percent"/>
+                    <div *ngIf="editForm.get('percent')!.invalid && (editForm.get('percent')!.dirty || editForm.get('percent')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('percent')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('percent')?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.fee.percentSecure" for="field_percentSecure" [ngbTooltip]="'btcPaymentSystemApp.fee.help.percentSecure' | translate">Percent Secure</label>
+                    <input type="number" class="form-control" name="percentSecure" id="field_percentSecure"
+                           formControlName="percentSecure"/>
+                    <div *ngIf="editForm.get('percentSecure')!.invalid && (editForm.get('percentSecure')!.dirty || editForm.get('percentSecure')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('percentSecure')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('percentSecure')?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+{
+  "btcPaymentSystemApp": {
+    "fee": {
+      "home": {
+        "title": "Fees",
+        "createLabel": "Create a new Fee",
+        "createOrEditLabel": "Create or edit a Fee",
+        "notFound": "No Fees found"
+      },
+      "created": "A new Fee is created with identifier {{ param }}",
+      "updated": "A Fee is updated with identifier {{ param }}",
+      "deleted": "A Fee is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Fee {{ id }}?"
+      },
+      "detail": {
+        "title": "Fee"
+      },
+      "feeType": "Fee Type",
+      "percent": "Percent",
+      "percentSecure": "Percent Secure",
+      "help": {
+        "feeType": "Fees can be ZERO, LOW, HIGH",
+        "percent": "Percentage for a small amount transaction",
+        "percentSecure": "Percentage for a high amount transaction"
+      }
+    }
+  }
+}

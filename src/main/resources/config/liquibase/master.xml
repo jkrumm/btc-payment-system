@@ -14,7 +14,17 @@
     <property name="uuidType" value="varchar(36)" dbms="h2, mysql, mariadb"/>
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210117092355_added_entity_Transaction.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210117092455_added_entity_Confidence.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210117092555_added_entity_Merchant.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210117092655_added_entity_Fee.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210117092755_added_entity_Block.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210117092855_added_entity_MerchantUser.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20210117092355_added_entity_constraints_Transaction.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210117092455_added_entity_constraints_Confidence.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210117092555_added_entity_constraints_Merchant.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210117092855_added_entity_constraints_MerchantUser.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

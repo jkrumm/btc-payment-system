@@ -1,0 +1,10 @@
+{
+  "btcPaymentSystemApp": {
+    "FeeType": {
+      "null": "",
+      "ZERO": "ZERO",
+      "LOW": "LOW",
+      "HIGH": "HIGH"
+    }
+  }
+}

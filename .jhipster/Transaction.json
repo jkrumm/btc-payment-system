@@ -1,0 +1,106 @@
+{
+  "name": "Transaction",
+  "fields": [
+    {
+      "fieldName": "initiatedAt",
+      "fieldType": "Instant",
+      "javadoc": "Transaction initiated at",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "transactionType",
+      "fieldType": "TransactionType",
+      "javadoc": "Transaction enum type",
+      "fieldValues": "INCOMING_UNKNOWN,INCOMING_CUSTOMER,FORWARD_MERCHANT,FORWARD_HOLDINGS",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "isMempool",
+      "fieldType": "Boolean",
+      "javadoc": "Is Transaction still in the Mempool",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "txHash",
+      "fieldType": "String",
+      "javadoc": "Transaction hash",
+      "fieldValidateRules": ["unique"]
+    },
+    {
+      "fieldName": "fromAddress",
+      "fieldType": "String",
+      "javadoc": "Transaction send from address"
+    },
+    {
+      "fieldName": "toAddress",
+      "fieldType": "String",
+      "javadoc": "Transaction send to address",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "expectedAmount",
+      "fieldType": "Long",
+      "javadoc": "Expected BTC amount from the customer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "amount",
+      "fieldType": "Long",
+      "javadoc": "Actual BTC amount of the transaction"
+    },
+    {
+      "fieldName": "serviceFee",
+      "fieldType": "Long",
+      "javadoc": "Service fee",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "btcPrice",
+      "fieldType": "Long",
+      "javadoc": "BTC price at intiation",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "isWithdrawed",
+      "fieldType": "Boolean",
+      "javadoc": "Transaction BTC amount has been forwarded",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "confidence",
+      "otherEntityRelationshipName": "transaction",
+      "javadoc": "One Transaction has Many Confidence entries",
+      "relationshipName": "confidence"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "transaction",
+      "javadoc": "Many Transaction can be done by One User",
+      "relationshipName": "user",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "block",
+      "otherEntityRelationshipName": "transaction",
+      "relationshipName": "block",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210117092355",
+  "javadoc": "Central table to persist transaction details. All holdings will be derived from it.",
+  "entityTableName": "transaction",
+  "dto": "mapstruct",
+  "pagination": "infinite-scroll",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

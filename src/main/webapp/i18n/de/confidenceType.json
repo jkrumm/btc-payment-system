@@ -1,0 +1,12 @@
+{
+  "btcPaymentSystemApp": {
+    "ConfidenceType": {
+      "null": "",
+      "INCOMING": "INCOMING",
+      "BUILDING": "BUILDING",
+      "DEAD": "DEAD",
+      "UNKNOWN": "UNKNOWN",
+      "CONFIRMED": "CONFIRMED"
+    }
+  }
+}
