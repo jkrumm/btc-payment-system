@@ -12,9 +12,13 @@
                 <dd>
                     <span>{{ block.minedAt }}</span>
                 </dd>
-                <dt><span jhiTranslate="btcPaymentSystemApp.block.block" [ngbTooltip]="'btcPaymentSystemApp.block.help.block' | translate">Block</span></dt>
+                <dt><span jhiTranslate="btcPaymentSystemApp.block.blockHeight" [ngbTooltip]="'btcPaymentSystemApp.block.help.blockHeight' | translate">Block Height</span></dt>
                 <dd>
-                    <span>{{ block.block }}</span>
+                    <span>{{ block.blockHeight }}</span>
+                </dd>
+                <dt><span jhiTranslate="btcPaymentSystemApp.block.blockHash" [ngbTooltip]="'btcPaymentSystemApp.block.help.blockHash' | translate">Block Hash</span></dt>
+                <dd>
+                    <span>{{ block.blockHash }}</span>
                 </dd>
                 <dt><span jhiTranslate="btcPaymentSystemApp.block.available">Available</span></dt>
                 <dd>

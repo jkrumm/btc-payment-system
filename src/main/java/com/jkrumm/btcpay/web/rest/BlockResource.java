@@ -111,6 +111,17 @@ public class BlockResource {
     }
 
     /**
+     * {@code GET  /latestBlock} : get all the blocks.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the latest block in body.
+     */
+    @GetMapping("/blocks")
+    public ResponseEntity<BlockDTO> getLatestBlock() {
+        log.debug("REST request to get the latest Block of Blocks");
+        return ResponseEntity.ok().body(blockService.getLatestBlock());
+    }
+
+    /**
      * {@code DELETE  /blocks/:id} : delete the "id" block.
      *
      * @param id the id of the blockDTO to delete.

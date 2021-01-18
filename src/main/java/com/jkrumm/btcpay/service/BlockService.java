@@ -34,6 +34,14 @@ public interface BlockService {
     Optional<BlockDTO> findOne(Long id);
 
     /**
+     * Get the latest block.
+     *
+     * @return the latest entity.
+     */
+    BlockDTO getLatestBlock();
+    /* Optional<BlockDTO> findTopByOrderByIdDesc(); */
+
+    /**
      * Delete the "id" block.
      *
      * @param id the id of the entity.

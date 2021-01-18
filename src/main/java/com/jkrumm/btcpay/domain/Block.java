@@ -25,16 +25,22 @@ public class Block implements Serializable {
     /**
      * Timestamp new block was added
      */
-    @NotNull
-    @Column(name = "mined_at", nullable = false)
+    @Column(name = "mined_at")
     private Instant minedAt;
 
     /**
-     * Block ID
+     * Block Height ID
      */
+    @NotNull
+    @Column(name = "block_height", nullable = false)
+    private Long blockHeight;
 
-    @Column(name = "block", unique = true)
-    private Long block;
+    /**
+     * Block Hash
+     */
+    @NotNull
+    @Column(name = "block_hash", nullable = false)
+    private String blockHash;
 
     @NotNull
     @Column(name = "available", nullable = false)
@@ -81,17 +87,30 @@ public class Block implements Serializable {
         this.minedAt = minedAt;
     }
 
-    public Long getBlock() {
-        return block;
+    public Long getBlockHeight() {
+        return blockHeight;
     }
 
-    public Block block(Long block) {
-        this.block = block;
+    public Block blockHeight(Long blockHeight) {
+        this.blockHeight = blockHeight;
         return this;
     }
 
-    public void setBlock(Long block) {
-        this.block = block;
+    public void setBlockHeight(Long blockHeight) {
+        this.blockHeight = blockHeight;
+    }
+
+    public String getBlockHash() {
+        return blockHash;
+    }
+
+    public Block blockHash(String blockHash) {
+        this.blockHash = blockHash;
+        return this;
+    }
+
+    public void setBlockHash(String blockHash) {
+        this.blockHash = blockHash;
     }
 
     public Long getAvailable() {
@@ -195,7 +214,8 @@ public class Block implements Serializable {
         return "Block{" +
             "id=" + getId() +
             ", minedAt='" + getMinedAt() + "'" +
-            ", block=" + getBlock() +
+            ", blockHeight=" + getBlockHeight() +
+            ", blockHash='" + getBlockHash() + "'" +
             ", available=" + getAvailable() +
             ", estimated=" + getEstimated() +
             ", availableSpendable=" + getAvailableSpendable() +

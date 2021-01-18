@@ -4,34 +4,51 @@
     {
       "fieldName": "minedAt",
       "fieldType": "Instant",
-      "javadoc": "Timestamp new block was added",
-      "fieldValidateRules": ["required"]
+      "javadoc": "Timestamp new block was added"
     },
     {
-      "fieldName": "block",
+      "fieldName": "blockHeight",
       "fieldType": "Long",
-      "javadoc": "Block ID",
-      "fieldValidateRules": ["unique"]
+      "javadoc": "Block Height ID",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "blockHash",
+      "fieldType": "String",
+      "javadoc": "Block Hash",
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "available",
       "fieldType": "Long",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "estimated",
       "fieldType": "Long",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "availableSpendable",
       "fieldType": "Long",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "estimatedSpendable",
       "fieldType": "Long",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     }
   ],
   "relationships": [
@@ -54,5 +71,7 @@
   "readOnly": false,
   "embedded": false,
   "clientRootFolder": "",
-  "applications": "*"
+  "applications": "*",
+  "searchEngine": false,
+  "databaseType": "sql"
 }

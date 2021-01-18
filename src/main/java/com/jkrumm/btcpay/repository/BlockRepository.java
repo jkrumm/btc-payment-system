@@ -1,6 +1,7 @@
 package com.jkrumm.btcpay.repository;
 
 import com.jkrumm.btcpay.domain.Block;
+import java.util.stream.DoubleStream;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface BlockRepository extends JpaRepository<Block, Long> {}
+public interface BlockRepository extends JpaRepository<Block, Long> {
+    Block findTopByOrderByIdDesc();
+}

@@ -30,7 +30,8 @@ export class BlockUpdatePage {
   cancelButton = element(by.id('cancel-save'));
 
   minedAtInput = element(by.id('field_minedAt'));
-  blockInput = element(by.id('field_block'));
+  blockHeightInput = element(by.id('field_blockHeight'));
+  blockHashInput = element(by.id('field_blockHash'));
   availableInput = element(by.id('field_available'));
   estimatedInput = element(by.id('field_estimated'));
   availableSpendableInput = element(by.id('field_availableSpendable'));
@@ -48,12 +49,20 @@ export class BlockUpdatePage {
     return await this.minedAtInput.getAttribute('value');
   }
 
-  async setBlockInput(block: string): Promise<void> {
-    await this.blockInput.sendKeys(block);
+  async setBlockHeightInput(blockHeight: string): Promise<void> {
+    await this.blockHeightInput.sendKeys(blockHeight);
   }
 
-  async getBlockInput(): Promise<string> {
-    return await this.blockInput.getAttribute('value');
+  async getBlockHeightInput(): Promise<string> {
+    return await this.blockHeightInput.getAttribute('value');
+  }
+
+  async setBlockHashInput(blockHash: string): Promise<void> {
+    await this.blockHashInput.sendKeys(blockHash);
+  }
+
+  async getBlockHashInput(): Promise<string> {
+    return await this.blockHashInput.getAttribute('value');
   }
 
   async setAvailableInput(available: string): Promise<void> {

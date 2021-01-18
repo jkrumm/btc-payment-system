@@ -16,16 +16,22 @@ public class BlockDTO implements Serializable {
     /**
      * Timestamp new block was added
      */
-    @NotNull
-    @ApiModelProperty(value = "Timestamp new block was added", required = true)
+    @ApiModelProperty(value = "Timestamp new block was added")
     private Instant minedAt;
 
     /**
-     * Block ID
+     * Block Height ID
      */
+    @NotNull
+    @ApiModelProperty(value = "Block Height ID", required = true)
+    private Long blockHeight;
 
-    @ApiModelProperty(value = "Block ID")
-    private Long block;
+    /**
+     * Block Hash
+     */
+    @NotNull
+    @ApiModelProperty(value = "Block Hash", required = true)
+    private String blockHash;
 
     @NotNull
     private Long available;
@@ -59,12 +65,20 @@ public class BlockDTO implements Serializable {
         this.minedAt = minedAt;
     }
 
-    public Long getBlock() {
-        return block;
+    public Long getBlockHeight() {
+        return blockHeight;
     }
 
-    public void setBlock(Long block) {
-        this.block = block;
+    public void setBlockHeight(Long blockHeight) {
+        this.blockHeight = blockHeight;
+    }
+
+    public String getBlockHash() {
+        return blockHash;
+    }
+
+    public void setBlockHash(String blockHash) {
+        this.blockHash = blockHash;
     }
 
     public Long getAvailable() {
@@ -122,7 +136,8 @@ public class BlockDTO implements Serializable {
         return "BlockDTO{" +
             "id=" + getId() +
             ", minedAt='" + getMinedAt() + "'" +
-            ", block=" + getBlock() +
+            ", blockHeight=" + getBlockHeight() +
+            ", blockHash='" + getBlockHash() + "'" +
             ", available=" + getAvailable() +
             ", estimated=" + getEstimated() +
             ", availableSpendable=" + getAvailableSpendable() +

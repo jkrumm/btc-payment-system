@@ -42,7 +42,8 @@ describe('Block e2e test', () => {
 
     await promise.all([
       blockUpdatePage.setMinedAtInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
-      blockUpdatePage.setBlockInput('5'),
+      blockUpdatePage.setBlockHeightInput('5'),
+      blockUpdatePage.setBlockHashInput('blockHash'),
       blockUpdatePage.setAvailableInput('5'),
       blockUpdatePage.setEstimatedInput('5'),
       blockUpdatePage.setAvailableSpendableInput('5'),
@@ -50,7 +51,8 @@ describe('Block e2e test', () => {
     ]);
 
     expect(await blockUpdatePage.getMinedAtInput()).to.contain('2001-01-01T02:30', 'Expected minedAt value to be equals to 2000-12-31');
-    expect(await blockUpdatePage.getBlockInput()).to.eq('5', 'Expected block value to be equals to 5');
+    expect(await blockUpdatePage.getBlockHeightInput()).to.eq('5', 'Expected blockHeight value to be equals to 5');
+    expect(await blockUpdatePage.getBlockHashInput()).to.eq('blockHash', 'Expected BlockHash value to be equals to blockHash');
     expect(await blockUpdatePage.getAvailableInput()).to.eq('5', 'Expected available value to be equals to 5');
     expect(await blockUpdatePage.getEstimatedInput()).to.eq('5', 'Expected estimated value to be equals to 5');
     expect(await blockUpdatePage.getAvailableSpendableInput()).to.eq('5', 'Expected availableSpendable value to be equals to 5');

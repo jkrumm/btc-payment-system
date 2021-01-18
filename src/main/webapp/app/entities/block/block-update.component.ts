@@ -19,8 +19,9 @@ export class BlockUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    minedAt: [null, [Validators.required]],
-    block: [null, []],
+    minedAt: [],
+    blockHeight: [null, [Validators.required]],
+    blockHash: [null, [Validators.required]],
     available: [null, [Validators.required]],
     estimated: [null, [Validators.required]],
     availableSpendable: [null, [Validators.required]],
@@ -44,7 +45,8 @@ export class BlockUpdateComponent implements OnInit {
     this.editForm.patchValue({
       id: block.id,
       minedAt: block.minedAt ? block.minedAt.format(DATE_TIME_FORMAT) : null,
-      block: block.block,
+      blockHeight: block.blockHeight,
+      blockHash: block.blockHash,
       available: block.available,
       estimated: block.estimated,
       availableSpendable: block.availableSpendable,
@@ -71,7 +73,8 @@ export class BlockUpdateComponent implements OnInit {
       ...new Block(),
       id: this.editForm.get(['id'])!.value,
       minedAt: this.editForm.get(['minedAt'])!.value ? moment(this.editForm.get(['minedAt'])!.value, DATE_TIME_FORMAT) : undefined,
-      block: this.editForm.get(['block'])!.value,
+      blockHeight: this.editForm.get(['blockHeight'])!.value,
+      blockHash: this.editForm.get(['blockHash'])!.value,
       available: this.editForm.get(['available'])!.value,
       estimated: this.editForm.get(['estimated'])!.value,
       availableSpendable: this.editForm.get(['availableSpendable'])!.value,

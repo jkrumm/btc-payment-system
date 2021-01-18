@@ -47,8 +47,9 @@ enum FeeType {
 
 /** Wallet status after each added Block */
 entity Block {
-	minedAt Instant required /** Timestamp new block was added */
-	block Long unique /** Block ID */
+	minedAt Instant /** Timestamp new block was added */
+	blockHeight Long required /** Block Height ID */
+    blockHash String required /** Block Hash */
     available Long required
     estimated Long required
     availableSpendable Long required

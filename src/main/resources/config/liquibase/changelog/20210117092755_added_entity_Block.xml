@@ -17,10 +17,13 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="mined_at" type="datetime" remarks="Timestamp new block was added">
+                <constraints nullable="true" />
+            </column>
+            <column name="block_height" type="bigint" remarks="Block Height ID">
                 <constraints nullable="false" />
             </column>
-            <column name="block" type="bigint" remarks="Block ID">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_block_block" />
+            <column name="block_hash" type="varchar(255)" remarks="Block Hash">
+                <constraints nullable="false" />
             </column>
             <column name="available" type="bigint">
                 <constraints nullable="false" />
@@ -59,7 +62,8 @@
                   tableName="block">
             <column name="id" type="numeric"/>
             <column name="mined_at" type="datetime"/>
-            <column name="block" type="numeric"/>
+            <column name="block_height" type="numeric"/>
+            <column name="block_hash" type="string"/>
             <column name="available" type="numeric"/>
             <column name="estimated" type="numeric"/>
             <column name="available_spendable" type="numeric"/>

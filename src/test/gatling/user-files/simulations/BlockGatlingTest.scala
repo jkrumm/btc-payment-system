@@ -73,7 +73,8 @@ class BlockGatlingTest extends Simulation {
             .body(StringBody("""{
                 "id":null
                 , "minedAt":"2020-01-01T00:00:00.000Z"
-                , "block":null
+                , "blockHeight":null
+                , "blockHash":"SAMPLE_TEXT"
                 , "available":null
                 , "estimated":null
                 , "availableSpendable":null

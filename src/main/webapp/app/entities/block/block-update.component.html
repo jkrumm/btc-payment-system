@@ -16,26 +16,32 @@
                     <div class="d-flex">
                         <input id="field_minedAt" type="datetime-local" class="form-control" name="minedAt" formControlName="minedAt" placeholder="YYYY-MM-DD HH:mm"/>
                     </div>
-                    <div *ngIf="editForm.get('minedAt')!.invalid && (editForm.get('minedAt')!.dirty || editForm.get('minedAt')!.touched)">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.block.blockHeight" for="field_blockHeight" [ngbTooltip]="'btcPaymentSystemApp.block.help.blockHeight' | translate">Block Height</label>
+                    <input type="number" class="form-control" name="blockHeight" id="field_blockHeight"
+                           formControlName="blockHeight"/>
+                    <div *ngIf="editForm.get('blockHeight')!.invalid && (editForm.get('blockHeight')!.dirty || editForm.get('blockHeight')!.touched)">
                         <small class="form-text text-danger"
-                               *ngIf="editForm.get('minedAt')?.errors?.required" jhiTranslate="entity.validation.required">
+                               *ngIf="editForm.get('blockHeight')?.errors?.required" jhiTranslate="entity.validation.required">
                         This field is required.
                         </small>
                         <small class="form-text text-danger"
-                            [hidden]="!editForm.get('minedAt')?.errors?.ZonedDateTimelocal" jhiTranslate="entity.validation.ZonedDateTimelocal">
-                            This field should be a date and time.
+                            [hidden]="!editForm.get('blockHeight')?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
                         </small>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.block.block" for="field_block" [ngbTooltip]="'btcPaymentSystemApp.block.help.block' | translate">Block</label>
-                    <input type="number" class="form-control" name="block" id="field_block"
-                           formControlName="block"/>
-                    <div *ngIf="editForm.get('block')!.invalid && (editForm.get('block')!.dirty || editForm.get('block')!.touched)">
+                    <label class="form-control-label" jhiTranslate="btcPaymentSystemApp.block.blockHash" for="field_blockHash" [ngbTooltip]="'btcPaymentSystemApp.block.help.blockHash' | translate">Block Hash</label>
+                    <input type="text" class="form-control" name="blockHash" id="field_blockHash"
+                           formControlName="blockHash"/>
+                    <div *ngIf="editForm.get('blockHash')!.invalid && (editForm.get('blockHash')!.dirty || editForm.get('blockHash')!.touched)">
                         <small class="form-text text-danger"
-                            [hidden]="!editForm.get('block')?.errors?.number" jhiTranslate="entity.validation.number">
-                            This field should be a number.
+                               *ngIf="editForm.get('blockHash')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
                         </small>
                     </div>
                 </div>

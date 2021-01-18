@@ -35,8 +35,11 @@ public class BlockResourceIT {
     private static final Instant DEFAULT_MINED_AT = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_MINED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
-    private static final Long DEFAULT_BLOCK = 1L;
-    private static final Long UPDATED_BLOCK = 2L;
+    private static final Long DEFAULT_BLOCK_HEIGHT = 1L;
+    private static final Long UPDATED_BLOCK_HEIGHT = 2L;
+
+    private static final String DEFAULT_BLOCK_HASH = "AAAAAAAAAA";
+    private static final String UPDATED_BLOCK_HASH = "BBBBBBBBBB";
 
     private static final Long DEFAULT_AVAILABLE = 1L;
     private static final Long UPDATED_AVAILABLE = 2L;
@@ -76,7 +79,8 @@ public class BlockResourceIT {
     public static Block createEntity(EntityManager em) {
         Block block = new Block()
             .minedAt(DEFAULT_MINED_AT)
-            .block(DEFAULT_BLOCK)
+            .blockHeight(DEFAULT_BLOCK_HEIGHT)
+            .blockHash(DEFAULT_BLOCK_HASH)
             .available(DEFAULT_AVAILABLE)
             .estimated(DEFAULT_ESTIMATED)
             .availableSpendable(DEFAULT_AVAILABLE_SPENDABLE)
@@ -93,7 +97,8 @@ public class BlockResourceIT {
     public static Block createUpdatedEntity(EntityManager em) {
         Block block = new Block()
             .minedAt(UPDATED_MINED_AT)
-            .block(UPDATED_BLOCK)
+            .blockHeight(UPDATED_BLOCK_HEIGHT)
+            .blockHash(UPDATED_BLOCK_HASH)
             .available(UPDATED_AVAILABLE)
             .estimated(UPDATED_ESTIMATED)
             .availableSpendable(UPDATED_AVAILABLE_SPENDABLE)
@@ -121,7 +126,8 @@ public class BlockResourceIT {
         assertThat(blockList).hasSize(databaseSizeBeforeCreate + 1);
         Block testBlock = blockList.get(blockList.size() - 1);
         assertThat(testBlock.getMinedAt()).isEqualTo(DEFAULT_MINED_AT);
-        assertThat(testBlock.getBlock()).isEqualTo(DEFAULT_BLOCK);
+        assertThat(testBlock.getBlockHeight()).isEqualTo(DEFAULT_BLOCK_HEIGHT);
+        assertThat(testBlock.getBlockHash()).isEqualTo(DEFAULT_BLOCK_HASH);
         assertThat(testBlock.getAvailable()).isEqualTo(DEFAULT_AVAILABLE);
         assertThat(testBlock.getEstimated()).isEqualTo(DEFAULT_ESTIMATED);
         assertThat(testBlock.getAvailableSpendable()).isEqualTo(DEFAULT_AVAILABLE_SPENDABLE);
@@ -149,10 +155,28 @@ public class BlockResourceIT {
 
     @Test
     @Transactional
-    public void checkMinedAtIsRequired() throws Exception {
+    public void checkBlockHeightIsRequired() throws Exception {
         int databaseSizeBeforeTest = blockRepository.findAll().size();
         // set the field null
-        block.setMinedAt(null);
+        block.setBlockHeight(null);
+
+        // Create the Block, which fails.
+        BlockDTO blockDTO = blockMapper.toDto(block);
+
+        restBlockMockMvc
+            .perform(post("/api/blocks").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(blockDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Block> blockList = blockRepository.findAll();
+        assertThat(blockList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkBlockHashIsRequired() throws Exception {
+        int databaseSizeBeforeTest = blockRepository.findAll().size();
+        // set the field null
+        block.setBlockHash(null);
 
         // Create the Block, which fails.
         BlockDTO blockDTO = blockMapper.toDto(block);
@@ -250,7 +274,8 @@ public class BlockResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(block.getId().intValue())))
             .andExpect(jsonPath("$.[*].minedAt").value(hasItem(DEFAULT_MINED_AT.toString())))
-            .andExpect(jsonPath("$.[*].block").value(hasItem(DEFAULT_BLOCK.intValue())))
+            .andExpect(jsonPath("$.[*].blockHeight").value(hasItem(DEFAULT_BLOCK_HEIGHT.intValue())))
+            .andExpect(jsonPath("$.[*].blockHash").value(hasItem(DEFAULT_BLOCK_HASH)))
             .andExpect(jsonPath("$.[*].available").value(hasItem(DEFAULT_AVAILABLE.intValue())))
             .andExpect(jsonPath("$.[*].estimated").value(hasItem(DEFAULT_ESTIMATED.intValue())))
             .andExpect(jsonPath("$.[*].availableSpendable").value(hasItem(DEFAULT_AVAILABLE_SPENDABLE.intValue())))
@@ -270,7 +295,8 @@ public class BlockResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(block.getId().intValue()))
             .andExpect(jsonPath("$.minedAt").value(DEFAULT_MINED_AT.toString()))
-            .andExpect(jsonPath("$.block").value(DEFAULT_BLOCK.intValue()))
+            .andExpect(jsonPath("$.blockHeight").value(DEFAULT_BLOCK_HEIGHT.intValue()))
+            .andExpect(jsonPath("$.blockHash").value(DEFAULT_BLOCK_HASH))
             .andExpect(jsonPath("$.available").value(DEFAULT_AVAILABLE.intValue()))
             .andExpect(jsonPath("$.estimated").value(DEFAULT_ESTIMATED.intValue()))
             .andExpect(jsonPath("$.availableSpendable").value(DEFAULT_AVAILABLE_SPENDABLE.intValue()))
@@ -298,7 +324,8 @@ public class BlockResourceIT {
         em.detach(updatedBlock);
         updatedBlock
             .minedAt(UPDATED_MINED_AT)
-            .block(UPDATED_BLOCK)
+            .blockHeight(UPDATED_BLOCK_HEIGHT)
+            .blockHash(UPDATED_BLOCK_HASH)
             .available(UPDATED_AVAILABLE)
             .estimated(UPDATED_ESTIMATED)
             .availableSpendable(UPDATED_AVAILABLE_SPENDABLE)
@@ -314,7 +341,8 @@ public class BlockResourceIT {
         assertThat(blockList).hasSize(databaseSizeBeforeUpdate);
         Block testBlock = blockList.get(blockList.size() - 1);
         assertThat(testBlock.getMinedAt()).isEqualTo(UPDATED_MINED_AT);
-        assertThat(testBlock.getBlock()).isEqualTo(UPDATED_BLOCK);
+        assertThat(testBlock.getBlockHeight()).isEqualTo(UPDATED_BLOCK_HEIGHT);
+        assertThat(testBlock.getBlockHash()).isEqualTo(UPDATED_BLOCK_HASH);
         assertThat(testBlock.getAvailable()).isEqualTo(UPDATED_AVAILABLE);
         assertThat(testBlock.getEstimated()).isEqualTo(UPDATED_ESTIMATED);
         assertThat(testBlock.getAvailableSpendable()).isEqualTo(UPDATED_AVAILABLE_SPENDABLE);

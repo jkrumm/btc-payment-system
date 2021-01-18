@@ -24,7 +24,7 @@ describe('Service Tests', () => {
       httpMock = injector.get(HttpTestingController);
       currentDate = moment();
 
-      elemDefault = new Block(0, currentDate, 0, 0, 0, 0, 0);
+      elemDefault = new Block(0, currentDate, 0, 'AAAAAAA', 0, 0, 0, 0);
     });
 
     describe('Service methods', () => {
@@ -70,7 +70,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             minedAt: currentDate.format(DATE_TIME_FORMAT),
-            block: 1,
+            blockHeight: 1,
+            blockHash: 'BBBBBB',
             available: 1,
             estimated: 1,
             availableSpendable: 1,
@@ -97,7 +98,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             minedAt: currentDate.format(DATE_TIME_FORMAT),
-            block: 1,
+            blockHeight: 1,
+            blockHash: 'BBBBBB',
             available: 1,
             estimated: 1,
             availableSpendable: 1,

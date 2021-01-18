@@ -52,6 +52,12 @@ public class BlockServiceImpl implements BlockService {
         return blockRepository.findById(id).map(blockMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
+    public BlockDTO getLatestBlock() {
+        log.debug("Request to get latest Block");
+        return blockMapper.toDto(blockRepository.findTopByOrderByIdDesc());
+    }
+
     @Override
     public void delete(Long id) {
         log.debug("Request to delete Block : {}", id);
