@@ -23,22 +23,13 @@ import org.springframework.core.env.Environment;
 public class WalletConfiguration {
     private final Logger log = LoggerFactory.getLogger(WalletConfiguration.class);
 
-    private final Environment env;
-
-    private final JHipsterProperties jHipsterProperties;
-
-    public WalletConfiguration(Environment env, JHipsterProperties jHipsterProperties) {
-        this.env = env;
-        this.jHipsterProperties = jHipsterProperties;
-    }
-
-    @Value("${wallet.network}")
+    @Value("${application.wallet.network}")
     private String network;
 
-    @Value("${wallet.filePrefix}")
+    @Value("${application.wallet.filePrefix}")
     private String filePrefix;
 
-    @Value("${wallet.btcFileLocation}")
+    @Value("${application.wallet.btcFileLocation}")
     private String btcFileLocation;
 
     @Bean

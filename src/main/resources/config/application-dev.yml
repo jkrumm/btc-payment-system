@@ -15,9 +15,9 @@
 
 logging:
   level:
-    ROOT: DEBUG
-    io.github.jhipster: DEBUG
-    com.jkrumm.btcpay: DEBUG
+    ROOT: INFO
+    io.github.jhipster: INFO
+    com.jkrumm.btcpay: INFO
 
 spring:
   profiles:
@@ -117,4 +117,8 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  wallet:
+    network: 'testnet'
+    filePrefix: 'dev'
+    btcFileLocation: '/Users/johanneskrumm/btc-payment-system'
