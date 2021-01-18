@@ -17,7 +17,8 @@
         "title": "Block"
       },
       "minedAt": "Mined At",
-      "block": "Block",
+      "blockHeight": "Block Height",
+      "blockHash": "Block Hash",
       "available": "Available",
       "estimated": "Estimated",
       "availableSpendable": "Available Spendable",
@@ -25,7 +26,8 @@
       "transaction": "Transaction",
       "help": {
         "minedAt": "Timestamp new block was added",
-        "block": "Block ID"
+        "blockHeight": "Block Height ID",
+        "blockHash": "Block Hash"
       }
     }
   }

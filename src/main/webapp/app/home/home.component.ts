@@ -24,6 +24,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.accountService.isAuthenticated();
   }
 
+  isAdmin(): boolean {
+    return this.accountService.hasAnyAuthority('ROLE_ADMIN') && this.accountService.isAuthenticated();
+  }
+
   login(): void {
     this.loginModalService.open();
   }

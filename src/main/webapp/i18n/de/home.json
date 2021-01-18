@@ -14,6 +14,12 @@
       "follow": "kontaktieren Sie uns mit @jhipster auf Twitter"
     },
     "like": "Wenn Sie JHipster mögen, vergessen Sie nicht uns einen Stern zu geben auf",
-    "github": "GitHub"
+    "github": "GitHub",
+    "admin": {
+      "message": "Sie sind als Admin \"{{username}}\" angemeldet."
+    },
+    "user": {
+      "message": "Sie sind als User \"{{username}}\" angemeldet."
+    }
   }
 }
