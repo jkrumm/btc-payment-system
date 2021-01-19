@@ -1,11 +1,10 @@
-package com.jkrumm.btcpay.service;
+package com.jkrumm.btcpay.btc.wallet;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.jkrumm.btcpay.config.WalletConfiguration;
-import com.jkrumm.btcpay.service.dto.BlockDTO;
-import com.jkrumm.btcpay.service.impl.BlockServiceImpl;
+import com.jkrumm.btcpay.domain.Block;
+import java.time.Instant;
 import javax.annotation.PostConstruct;
 import org.bitcoinj.core.*;
 import org.bitcoinj.core.listeners.NewBestBlockListener;
@@ -16,8 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class WalletService {
     private final Logger log = LoggerFactory.getLogger(WalletConfiguration.class);
 
@@ -27,7 +27,8 @@ public class WalletService {
     @Autowired
     private NetworkParameters networkParameters;
 
-    private BlockServiceImpl blockService;
+    @Autowired
+    private WalletRepositoryContainer.Container repos;
 
     @PostConstruct
     public void start() {
@@ -60,34 +61,33 @@ public class WalletService {
         walletAppKit
             .chain()
             .addNewBestBlockListener(
-                new NewBestBlockListener() {
+                block -> {
+                    long newBlockHeight = block.getHeight();
+                    Instant newBlockMinedAt = Instant.now();
+                    String newBlockHash = block.getHeader().getHashAsString();
+                    long newAvailable = walletAppKit.wallet().getBalance(Wallet.BalanceType.AVAILABLE).longValue();
+                    long newAvailableSpendable = walletAppKit.wallet().getBalance(Wallet.BalanceType.AVAILABLE_SPENDABLE).longValue();
+                    long newEstimated = walletAppKit.wallet().getBalance(Wallet.BalanceType.ESTIMATED).longValue();
+                    long newEstimatedSpendable = walletAppKit.wallet().getBalance(Wallet.BalanceType.ESTIMATED_SPENDABLE).longValue();
 
-                    @Override
-                    public void notifyNewBestBlock(StoredBlock block) throws VerificationException {
-                        long newBlockHeight = block.getHeight();
-                        String newBlockHash = block.getHeader().getHashAsString();
-                        long newAvailable = walletAppKit.wallet().getBalance(Wallet.BalanceType.AVAILABLE).longValue();
-                        long newAvailableSpendable = walletAppKit.wallet().getBalance(Wallet.BalanceType.AVAILABLE_SPENDABLE).longValue();
-                        long newEstimated = walletAppKit.wallet().getBalance(Wallet.BalanceType.ESTIMATED).longValue();
-                        long newEstimatedSpendable = walletAppKit.wallet().getBalance(Wallet.BalanceType.ESTIMATED_SPENDABLE).longValue();
+                    log.info("New Block Height: " + newBlockHeight + " | Hash: " + newBlockHash + " | Mined At: " + newBlockMinedAt);
+                    log.info("Balance " + Wallet.BalanceType.AVAILABLE + " " + newAvailable);
+                    log.info("Balance: " + Wallet.BalanceType.AVAILABLE_SPENDABLE + " " + newAvailableSpendable);
+                    log.info("Balance: " + Wallet.BalanceType.ESTIMATED + " " + newEstimated);
+                    log.info("Balance: " + Wallet.BalanceType.ESTIMATED_SPENDABLE + " " + newEstimatedSpendable);
 
-                        log.info("New Block Height: " + newBlockHeight + " | Hash: " + newBlockHash);
-                        log.info("Balance " + Wallet.BalanceType.AVAILABLE + " " + newAvailable);
-                        log.info("Balance: " + Wallet.BalanceType.AVAILABLE_SPENDABLE + " " + newAvailableSpendable);
-                        log.info("Balance: " + Wallet.BalanceType.ESTIMATED + " " + newEstimated);
-                        log.info("Balance: " + Wallet.BalanceType.ESTIMATED_SPENDABLE + " " + newEstimatedSpendable);
+                    Block newBlock = new Block();
+                    newBlock.setMinedAt(newBlockMinedAt);
+                    newBlock.setBlockHeight(newBlockHeight);
+                    newBlock.setBlockHash(newBlockHash);
+                    newBlock.setAvailable(newAvailable);
+                    newBlock.setAvailableSpendable(newAvailableSpendable);
+                    newBlock.setEstimated(newEstimated);
+                    newBlock.setEstimatedSpendable(newEstimatedSpendable);
 
-                        BlockDTO newBlock = new BlockDTO();
-                        newBlock.setBlockHeight(newBlockHeight);
-                        newBlock.setBlockHash(newBlockHash);
-                        newBlock.setAvailable(newAvailable);
-                        newBlock.setAvailableSpendable(newAvailableSpendable);
-                        newBlock.setEstimated(newEstimated);
-                        newBlock.setEstimatedSpendable(newEstimatedSpendable);
-
-                        BlockDTO newBlockSave = blockService.save(newBlock);
-                        log.info(newBlockSave.toString());
-                    }
+                    log.info(newBlock.toString());
+                    Block newBlockSave = repos.block.save(newBlock);
+                    log.info(newBlockSave.toString());
                 }
             );
 

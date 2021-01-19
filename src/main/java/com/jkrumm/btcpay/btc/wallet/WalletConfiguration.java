@@ -1,6 +1,5 @@
-package com.jkrumm.btcpay.config;
+package com.jkrumm.btcpay.btc.wallet;
 
-import io.github.jhipster.config.JHipsterProperties;
 import java.io.File;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 /**
  * Configuration of web application with Servlet 3.0 APIs.

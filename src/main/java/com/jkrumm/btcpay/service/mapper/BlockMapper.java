@@ -9,9 +9,6 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring", uses = {})
 public interface BlockMapper extends EntityMapper<BlockDTO, Block> {
-    @Mapping(source = "block.id", target = "blockId")
-    BlockDTO toDto(Block block);
-
     @Mapping(target = "transactions", ignore = true)
     @Mapping(target = "removeTransaction", ignore = true)
     Block toEntity(BlockDTO blockDTO);

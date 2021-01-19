@@ -115,7 +115,7 @@ public class BlockResource {
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the latest block in body.
      */
-    @GetMapping("/blocks")
+    @GetMapping("/latestBlock")
     public ResponseEntity<BlockDTO> getLatestBlock() {
         log.debug("REST request to get the latest Block of Blocks");
         return ResponseEntity.ok().body(blockService.getLatestBlock());

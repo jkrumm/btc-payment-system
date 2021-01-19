@@ -1,0 +1,54 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="block">
+            <h2><span jhiTranslate="btcPaymentSystemApp.block.detail.title">Block</span> {{ block.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="btcPaymentSystemApp.block.minedAt" [ngbTooltip]="'btcPaymentSystemApp.block.help.minedAt' | translate">Mined At</span></dt>
+                <dd>
+                    <span>{{ block.minedAt }}</span>
+                </dd>
+                <dt><span jhiTranslate="btcPaymentSystemApp.block.blockHeight" [ngbTooltip]="'btcPaymentSystemApp.block.help.blockHeight' | translate">Block Height</span></dt>
+                <dd>
+                    <span>{{ block.blockHeight }}</span>
+                </dd>
+                <dt><span jhiTranslate="btcPaymentSystemApp.block.blockHash" [ngbTooltip]="'btcPaymentSystemApp.block.help.blockHash' | translate">Block Hash</span></dt>
+                <dd>
+                    <span>{{ block.blockHash }}</span>
+                </dd>
+                <dt><span jhiTranslate="btcPaymentSystemApp.block.available">Available</span></dt>
+                <dd>
+                    <span>{{ block.available }}</span>
+                </dd>
+                <dt><span jhiTranslate="btcPaymentSystemApp.block.estimated">Estimated</span></dt>
+                <dd>
+                    <span>{{ block.estimated }}</span>
+                </dd>
+                <dt><span jhiTranslate="btcPaymentSystemApp.block.availableSpendable">Available Spendable</span></dt>
+                <dd>
+                    <span>{{ block.availableSpendable }}</span>
+                </dd>
+                <dt><span jhiTranslate="btcPaymentSystemApp.block.estimatedSpendable">Estimated Spendable</span></dt>
+                <dd>
+                    <span>{{ block.estimatedSpendable }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/block', block.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

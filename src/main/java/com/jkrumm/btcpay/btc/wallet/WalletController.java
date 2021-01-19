@@ -1,6 +1,5 @@
-package com.jkrumm.btcpay.web.rest;
+package com.jkrumm.btcpay.btc.wallet;
 
-import com.jkrumm.btcpay.service.WalletService;
 import java.net.URISyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
