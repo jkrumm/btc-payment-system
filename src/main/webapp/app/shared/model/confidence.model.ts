@@ -1,12 +1,13 @@
+import dayjs from 'dayjs';
+import { ITransaction } from 'app/shared/model/transaction.model';
 import { ConfidenceType } from 'app/shared/model/enumerations/confidence-type.model';
 
 export interface IConfidence {
   id?: number;
+  changeAt?: string;
   confidenceType?: ConfidenceType;
   confirmations?: number;
-  transactionId?: number;
+  transaction?: ITransaction | null;
 }
 
-export class Confidence implements IConfidence {
-  constructor(public id?: number, public confidenceType?: ConfidenceType, public confirmations?: number, public transactionId?: number) {}
-}
+export const defaultValue: Readonly<IConfidence> = {};

@@ -1,16 +1,13 @@
-/** Central table to persist transaction details. All holdings will be derived from it. */
+/** Central table to persist transaction details. All holdings will be derived from it with help of BitcoinJ. */
 entity Transaction {
 	initiatedAt Instant required /** Transaction initiated at */
-	transactionType TransactionType required /** Transaction enum type */
-    isMempool Boolean required /** Is Transaction still in the Mempool */
+	transactionType TransactionType /** Transaction enum type */
     txHash String unique /** Transaction hash */
-	fromAddress String /** Transaction send from address */
-    toAddress String required /** Transaction send to address */
-    expectedAmount Long required /** Expected BTC amount from the customer */
-    amount Long /** Actual BTC amount of the transaction */
-    serviceFee Long required /** Service fee */
-    btcPrice Long required /** BTC price at intiation */
-    isWithdrawed Boolean required /** Transaction BTC amount has been forwarded **/
+    expectedAmount Long /** Expected BTC amount from the customer */
+    actualAmount Long /** Actual BTC amount of the transaction */
+    transactionFee Long /** BTC transaction fee */
+    serviceFee Long /** Service fee */
+    btcUsd Double /** BTC price at intiation */
 }
 
 enum TransactionType {
@@ -19,10 +16,12 @@ enum TransactionType {
 
 /** Store history of a Trasaction confidence */
 entity Confidence {
-	confidenceType ConfidenceType /** Current state of a transaction */
-    confirmations Integer /** Amount of confirmations through new blocks */
+	changeAt Instant required
+	confidenceType ConfidenceType required /** Current state of a transaction */
+    confirmations Integer min(0) max(6) required /** Amount of confirmations through new blocks */
 }
 
+/** Confidence types defined by BitcoinJ */
 enum ConfidenceType {
 	INCOMING, BUILDING, DEAD, UNKNOWN, CONFIRMED
 }
@@ -31,7 +30,7 @@ enum ConfidenceType {
 /** Merchant informations */
 entity Merchant {
 	name String required unique /** Merchant name */
-    email String required unique pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)
+    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)
 }
 
 /** Associated Merchant Fee */
@@ -45,17 +44,6 @@ enum FeeType {
 	ZERO, LOW, HIGH
 }
 
-/** Wallet status after each added Block */
-entity Block {
-	minedAt Instant /** Timestamp new block was added */
-	blockHeight Long required /** Block Height ID */
-    blockHash String required /** Block Hash */
-    available Long required
-    estimated Long required
-    availableSpendable Long required
-    estimatedSpendable Long required
-}
-
 entity MerchantUser {}
 
 relationship OneToOne {
@@ -67,28 +55,27 @@ relationship OneToOne {
 relationship OneToMany {
 	/** One Transaction has Many Confidence entries */
 	Transaction to Confidence{transaction},
-    /** One Block holds Many Transactions */
-    Block to Transaction{block},
     /** One Merchant has Many Users */
     Merchant to MerchantUser{merchant}
 }
 
 relationship ManyToOne {
 	/** Many Transaction can be done by One User */
-	Transaction{user} to User
+	Transaction{user} to User,
+    /** Many Transaction can be done by One Merchant */
+    Transaction{merchant} to Merchant
 }
 
 // Set pagination options
-paginate Transaction, Block, Confidence with infinite-scroll
-paginate Fee, Merchant, MerchantUser with pagination
+// paginate Transaction, Block, Confidence with infinite-scroll
+paginate Transaction, Confidence with pagination
 
 // Use Data Transfer Objects (DTO)
 dto * with mapstruct
 
 // Set service options
 // Fee, Merchant, Confidence will also be serviceImpl
-service Transaction with serviceClass
-service Block, Fee, Merchant, Confidence, MerchantUser with serviceImpl
+service * with serviceImpl
 
 // Set an angular suffix
 // angularSuffix * with mySuffix

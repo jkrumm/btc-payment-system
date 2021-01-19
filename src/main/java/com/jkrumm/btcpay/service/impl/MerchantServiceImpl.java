@@ -5,11 +5,12 @@ import com.jkrumm.btcpay.repository.MerchantRepository;
 import com.jkrumm.btcpay.service.MerchantService;
 import com.jkrumm.btcpay.service.dto.MerchantDTO;
 import com.jkrumm.btcpay.service.mapper.MerchantMapper;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class MerchantServiceImpl implements MerchantService {
+
     private final Logger log = LoggerFactory.getLogger(MerchantServiceImpl.class);
 
     private final MerchantRepository merchantRepository;
@@ -39,10 +41,33 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
+    public Optional<MerchantDTO> partialUpdate(MerchantDTO merchantDTO) {
+        log.debug("Request to partially update Merchant : {}", merchantDTO);
+
+        return merchantRepository
+            .findById(merchantDTO.getId())
+            .map(
+                existingMerchant -> {
+                    if (merchantDTO.getName() != null) {
+                        existingMerchant.setName(merchantDTO.getName());
+                    }
+
+                    if (merchantDTO.getEmail() != null) {
+                        existingMerchant.setEmail(merchantDTO.getEmail());
+                    }
+
+                    return existingMerchant;
+                }
+            )
+            .map(merchantRepository::save)
+            .map(merchantMapper::toDto);
+    }
+
+    @Override
     @Transactional(readOnly = true)
-    public Page<MerchantDTO> findAll(Pageable pageable) {
+    public List<MerchantDTO> findAll() {
         log.debug("Request to get all Merchants");
-        return merchantRepository.findAll(pageable).map(merchantMapper::toDto);
+        return merchantRepository.findAll().stream().map(merchantMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.jkrumm.btcpay.web.rest.errors;
 
-import io.github.jhipster.config.JHipsterConstants;
-import io.github.jhipster.web.util.HeaderUtil;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +29,8 @@ import org.zalando.problem.StatusType;
 import org.zalando.problem.spring.web.advice.ProblemHandling;
 import org.zalando.problem.spring.web.advice.security.SecurityAdviceTrait;
 import org.zalando.problem.violations.ConstraintViolationProblem;
+import tech.jhipster.config.JHipsterConstants;
+import tech.jhipster.web.util.HeaderUtil;
 
 /**
  * Controller advice to translate the server side exceptions to client-friendly json structures.
@@ -38,6 +38,7 @@ import org.zalando.problem.violations.ConstraintViolationProblem;
  */
 @ControllerAdvice
 public class ExceptionTranslator implements ProblemHandling, SecurityAdviceTrait {
+
     private static final String FIELD_ERRORS_KEY = "fieldErrors";
     private static final String MESSAGE_KEY = "message";
     private static final String PATH_KEY = "path";
@@ -58,18 +59,21 @@ public class ExceptionTranslator implements ProblemHandling, SecurityAdviceTrait
     @Override
     public ResponseEntity<Problem> process(@Nullable ResponseEntity<Problem> entity, NativeWebRequest request) {
         if (entity == null) {
-            return entity;
+            return null;
         }
         Problem problem = entity.getBody();
         if (!(problem instanceof ConstraintViolationProblem || problem instanceof DefaultProblem)) {
             return entity;
         }
+
+        HttpServletRequest nativeRequest = request.getNativeRequest(HttpServletRequest.class);
+        String requestUri = nativeRequest != null ? nativeRequest.getRequestURI() : StringUtils.EMPTY;
         ProblemBuilder builder = Problem
             .builder()
             .withType(Problem.DEFAULT_TYPE.equals(problem.getType()) ? ErrorConstants.DEFAULT_TYPE : problem.getType())
             .withStatus(problem.getStatus())
             .withTitle(problem.getTitle())
-            .with(PATH_KEY, request.getNativeRequest(HttpServletRequest.class).getRequestURI());
+            .with(PATH_KEY, requestUri);
 
         if (problem instanceof ConstraintViolationProblem) {
             builder
@@ -91,7 +95,14 @@ public class ExceptionTranslator implements ProblemHandling, SecurityAdviceTrait
         List<FieldErrorVM> fieldErrors = result
             .getFieldErrors()
             .stream()
-            .map(f -> new FieldErrorVM(f.getObjectName().replaceFirst("DTO$", ""), f.getField(), f.getCode()))
+            .map(
+                f ->
+                    new FieldErrorVM(
+                        f.getObjectName().replaceFirst("DTO$", ""),
+                        f.getField(),
+                        StringUtils.isNotBlank(f.getDefaultMessage()) ? f.getDefaultMessage() : f.getCode()
+                    )
+            )
             .collect(Collectors.toList());
 
         Problem problem = Problem
@@ -114,7 +125,7 @@ public class ExceptionTranslator implements ProblemHandling, SecurityAdviceTrait
         return create(
             problem,
             request,
-            HeaderUtil.createFailureAlert(applicationName, true, problem.getEntityName(), problem.getErrorKey(), problem.getMessage())
+            HeaderUtil.createFailureAlert(applicationName, false, problem.getEntityName(), problem.getErrorKey(), problem.getMessage())
         );
     }
 
@@ -127,7 +138,7 @@ public class ExceptionTranslator implements ProblemHandling, SecurityAdviceTrait
         return create(
             problem,
             request,
-            HeaderUtil.createFailureAlert(applicationName, true, problem.getEntityName(), problem.getErrorKey(), problem.getMessage())
+            HeaderUtil.createFailureAlert(applicationName, false, problem.getEntityName(), problem.getErrorKey(), problem.getMessage())
         );
     }
 
@@ -144,7 +155,7 @@ public class ExceptionTranslator implements ProblemHandling, SecurityAdviceTrait
         return create(
             ex,
             request,
-            HeaderUtil.createFailureAlert(applicationName, true, ex.getEntityName(), ex.getErrorKey(), ex.getMessage())
+            HeaderUtil.createFailureAlert(applicationName, false, ex.getEntityName(), ex.getErrorKey(), ex.getMessage())
         );
     }
 

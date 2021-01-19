@@ -13,10 +13,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "merchant_user")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class MerchantUser implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
     @OneToOne
@@ -24,7 +26,7 @@ public class MerchantUser implements Serializable {
     private User user;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = "merchantUsers", allowSetters = true)
+    @JsonIgnoreProperties(value = { "fee", "merchantUsers" }, allowSetters = true)
     private Merchant merchant;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -36,12 +38,17 @@ public class MerchantUser implements Serializable {
         this.id = id;
     }
 
+    public MerchantUser id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public User getUser() {
-        return user;
+        return this.user;
     }
 
     public MerchantUser user(User user) {
-        this.user = user;
+        this.setUser(user);
         return this;
     }
 
@@ -50,11 +57,11 @@ public class MerchantUser implements Serializable {
     }
 
     public Merchant getMerchant() {
-        return merchant;
+        return this.merchant;
     }
 
     public MerchantUser merchant(Merchant merchant) {
-        this.merchant = merchant;
+        this.setMerchant(merchant);
         return this;
     }
 
@@ -77,7 +84,8 @@ public class MerchantUser implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

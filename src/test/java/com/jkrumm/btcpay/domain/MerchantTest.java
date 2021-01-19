@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.jkrumm.btcpay.web.rest.TestUtil;
 import org.junit.jupiter.api.Test;
 
-public class MerchantTest {
+class MerchantTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Merchant.class);
         Merchant merchant1 = new Merchant();
         merchant1.setId(1L);

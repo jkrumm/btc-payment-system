@@ -3,9 +3,6 @@ package com.jkrumm.btcpay.web.rest;
 import com.jkrumm.btcpay.service.MerchantUserService;
 import com.jkrumm.btcpay.service.dto.MerchantUserDTO;
 import com.jkrumm.btcpay.web.rest.errors.BadRequestAlertException;
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -13,13 +10,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.jkrumm.btcpay.domain.MerchantUser}.
@@ -27,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/api")
 public class MerchantUserResource {
+
     private final Logger log = LoggerFactory.getLogger(MerchantUserResource.class);
 
     private static final String ENTITY_NAME = "merchantUser";
@@ -56,7 +51,7 @@ public class MerchantUserResource {
         MerchantUserDTO result = merchantUserService.save(merchantUserDTO);
         return ResponseEntity
             .created(new URI("/api/merchant-users/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
@@ -78,22 +73,45 @@ public class MerchantUserResource {
         MerchantUserDTO result = merchantUserService.save(merchantUserDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, merchantUserDTO.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, merchantUserDTO.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /merchant-users} : Updates given fields of an existing merchantUser.
+     *
+     * @param merchantUserDTO the merchantUserDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated merchantUserDTO,
+     * or with status {@code 400 (Bad Request)} if the merchantUserDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the merchantUserDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the merchantUserDTO couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/merchant-users", consumes = "application/merge-patch+json")
+    public ResponseEntity<MerchantUserDTO> partialUpdateMerchantUser(@RequestBody MerchantUserDTO merchantUserDTO)
+        throws URISyntaxException {
+        log.debug("REST request to update MerchantUser partially : {}", merchantUserDTO);
+        if (merchantUserDTO.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+
+        Optional<MerchantUserDTO> result = merchantUserService.partialUpdate(merchantUserDTO);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, merchantUserDTO.getId().toString())
+        );
     }
 
     /**
      * {@code GET  /merchant-users} : get all the merchantUsers.
      *
-     * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of merchantUsers in body.
      */
     @GetMapping("/merchant-users")
-    public ResponseEntity<List<MerchantUserDTO>> getAllMerchantUsers(Pageable pageable) {
-        log.debug("REST request to get a page of MerchantUsers");
-        Page<MerchantUserDTO> page = merchantUserService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    public List<MerchantUserDTO> getAllMerchantUsers() {
+        log.debug("REST request to get all MerchantUsers");
+        return merchantUserService.findAll();
     }
 
     /**
@@ -121,7 +139,7 @@ public class MerchantUserResource {
         merchantUserService.delete(id);
         return ResponseEntity
             .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
     }
 }

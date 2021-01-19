@@ -16,6 +16,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 @Controller
 public class ActivityService implements ApplicationListener<SessionDisconnectEvent> {
+
     private static final Logger log = LoggerFactory.getLogger(ActivityService.class);
 
     private final SimpMessageSendingOperations messagingTemplate;

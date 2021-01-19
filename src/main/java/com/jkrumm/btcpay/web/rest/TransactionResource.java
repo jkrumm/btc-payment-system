@@ -3,14 +3,12 @@ package com.jkrumm.btcpay.web.rest;
 import com.jkrumm.btcpay.service.TransactionService;
 import com.jkrumm.btcpay.service.dto.TransactionDTO;
 import com.jkrumm.btcpay.web.rest.errors.BadRequestAlertException;
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.jkrumm.btcpay.domain.Transaction}.
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/api")
 public class TransactionResource {
+
     private final Logger log = LoggerFactory.getLogger(TransactionResource.class);
 
     private static final String ENTITY_NAME = "transaction";
@@ -57,7 +59,7 @@ public class TransactionResource {
         TransactionDTO result = transactionService.save(transactionDTO);
         return ResponseEntity
             .created(new URI("/api/transactions/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
@@ -79,8 +81,34 @@ public class TransactionResource {
         TransactionDTO result = transactionService.save(transactionDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, transactionDTO.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, transactionDTO.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /transactions} : Updates given fields of an existing transaction.
+     *
+     * @param transactionDTO the transactionDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated transactionDTO,
+     * or with status {@code 400 (Bad Request)} if the transactionDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the transactionDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the transactionDTO couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/transactions", consumes = "application/merge-patch+json")
+    public ResponseEntity<TransactionDTO> partialUpdateTransaction(@NotNull @RequestBody TransactionDTO transactionDTO)
+        throws URISyntaxException {
+        log.debug("REST request to update Transaction partially : {}", transactionDTO);
+        if (transactionDTO.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+
+        Optional<TransactionDTO> result = transactionService.partialUpdate(transactionDTO);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, transactionDTO.getId().toString())
+        );
     }
 
     /**
@@ -122,7 +150,7 @@ public class TransactionResource {
         transactionService.delete(id);
         return ResponseEntity
             .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
     }
 }

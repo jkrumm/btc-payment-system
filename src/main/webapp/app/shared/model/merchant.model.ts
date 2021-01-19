@@ -1,19 +1,12 @@
+import { IFee } from 'app/shared/model/fee.model';
 import { IMerchantUser } from 'app/shared/model/merchant-user.model';
 
 export interface IMerchant {
   id?: number;
   name?: string;
   email?: string;
-  feeId?: number;
-  merchantUsers?: IMerchantUser[];
+  fee?: IFee | null;
+  merchantUsers?: IMerchantUser[] | null;
 }
 
-export class Merchant implements IMerchant {
-  constructor(
-    public id?: number,
-    public name?: string,
-    public email?: string,
-    public feeId?: number,
-    public merchantUsers?: IMerchantUser[]
-  ) {}
-}
+export const defaultValue: Readonly<IMerchant> = {};

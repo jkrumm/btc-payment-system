@@ -5,11 +5,12 @@ import com.jkrumm.btcpay.repository.MerchantUserRepository;
 import com.jkrumm.btcpay.service.MerchantUserService;
 import com.jkrumm.btcpay.service.dto.MerchantUserDTO;
 import com.jkrumm.btcpay.service.mapper.MerchantUserMapper;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class MerchantUserServiceImpl implements MerchantUserService {
+
     private final Logger log = LoggerFactory.getLogger(MerchantUserServiceImpl.class);
 
     private final MerchantUserRepository merchantUserRepository;
@@ -39,10 +41,25 @@ public class MerchantUserServiceImpl implements MerchantUserService {
     }
 
     @Override
+    public Optional<MerchantUserDTO> partialUpdate(MerchantUserDTO merchantUserDTO) {
+        log.debug("Request to partially update MerchantUser : {}", merchantUserDTO);
+
+        return merchantUserRepository
+            .findById(merchantUserDTO.getId())
+            .map(
+                existingMerchantUser -> {
+                    return existingMerchantUser;
+                }
+            )
+            .map(merchantUserRepository::save)
+            .map(merchantUserMapper::toDto);
+    }
+
+    @Override
     @Transactional(readOnly = true)
-    public Page<MerchantUserDTO> findAll(Pageable pageable) {
+    public List<MerchantUserDTO> findAll() {
         log.debug("Request to get all MerchantUsers");
-        return merchantUserRepository.findAll(pageable).map(merchantUserMapper::toDto);
+        return merchantUserRepository.findAll().stream().map(merchantUserMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override

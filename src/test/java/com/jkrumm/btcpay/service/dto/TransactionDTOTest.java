@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.jkrumm.btcpay.web.rest.TestUtil;
 import org.junit.jupiter.api.Test;
 
-public class TransactionDTOTest {
+class TransactionDTOTest {
 
     @Test
-    public void dtoEqualsVerifier() throws Exception {
+    void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(TransactionDTO.class);
         TransactionDTO transactionDTO1 = new TransactionDTO();
         transactionDTO1.setId(1L);

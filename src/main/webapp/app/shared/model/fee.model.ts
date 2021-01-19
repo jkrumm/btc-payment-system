@@ -7,6 +7,4 @@ export interface IFee {
   percentSecure?: number;
 }
 
-export class Fee implements IFee {
-  constructor(public id?: number, public feeType?: FeeType, public percent?: number, public percentSecure?: number) {}
-}
+export const defaultValue: Readonly<IFee> = {};

@@ -15,10 +15,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "fee")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Fee implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
     /**
@@ -52,8 +54,13 @@ public class Fee implements Serializable {
         this.id = id;
     }
 
+    public Fee id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public FeeType getFeeType() {
-        return feeType;
+        return this.feeType;
     }
 
     public Fee feeType(FeeType feeType) {
@@ -66,7 +73,7 @@ public class Fee implements Serializable {
     }
 
     public BigDecimal getPercent() {
-        return percent;
+        return this.percent;
     }
 
     public Fee percent(BigDecimal percent) {
@@ -79,7 +86,7 @@ public class Fee implements Serializable {
     }
 
     public BigDecimal getPercentSecure() {
-        return percentSecure;
+        return this.percentSecure;
     }
 
     public Fee percentSecure(BigDecimal percentSecure) {
@@ -106,7 +113,8 @@ public class Fee implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

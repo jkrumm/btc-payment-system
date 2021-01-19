@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 import javax.validation.constraints.*;
 
 /**
@@ -12,6 +13,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Associated Merchant Fee")
 public class FeeDTO implements Serializable {
+
     private Long id;
 
     /**
@@ -76,12 +78,16 @@ public class FeeDTO implements Serializable {
             return false;
         }
 
-        return id != null && id.equals(((FeeDTO) o).id);
+        FeeDTO feeDTO = (FeeDTO) o;
+        if (this.id == null) {
+            return false;
+        }
+        return Objects.equals(this.id, feeDTO.id);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(this.id);
     }
 
     // prettier-ignore

@@ -11,14 +11,7 @@
       "fieldName": "transactionType",
       "fieldType": "TransactionType",
       "javadoc": "Transaction enum type",
-      "fieldValues": "INCOMING_UNKNOWN,INCOMING_CUSTOMER,FORWARD_MERCHANT,FORWARD_HOLDINGS",
-      "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "isMempool",
-      "fieldType": "Boolean",
-      "javadoc": "Is Transaction still in the Mempool",
-      "fieldValidateRules": ["required"]
+      "fieldValues": "INCOMING_UNKNOWN,INCOMING_CUSTOMER,FORWARD_MERCHANT,FORWARD_HOLDINGS"
     },
     {
       "fieldName": "txHash",
@@ -27,44 +20,29 @@
       "fieldValidateRules": ["unique"]
     },
     {
-      "fieldName": "fromAddress",
-      "fieldType": "String",
-      "javadoc": "Transaction send from address"
-    },
-    {
-      "fieldName": "toAddress",
-      "fieldType": "String",
-      "javadoc": "Transaction send to address",
-      "fieldValidateRules": ["required"]
-    },
-    {
       "fieldName": "expectedAmount",
       "fieldType": "Long",
-      "javadoc": "Expected BTC amount from the customer",
-      "fieldValidateRules": ["required"]
+      "javadoc": "Expected BTC amount from the customer"
     },
     {
-      "fieldName": "amount",
+      "fieldName": "actualAmount",
       "fieldType": "Long",
       "javadoc": "Actual BTC amount of the transaction"
     },
     {
+      "fieldName": "transactionFee",
+      "fieldType": "Long",
+      "javadoc": "BTC transaction fee"
+    },
+    {
       "fieldName": "serviceFee",
       "fieldType": "Long",
-      "javadoc": "Service fee",
-      "fieldValidateRules": ["required"]
+      "javadoc": "Service fee"
     },
     {
-      "fieldName": "btcPrice",
-      "fieldType": "Long",
-      "javadoc": "BTC price at intiation",
-      "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "isWithdrawed",
-      "fieldType": "Boolean",
-      "javadoc": "Transaction BTC amount has been forwarded",
-      "fieldValidateRules": ["required"]
+      "fieldName": "btcUsd",
+      "fieldType": "Double",
+      "javadoc": "BTC price at intiation"
     }
   ],
   "relationships": [
@@ -80,27 +58,25 @@
       "otherEntityName": "user",
       "otherEntityRelationshipName": "transaction",
       "javadoc": "Many Transaction can be done by One User",
-      "relationshipName": "user",
-      "otherEntityField": "id"
+      "relationshipName": "user"
     },
     {
       "relationshipType": "many-to-one",
-      "otherEntityName": "block",
+      "otherEntityName": "merchant",
       "otherEntityRelationshipName": "transaction",
-      "relationshipName": "block",
-      "otherEntityField": "id"
+      "javadoc": "Many Transaction can be done by One Merchant",
+      "relationshipName": "merchant"
     }
   ],
-  "changelogDate": "20210117092355",
-  "javadoc": "Central table to persist transaction details. All holdings will be derived from it.",
+  "javadoc": "Central table to persist transaction details. All holdings will be derived from it with help of BitcoinJ.",
   "entityTableName": "transaction",
   "dto": "mapstruct",
-  "pagination": "infinite-scroll",
-  "service": "serviceClass",
+  "pagination": "pagination",
+  "service": "serviceImpl",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,
   "readOnly": false,
   "embedded": false,
-  "clientRootFolder": "",
-  "applications": "*"
+  "applications": "*",
+  "changelogDate": "20210119184213"
 }

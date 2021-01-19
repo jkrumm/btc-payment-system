@@ -5,10 +5,9 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.jkrumm.btcpay.BtcPaymentSystemApp;
+import com.jkrumm.btcpay.IntegrationTest;
 import com.jkrumm.btcpay.domain.MerchantUser;
 import com.jkrumm.btcpay.repository.MerchantUserRepository;
-import com.jkrumm.btcpay.service.MerchantUserService;
 import com.jkrumm.btcpay.service.dto.MerchantUserDTO;
 import com.jkrumm.btcpay.service.mapper.MerchantUserMapper;
 import java.util.List;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,18 +24,16 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Integration tests for the {@link MerchantUserResource} REST controller.
  */
-@SpringBootTest(classes = BtcPaymentSystemApp.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @WithMockUser
-public class MerchantUserResourceIT {
+class MerchantUserResourceIT {
+
     @Autowired
     private MerchantUserRepository merchantUserRepository;
 
     @Autowired
     private MerchantUserMapper merchantUserMapper;
-
-    @Autowired
-    private MerchantUserService merchantUserService;
 
     @Autowired
     private EntityManager em;
@@ -76,7 +72,7 @@ public class MerchantUserResourceIT {
 
     @Test
     @Transactional
-    public void createMerchantUser() throws Exception {
+    void createMerchantUser() throws Exception {
         int databaseSizeBeforeCreate = merchantUserRepository.findAll().size();
         // Create the MerchantUser
         MerchantUserDTO merchantUserDTO = merchantUserMapper.toDto(merchantUser);
@@ -96,12 +92,12 @@ public class MerchantUserResourceIT {
 
     @Test
     @Transactional
-    public void createMerchantUserWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = merchantUserRepository.findAll().size();
-
+    void createMerchantUserWithExistingId() throws Exception {
         // Create the MerchantUser with an existing ID
         merchantUser.setId(1L);
         MerchantUserDTO merchantUserDTO = merchantUserMapper.toDto(merchantUser);
+
+        int databaseSizeBeforeCreate = merchantUserRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restMerchantUserMockMvc
@@ -119,7 +115,7 @@ public class MerchantUserResourceIT {
 
     @Test
     @Transactional
-    public void getAllMerchantUsers() throws Exception {
+    void getAllMerchantUsers() throws Exception {
         // Initialize the database
         merchantUserRepository.saveAndFlush(merchantUser);
 
@@ -133,7 +129,7 @@ public class MerchantUserResourceIT {
 
     @Test
     @Transactional
-    public void getMerchantUser() throws Exception {
+    void getMerchantUser() throws Exception {
         // Initialize the database
         merchantUserRepository.saveAndFlush(merchantUser);
 
@@ -147,14 +143,14 @@ public class MerchantUserResourceIT {
 
     @Test
     @Transactional
-    public void getNonExistingMerchantUser() throws Exception {
+    void getNonExistingMerchantUser() throws Exception {
         // Get the merchantUser
         restMerchantUserMockMvc.perform(get("/api/merchant-users/{id}", Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updateMerchantUser() throws Exception {
+    void updateMerchantUser() throws Exception {
         // Initialize the database
         merchantUserRepository.saveAndFlush(merchantUser);
 
@@ -182,7 +178,7 @@ public class MerchantUserResourceIT {
 
     @Test
     @Transactional
-    public void updateNonExistingMerchantUser() throws Exception {
+    void updateNonExistingMerchantUser() throws Exception {
         int databaseSizeBeforeUpdate = merchantUserRepository.findAll().size();
 
         // Create the MerchantUser
@@ -204,7 +200,74 @@ public class MerchantUserResourceIT {
 
     @Test
     @Transactional
-    public void deleteMerchantUser() throws Exception {
+    void partialUpdateMerchantUserWithPatch() throws Exception {
+        // Initialize the database
+        merchantUserRepository.saveAndFlush(merchantUser);
+
+        int databaseSizeBeforeUpdate = merchantUserRepository.findAll().size();
+
+        // Update the merchantUser using partial update
+        MerchantUser partialUpdatedMerchantUser = new MerchantUser();
+        partialUpdatedMerchantUser.setId(merchantUser.getId());
+
+        restMerchantUserMockMvc
+            .perform(
+                patch("/api/merchant-users")
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedMerchantUser))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the MerchantUser in the database
+        List<MerchantUser> merchantUserList = merchantUserRepository.findAll();
+        assertThat(merchantUserList).hasSize(databaseSizeBeforeUpdate);
+        MerchantUser testMerchantUser = merchantUserList.get(merchantUserList.size() - 1);
+    }
+
+    @Test
+    @Transactional
+    void fullUpdateMerchantUserWithPatch() throws Exception {
+        // Initialize the database
+        merchantUserRepository.saveAndFlush(merchantUser);
+
+        int databaseSizeBeforeUpdate = merchantUserRepository.findAll().size();
+
+        // Update the merchantUser using partial update
+        MerchantUser partialUpdatedMerchantUser = new MerchantUser();
+        partialUpdatedMerchantUser.setId(merchantUser.getId());
+
+        restMerchantUserMockMvc
+            .perform(
+                patch("/api/merchant-users")
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedMerchantUser))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the MerchantUser in the database
+        List<MerchantUser> merchantUserList = merchantUserRepository.findAll();
+        assertThat(merchantUserList).hasSize(databaseSizeBeforeUpdate);
+        MerchantUser testMerchantUser = merchantUserList.get(merchantUserList.size() - 1);
+    }
+
+    @Test
+    @Transactional
+    void partialUpdateMerchantUserShouldThrown() throws Exception {
+        // Update the merchantUser without id should throw
+        MerchantUser partialUpdatedMerchantUser = new MerchantUser();
+
+        restMerchantUserMockMvc
+            .perform(
+                patch("/api/merchant-users")
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedMerchantUser))
+            )
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    void deleteMerchantUser() throws Exception {
         // Initialize the database
         merchantUserRepository.saveAndFlush(merchantUser);
 

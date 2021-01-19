@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
+    <!--
+        Added the constraints for entity Confidence.
+    -->
+    <changeSet id="20210119184214-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="transaction_id"
+                                 baseTableName="confidence"
+                                 constraintName="fk_confidence__transaction_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="transaction"/>
+
+    </changeSet>
+</databaseChangeLog>

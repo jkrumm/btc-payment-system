@@ -74,15 +74,12 @@ class TransactionGatlingTest extends Simulation {
                 "id":null
                 , "initiatedAt":"2020-01-01T00:00:00.000Z"
                 , "transactionType":"INCOMING_UNKNOWN"
-                , "isMempool":null
                 , "txHash":"SAMPLE_TEXT"
-                , "fromAddress":"SAMPLE_TEXT"
-                , "toAddress":"SAMPLE_TEXT"
                 , "expectedAmount":null
-                , "amount":null
+                , "actualAmount":null
+                , "transactionFee":null
                 , "serviceFee":null
-                , "btcPrice":null
-                , "isWithdrawed":null
+                , "btcUsd":null
                 }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_transaction_url"))).exitHereIfFailed

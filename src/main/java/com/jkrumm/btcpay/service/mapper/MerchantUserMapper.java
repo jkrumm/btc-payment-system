@@ -9,20 +9,7 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring", uses = { UserMapper.class, MerchantMapper.class })
 public interface MerchantUserMapper extends EntityMapper<MerchantUserDTO, MerchantUser> {
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "merchant.id", target = "merchantId")
-    MerchantUserDTO toDto(MerchantUser merchantUser);
-
-    @Mapping(source = "userId", target = "user")
-    @Mapping(source = "merchantId", target = "merchant")
-    MerchantUser toEntity(MerchantUserDTO merchantUserDTO);
-
-    default MerchantUser fromId(Long id) {
-        if (id == null) {
-            return null;
-        }
-        MerchantUser merchantUser = new MerchantUser();
-        merchantUser.setId(id);
-        return merchantUser;
-    }
+    @Mapping(target = "user", source = "user", qualifiedByName = "id")
+    @Mapping(target = "merchant", source = "merchant", qualifiedByName = "id")
+    MerchantUserDTO toDto(MerchantUser s);
 }

@@ -1,15 +1,15 @@
 package com.jkrumm.btcpay.web.rest;
 
+import static com.jkrumm.btcpay.web.rest.TestUtil.sameNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.jkrumm.btcpay.BtcPaymentSystemApp;
+import com.jkrumm.btcpay.IntegrationTest;
 import com.jkrumm.btcpay.domain.Fee;
 import com.jkrumm.btcpay.domain.enumeration.FeeType;
 import com.jkrumm.btcpay.repository.FeeRepository;
-import com.jkrumm.btcpay.service.FeeService;
 import com.jkrumm.btcpay.service.dto.FeeDTO;
 import com.jkrumm.btcpay.service.mapper.FeeMapper;
 import java.math.BigDecimal;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,10 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Integration tests for the {@link FeeResource} REST controller.
  */
-@SpringBootTest(classes = BtcPaymentSystemApp.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @WithMockUser
-public class FeeResourceIT {
+class FeeResourceIT {
+
     private static final FeeType DEFAULT_FEE_TYPE = FeeType.ZERO;
     private static final FeeType UPDATED_FEE_TYPE = FeeType.LOW;
 
@@ -46,9 +46,6 @@ public class FeeResourceIT {
 
     @Autowired
     private FeeMapper feeMapper;
-
-    @Autowired
-    private FeeService feeService;
 
     @Autowired
     private EntityManager em;
@@ -87,7 +84,7 @@ public class FeeResourceIT {
 
     @Test
     @Transactional
-    public void createFee() throws Exception {
+    void createFee() throws Exception {
         int databaseSizeBeforeCreate = feeRepository.findAll().size();
         // Create the Fee
         FeeDTO feeDTO = feeMapper.toDto(fee);
@@ -100,18 +97,18 @@ public class FeeResourceIT {
         assertThat(feeList).hasSize(databaseSizeBeforeCreate + 1);
         Fee testFee = feeList.get(feeList.size() - 1);
         assertThat(testFee.getFeeType()).isEqualTo(DEFAULT_FEE_TYPE);
-        assertThat(testFee.getPercent()).isEqualTo(DEFAULT_PERCENT);
-        assertThat(testFee.getPercentSecure()).isEqualTo(DEFAULT_PERCENT_SECURE);
+        assertThat(testFee.getPercent()).isEqualByComparingTo(DEFAULT_PERCENT);
+        assertThat(testFee.getPercentSecure()).isEqualByComparingTo(DEFAULT_PERCENT_SECURE);
     }
 
     @Test
     @Transactional
-    public void createFeeWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = feeRepository.findAll().size();
-
+    void createFeeWithExistingId() throws Exception {
         // Create the Fee with an existing ID
         fee.setId(1L);
         FeeDTO feeDTO = feeMapper.toDto(fee);
+
+        int databaseSizeBeforeCreate = feeRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restFeeMockMvc
@@ -125,7 +122,7 @@ public class FeeResourceIT {
 
     @Test
     @Transactional
-    public void checkFeeTypeIsRequired() throws Exception {
+    void checkFeeTypeIsRequired() throws Exception {
         int databaseSizeBeforeTest = feeRepository.findAll().size();
         // set the field null
         fee.setFeeType(null);
@@ -143,7 +140,7 @@ public class FeeResourceIT {
 
     @Test
     @Transactional
-    public void checkPercentIsRequired() throws Exception {
+    void checkPercentIsRequired() throws Exception {
         int databaseSizeBeforeTest = feeRepository.findAll().size();
         // set the field null
         fee.setPercent(null);
@@ -161,7 +158,7 @@ public class FeeResourceIT {
 
     @Test
     @Transactional
-    public void checkPercentSecureIsRequired() throws Exception {
+    void checkPercentSecureIsRequired() throws Exception {
         int databaseSizeBeforeTest = feeRepository.findAll().size();
         // set the field null
         fee.setPercentSecure(null);
@@ -179,7 +176,7 @@ public class FeeResourceIT {
 
     @Test
     @Transactional
-    public void getAllFees() throws Exception {
+    void getAllFees() throws Exception {
         // Initialize the database
         feeRepository.saveAndFlush(fee);
 
@@ -190,13 +187,13 @@ public class FeeResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(fee.getId().intValue())))
             .andExpect(jsonPath("$.[*].feeType").value(hasItem(DEFAULT_FEE_TYPE.toString())))
-            .andExpect(jsonPath("$.[*].percent").value(hasItem(DEFAULT_PERCENT.intValue())))
-            .andExpect(jsonPath("$.[*].percentSecure").value(hasItem(DEFAULT_PERCENT_SECURE.intValue())));
+            .andExpect(jsonPath("$.[*].percent").value(hasItem(sameNumber(DEFAULT_PERCENT))))
+            .andExpect(jsonPath("$.[*].percentSecure").value(hasItem(sameNumber(DEFAULT_PERCENT_SECURE))));
     }
 
     @Test
     @Transactional
-    public void getFee() throws Exception {
+    void getFee() throws Exception {
         // Initialize the database
         feeRepository.saveAndFlush(fee);
 
@@ -207,20 +204,20 @@ public class FeeResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(fee.getId().intValue()))
             .andExpect(jsonPath("$.feeType").value(DEFAULT_FEE_TYPE.toString()))
-            .andExpect(jsonPath("$.percent").value(DEFAULT_PERCENT.intValue()))
-            .andExpect(jsonPath("$.percentSecure").value(DEFAULT_PERCENT_SECURE.intValue()));
+            .andExpect(jsonPath("$.percent").value(sameNumber(DEFAULT_PERCENT)))
+            .andExpect(jsonPath("$.percentSecure").value(sameNumber(DEFAULT_PERCENT_SECURE)));
     }
 
     @Test
     @Transactional
-    public void getNonExistingFee() throws Exception {
+    void getNonExistingFee() throws Exception {
         // Get the fee
         restFeeMockMvc.perform(get("/api/fees/{id}", Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updateFee() throws Exception {
+    void updateFee() throws Exception {
         // Initialize the database
         feeRepository.saveAndFlush(fee);
 
@@ -248,7 +245,7 @@ public class FeeResourceIT {
 
     @Test
     @Transactional
-    public void updateNonExistingFee() throws Exception {
+    void updateNonExistingFee() throws Exception {
         int databaseSizeBeforeUpdate = feeRepository.findAll().size();
 
         // Create the Fee
@@ -266,7 +263,76 @@ public class FeeResourceIT {
 
     @Test
     @Transactional
-    public void deleteFee() throws Exception {
+    void partialUpdateFeeWithPatch() throws Exception {
+        // Initialize the database
+        feeRepository.saveAndFlush(fee);
+
+        int databaseSizeBeforeUpdate = feeRepository.findAll().size();
+
+        // Update the fee using partial update
+        Fee partialUpdatedFee = new Fee();
+        partialUpdatedFee.setId(fee.getId());
+
+        restFeeMockMvc
+            .perform(
+                patch("/api/fees").contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(partialUpdatedFee))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Fee in the database
+        List<Fee> feeList = feeRepository.findAll();
+        assertThat(feeList).hasSize(databaseSizeBeforeUpdate);
+        Fee testFee = feeList.get(feeList.size() - 1);
+        assertThat(testFee.getFeeType()).isEqualTo(DEFAULT_FEE_TYPE);
+        assertThat(testFee.getPercent()).isEqualByComparingTo(DEFAULT_PERCENT);
+        assertThat(testFee.getPercentSecure()).isEqualByComparingTo(DEFAULT_PERCENT_SECURE);
+    }
+
+    @Test
+    @Transactional
+    void fullUpdateFeeWithPatch() throws Exception {
+        // Initialize the database
+        feeRepository.saveAndFlush(fee);
+
+        int databaseSizeBeforeUpdate = feeRepository.findAll().size();
+
+        // Update the fee using partial update
+        Fee partialUpdatedFee = new Fee();
+        partialUpdatedFee.setId(fee.getId());
+
+        partialUpdatedFee.feeType(UPDATED_FEE_TYPE).percent(UPDATED_PERCENT).percentSecure(UPDATED_PERCENT_SECURE);
+
+        restFeeMockMvc
+            .perform(
+                patch("/api/fees").contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(partialUpdatedFee))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Fee in the database
+        List<Fee> feeList = feeRepository.findAll();
+        assertThat(feeList).hasSize(databaseSizeBeforeUpdate);
+        Fee testFee = feeList.get(feeList.size() - 1);
+        assertThat(testFee.getFeeType()).isEqualTo(UPDATED_FEE_TYPE);
+        assertThat(testFee.getPercent()).isEqualByComparingTo(UPDATED_PERCENT);
+        assertThat(testFee.getPercentSecure()).isEqualByComparingTo(UPDATED_PERCENT_SECURE);
+    }
+
+    @Test
+    @Transactional
+    void partialUpdateFeeShouldThrown() throws Exception {
+        // Update the fee without id should throw
+        Fee partialUpdatedFee = new Fee();
+
+        restFeeMockMvc
+            .perform(
+                patch("/api/fees").contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(partialUpdatedFee))
+            )
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    void deleteFee() throws Exception {
         // Initialize the database
         feeRepository.saveAndFlush(fee);
 

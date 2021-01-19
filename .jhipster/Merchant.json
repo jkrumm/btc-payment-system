@@ -10,7 +10,7 @@
     {
       "fieldName": "email",
       "fieldType": "String",
-      "fieldValidateRules": ["required", "unique", "pattern"],
+      "fieldValidateRules": ["required", "pattern"],
       "fieldValidateRulesPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
     }
   ],
@@ -21,7 +21,6 @@
       "otherEntityRelationshipName": "merchant",
       "javadoc": "One Merchant has One Fee associated",
       "relationshipName": "fee",
-      "otherEntityField": "id",
       "ownerSide": true
     },
     {
@@ -32,16 +31,15 @@
       "relationshipName": "merchantUser"
     }
   ],
-  "changelogDate": "20210117092555",
   "javadoc": "Merchant informations",
   "entityTableName": "merchant",
   "dto": "mapstruct",
-  "pagination": "pagination",
+  "pagination": "no",
   "service": "serviceImpl",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,
   "readOnly": false,
   "embedded": false,
-  "clientRootFolder": "",
-  "applications": "*"
+  "applications": "*",
+  "changelogDate": "20210119184215"
 }

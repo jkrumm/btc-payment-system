@@ -4,27 +4,38 @@ import com.jkrumm.btcpay.domain.enumeration.ConfidenceType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.time.Instant;
+import java.util.Objects;
+import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link com.jkrumm.btcpay.domain.Confidence} entity.
  */
 @ApiModel(description = "Store history of a Trasaction confidence")
 public class ConfidenceDTO implements Serializable {
+
     private Long id;
+
+    @NotNull
+    private Instant changeAt;
 
     /**
      * Current state of a transaction
      */
-    @ApiModelProperty(value = "Current state of a transaction")
+    @NotNull
+    @ApiModelProperty(value = "Current state of a transaction", required = true)
     private ConfidenceType confidenceType;
 
     /**
      * Amount of confirmations through new blocks
      */
-    @ApiModelProperty(value = "Amount of confirmations through new blocks")
+    @NotNull
+    @Min(value = 0)
+    @Max(value = 6)
+    @ApiModelProperty(value = "Amount of confirmations through new blocks", required = true)
     private Integer confirmations;
 
-    private Long transactionId;
+    private TransactionDTO transaction;
 
     public Long getId() {
         return id;
@@ -32,6 +43,14 @@ public class ConfidenceDTO implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Instant getChangeAt() {
+        return changeAt;
+    }
+
+    public void setChangeAt(Instant changeAt) {
+        this.changeAt = changeAt;
     }
 
     public ConfidenceType getConfidenceType() {
@@ -50,12 +69,12 @@ public class ConfidenceDTO implements Serializable {
         this.confirmations = confirmations;
     }
 
-    public Long getTransactionId() {
-        return transactionId;
+    public TransactionDTO getTransaction() {
+        return transaction;
     }
 
-    public void setTransactionId(Long transactionId) {
-        this.transactionId = transactionId;
+    public void setTransaction(TransactionDTO transaction) {
+        this.transaction = transaction;
     }
 
     @Override
@@ -67,12 +86,16 @@ public class ConfidenceDTO implements Serializable {
             return false;
         }
 
-        return id != null && id.equals(((ConfidenceDTO) o).id);
+        ConfidenceDTO confidenceDTO = (ConfidenceDTO) o;
+        if (this.id == null) {
+            return false;
+        }
+        return Objects.equals(this.id, confidenceDTO.id);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(this.id);
     }
 
     // prettier-ignore
@@ -80,9 +103,10 @@ public class ConfidenceDTO implements Serializable {
     public String toString() {
         return "ConfidenceDTO{" +
             "id=" + getId() +
+            ", changeAt='" + getChangeAt() + "'" +
             ", confidenceType='" + getConfidenceType() + "'" +
             ", confirmations=" + getConfirmations() +
-            ", transactionId=" + getTransactionId() +
+            ", transaction=" + getTransaction() +
             "}";
     }
 }

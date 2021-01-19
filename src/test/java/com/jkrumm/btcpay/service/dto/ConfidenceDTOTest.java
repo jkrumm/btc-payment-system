@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.jkrumm.btcpay.web.rest.TestUtil;
 import org.junit.jupiter.api.Test;
 
-public class ConfidenceDTOTest {
+class ConfidenceDTOTest {
 
     @Test
-    public void dtoEqualsVerifier() throws Exception {
+    void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(ConfidenceDTO.class);
         ConfidenceDTO confidenceDTO1 = new ConfidenceDTO();
         confidenceDTO1.setId(1L);

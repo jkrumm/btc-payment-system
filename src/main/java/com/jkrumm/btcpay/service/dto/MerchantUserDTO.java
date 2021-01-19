@@ -1,16 +1,18 @@
 package com.jkrumm.btcpay.service.dto;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A DTO for the {@link com.jkrumm.btcpay.domain.MerchantUser} entity.
  */
 public class MerchantUserDTO implements Serializable {
+
     private Long id;
 
-    private Long userId;
+    private UserDTO user;
 
-    private Long merchantId;
+    private MerchantDTO merchant;
 
     public Long getId() {
         return id;
@@ -20,20 +22,20 @@ public class MerchantUserDTO implements Serializable {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public UserDTO getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 
-    public Long getMerchantId() {
-        return merchantId;
+    public MerchantDTO getMerchant() {
+        return merchant;
     }
 
-    public void setMerchantId(Long merchantId) {
-        this.merchantId = merchantId;
+    public void setMerchant(MerchantDTO merchant) {
+        this.merchant = merchant;
     }
 
     @Override
@@ -45,12 +47,16 @@ public class MerchantUserDTO implements Serializable {
             return false;
         }
 
-        return id != null && id.equals(((MerchantUserDTO) o).id);
+        MerchantUserDTO merchantUserDTO = (MerchantUserDTO) o;
+        if (this.id == null) {
+            return false;
+        }
+        return Objects.equals(this.id, merchantUserDTO.id);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(this.id);
     }
 
     // prettier-ignore
@@ -58,8 +64,8 @@ public class MerchantUserDTO implements Serializable {
     public String toString() {
         return "MerchantUserDTO{" +
             "id=" + getId() +
-            ", userId=" + getUserId() +
-            ", merchantId=" + getMerchantId() +
+            ", user=" + getUser() +
+            ", merchant=" + getMerchant() +
             "}";
     }
 }

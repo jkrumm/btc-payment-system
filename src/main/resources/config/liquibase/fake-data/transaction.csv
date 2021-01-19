@@ -1,11 +1,11 @@
-id;initiated_at;transaction_type;is_mempool;tx_hash;from_address;to_address;expected_amount;amount;service_fee;btc_price;is_withdrawed
-1;2021-01-17T08:42:52;INCOMING_CUSTOMER;false;COM Representative empowering;US Dollar;Buckinghamshire orchestrate grow;18598;1914;63291;78266;false
-2;2021-01-16T23:52:48;INCOMING_CUSTOMER;true;Engineer embrace SQL;Checking Account;Executive Automotive;53629;63183;59276;83747;true
-3;2021-01-16T09:26:36;INCOMING_CUSTOMER;true;withdrawal navigating scalable;Course;Assistant;78429;19104;36588;68314;false
-4;2021-01-17T03:10:22;FORWARD_HOLDINGS;false;Berkshire Pizza;Facilitator Regional Northern Mariana Islands;Ergonomic Fantastic;72853;28653;16350;39242;false
-5;2021-01-16T15:25:53;INCOMING_UNKNOWN;true;overriding Alabama monitor;models;invoice 5th generation Maryland;60529;88660;75828;48773;true
-6;2021-01-17T05:49:20;FORWARD_MERCHANT;true;Networked Tools Svalbard & Jan Mayen Islands;metrics Architect even-keeled;Savings Account Denar intangible;40767;85805;87303;68394;false
-7;2021-01-16T09:46:01;FORWARD_MERCHANT;true;Sleek Cotton Salad Dynamic calculating;Intelligent Concrete Chair Global;Towels;170;18859;52864;53281;true
-8;2021-01-16T12:21:21;INCOMING_UNKNOWN;true;withdrawal;Industrial Botswana;withdrawal synergies;90931;80179;20325;52277;true
-9;2021-01-16T11:11:20;FORWARD_MERCHANT;false;integrated;Sharable Global USB;Hat Assistant;94129;26101;72599;45256;false
-10;2021-01-16T20:17:45;INCOMING_UNKNOWN;false;Bedfordshire secured line Morocco;utilisation program;Outdoors visualize;84533;72922;75984;98729;false
+id;initiated_at;transaction_type;tx_hash;expected_amount;actual_amount;transaction_fee;service_fee;btc_usd
+1;2021-01-19T18:01:10;FORWARD_MERCHANT;approach Polarised;16431;99701;87407;56354;99553
+2;2021-01-18T19:52:14;INCOMING_CUSTOMER;needs-based Operations;38091;15757;40665;46784;18598
+3;2021-01-19T18:14:37;FORWARD_MERCHANT;disintermediate internet matrix;25283;38698;13230;87884;28894
+4;2021-01-19T12:08:17;FORWARD_MERCHANT;holistic;3216;94816;53629;63183;59276
+5;2021-01-18T22:36:14;FORWARD_MERCHANT;Executive Ball e-tailers;98576;66143;36496;83128;38135
+6;2021-01-19T12:26:09;FORWARD_HOLDINGS;Course;99687;82194;78429;19104;36588
+7;2021-01-19T02:18:29;INCOMING_CUSTOMER;Tools;78509;8602;55302;51541;49871
+8;2021-01-19T14:21:05;FORWARD_HOLDINGS;Facilitator deliver Forest;8497;39083;72853;28653;16350
+9;2021-01-19T09:17:06;INCOMING_UNKNOWN;connecting synthesizing Republik;87708;83844;21598;58305;1085
+10;2021-01-19T01:20:48;FORWARD_MERCHANT;mindshare;63813;83746;27839;4116;58674

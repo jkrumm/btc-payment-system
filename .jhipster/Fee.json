@@ -22,16 +22,15 @@
     }
   ],
   "relationships": [],
-  "changelogDate": "20210117092655",
   "javadoc": "Associated Merchant Fee",
   "entityTableName": "fee",
   "dto": "mapstruct",
-  "pagination": "pagination",
+  "pagination": "no",
   "service": "serviceImpl",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,
   "readOnly": false,
   "embedded": false,
-  "clientRootFolder": "",
-  "applications": "*"
+  "applications": "*",
+  "changelogDate": "20210119184216"
 }

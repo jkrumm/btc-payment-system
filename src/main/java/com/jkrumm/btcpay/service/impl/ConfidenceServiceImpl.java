@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class ConfidenceServiceImpl implements ConfidenceService {
+
     private final Logger log = LoggerFactory.getLogger(ConfidenceServiceImpl.class);
 
     private final ConfidenceRepository confidenceRepository;
@@ -36,6 +37,33 @@ public class ConfidenceServiceImpl implements ConfidenceService {
         Confidence confidence = confidenceMapper.toEntity(confidenceDTO);
         confidence = confidenceRepository.save(confidence);
         return confidenceMapper.toDto(confidence);
+    }
+
+    @Override
+    public Optional<ConfidenceDTO> partialUpdate(ConfidenceDTO confidenceDTO) {
+        log.debug("Request to partially update Confidence : {}", confidenceDTO);
+
+        return confidenceRepository
+            .findById(confidenceDTO.getId())
+            .map(
+                existingConfidence -> {
+                    if (confidenceDTO.getChangeAt() != null) {
+                        existingConfidence.setChangeAt(confidenceDTO.getChangeAt());
+                    }
+
+                    if (confidenceDTO.getConfidenceType() != null) {
+                        existingConfidence.setConfidenceType(confidenceDTO.getConfidenceType());
+                    }
+
+                    if (confidenceDTO.getConfirmations() != null) {
+                        existingConfidence.setConfirmations(confidenceDTO.getConfirmations());
+                    }
+
+                    return existingConfidence;
+                }
+            )
+            .map(confidenceRepository::save)
+            .map(confidenceMapper::toDto);
     }
 
     @Override

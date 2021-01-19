@@ -1,9 +1,8 @@
 package com.jkrumm.btcpay.service;
 
 import com.jkrumm.btcpay.service.dto.FeeDTO;
+import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing {@link com.jkrumm.btcpay.domain.Fee}.
@@ -18,12 +17,19 @@ public interface FeeService {
     FeeDTO save(FeeDTO feeDTO);
 
     /**
+     * Partially updates a fee.
+     *
+     * @param feeDTO the entity to update partially.
+     * @return the persisted entity.
+     */
+    Optional<FeeDTO> partialUpdate(FeeDTO feeDTO);
+
+    /**
      * Get all the fees.
      *
-     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<FeeDTO> findAll(Pageable pageable);
+    List<FeeDTO> findAll();
 
     /**
      * Get the "id" fee.

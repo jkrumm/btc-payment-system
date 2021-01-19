@@ -5,13 +5,15 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Objects;
 import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link com.jkrumm.btcpay.domain.Transaction} entity.
  */
-@ApiModel(description = "Central table to persist transaction details. All holdings will be derived from it.")
+@ApiModel(description = "Central table to persist transaction details. All holdings will be derived from it with help of BitcoinJ.")
 public class TransactionDTO implements Serializable {
+
     private Long id;
 
     /**
@@ -24,16 +26,8 @@ public class TransactionDTO implements Serializable {
     /**
      * Transaction enum type
      */
-    @NotNull
-    @ApiModelProperty(value = "Transaction enum type", required = true)
+    @ApiModelProperty(value = "Transaction enum type")
     private TransactionType transactionType;
-
-    /**
-     * Is Transaction still in the Mempool
-     */
-    @NotNull
-    @ApiModelProperty(value = "Is Transaction still in the Mempool", required = true)
-    private Boolean isMempool;
 
     /**
      * Transaction hash
@@ -43,59 +37,38 @@ public class TransactionDTO implements Serializable {
     private String txHash;
 
     /**
-     * Transaction send from address
-     */
-    @ApiModelProperty(value = "Transaction send from address")
-    private String fromAddress;
-
-    /**
-     * Transaction send to address
-     */
-    @NotNull
-    @ApiModelProperty(value = "Transaction send to address", required = true)
-    private String toAddress;
-
-    /**
      * Expected BTC amount from the customer
      */
-    @NotNull
-    @ApiModelProperty(value = "Expected BTC amount from the customer", required = true)
+    @ApiModelProperty(value = "Expected BTC amount from the customer")
     private Long expectedAmount;
 
     /**
      * Actual BTC amount of the transaction
      */
     @ApiModelProperty(value = "Actual BTC amount of the transaction")
-    private Long amount;
+    private Long actualAmount;
+
+    /**
+     * BTC transaction fee
+     */
+    @ApiModelProperty(value = "BTC transaction fee")
+    private Long transactionFee;
 
     /**
      * Service fee
      */
-    @NotNull
-    @ApiModelProperty(value = "Service fee", required = true)
+    @ApiModelProperty(value = "Service fee")
     private Long serviceFee;
 
     /**
      * BTC price at intiation
      */
-    @NotNull
-    @ApiModelProperty(value = "BTC price at intiation", required = true)
-    private Long btcPrice;
+    @ApiModelProperty(value = "BTC price at intiation")
+    private Double btcUsd;
 
-    /**
-     * Transaction BTC amount has been forwarded
-     */
-    @NotNull
-    @ApiModelProperty(value = "Transaction BTC amount has been forwarded", required = true)
-    private Boolean isWithdrawed;
+    private UserDTO user;
 
-    /**
-     * One Transaction has Many Confidence entries
-     */
-    @ApiModelProperty(value = "One Transaction has Many Confidence entries")
-    private Long userId;
-
-    private Long blockId;
+    private MerchantDTO merchant;
 
     public Long getId() {
         return id;
@@ -121,36 +94,12 @@ public class TransactionDTO implements Serializable {
         this.transactionType = transactionType;
     }
 
-    public Boolean isIsMempool() {
-        return isMempool;
-    }
-
-    public void setIsMempool(Boolean isMempool) {
-        this.isMempool = isMempool;
-    }
-
     public String getTxHash() {
         return txHash;
     }
 
     public void setTxHash(String txHash) {
         this.txHash = txHash;
-    }
-
-    public String getFromAddress() {
-        return fromAddress;
-    }
-
-    public void setFromAddress(String fromAddress) {
-        this.fromAddress = fromAddress;
-    }
-
-    public String getToAddress() {
-        return toAddress;
-    }
-
-    public void setToAddress(String toAddress) {
-        this.toAddress = toAddress;
     }
 
     public Long getExpectedAmount() {
@@ -161,12 +110,20 @@ public class TransactionDTO implements Serializable {
         this.expectedAmount = expectedAmount;
     }
 
-    public Long getAmount() {
-        return amount;
+    public Long getActualAmount() {
+        return actualAmount;
     }
 
-    public void setAmount(Long amount) {
-        this.amount = amount;
+    public void setActualAmount(Long actualAmount) {
+        this.actualAmount = actualAmount;
+    }
+
+    public Long getTransactionFee() {
+        return transactionFee;
+    }
+
+    public void setTransactionFee(Long transactionFee) {
+        this.transactionFee = transactionFee;
     }
 
     public Long getServiceFee() {
@@ -177,36 +134,28 @@ public class TransactionDTO implements Serializable {
         this.serviceFee = serviceFee;
     }
 
-    public Long getBtcPrice() {
-        return btcPrice;
+    public Double getBtcUsd() {
+        return btcUsd;
     }
 
-    public void setBtcPrice(Long btcPrice) {
-        this.btcPrice = btcPrice;
+    public void setBtcUsd(Double btcUsd) {
+        this.btcUsd = btcUsd;
     }
 
-    public Boolean isIsWithdrawed() {
-        return isWithdrawed;
+    public UserDTO getUser() {
+        return user;
     }
 
-    public void setIsWithdrawed(Boolean isWithdrawed) {
-        this.isWithdrawed = isWithdrawed;
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 
-    public Long getUserId() {
-        return userId;
+    public MerchantDTO getMerchant() {
+        return merchant;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getBlockId() {
-        return blockId;
-    }
-
-    public void setBlockId(Long blockId) {
-        this.blockId = blockId;
+    public void setMerchant(MerchantDTO merchant) {
+        this.merchant = merchant;
     }
 
     @Override
@@ -218,12 +167,16 @@ public class TransactionDTO implements Serializable {
             return false;
         }
 
-        return id != null && id.equals(((TransactionDTO) o).id);
+        TransactionDTO transactionDTO = (TransactionDTO) o;
+        if (this.id == null) {
+            return false;
+        }
+        return Objects.equals(this.id, transactionDTO.id);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(this.id);
     }
 
     // prettier-ignore
@@ -233,17 +186,14 @@ public class TransactionDTO implements Serializable {
             "id=" + getId() +
             ", initiatedAt='" + getInitiatedAt() + "'" +
             ", transactionType='" + getTransactionType() + "'" +
-            ", isMempool='" + isIsMempool() + "'" +
             ", txHash='" + getTxHash() + "'" +
-            ", fromAddress='" + getFromAddress() + "'" +
-            ", toAddress='" + getToAddress() + "'" +
             ", expectedAmount=" + getExpectedAmount() +
-            ", amount=" + getAmount() +
+            ", actualAmount=" + getActualAmount() +
+            ", transactionFee=" + getTransactionFee() +
             ", serviceFee=" + getServiceFee() +
-            ", btcPrice=" + getBtcPrice() +
-            ", isWithdrawed='" + isIsWithdrawed() + "'" +
-            ", userId=" + getUserId() +
-            ", blockId=" + getBlockId() +
+            ", btcUsd=" + getBtcUsd() +
+            ", user=" + getUser() +
+            ", merchant=" + getMerchant() +
             "}";
     }
 }

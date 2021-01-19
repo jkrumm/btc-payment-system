@@ -3,7 +3,9 @@ package com.jkrumm.btcpay.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jkrumm.btcpay.domain.enumeration.ConfidenceType;
 import java.io.Serializable;
+import java.time.Instant;
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -14,27 +16,37 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "confidence")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Confidence implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
+
+    @NotNull
+    @Column(name = "change_at", nullable = false)
+    private Instant changeAt;
 
     /**
      * Current state of a transaction
      */
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "confidence_type")
+    @Column(name = "confidence_type", nullable = false)
     private ConfidenceType confidenceType;
 
     /**
      * Amount of confirmations through new blocks
      */
-    @Column(name = "confirmations")
+    @NotNull
+    @Min(value = 0)
+    @Max(value = 6)
+    @Column(name = "confirmations", nullable = false)
     private Integer confirmations;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = "confidences", allowSetters = true)
+    @JsonIgnoreProperties(value = { "confidences", "user", "merchant" }, allowSetters = true)
     private Transaction transaction;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -46,8 +58,26 @@ public class Confidence implements Serializable {
         this.id = id;
     }
 
+    public Confidence id(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Instant getChangeAt() {
+        return this.changeAt;
+    }
+
+    public Confidence changeAt(Instant changeAt) {
+        this.changeAt = changeAt;
+        return this;
+    }
+
+    public void setChangeAt(Instant changeAt) {
+        this.changeAt = changeAt;
+    }
+
     public ConfidenceType getConfidenceType() {
-        return confidenceType;
+        return this.confidenceType;
     }
 
     public Confidence confidenceType(ConfidenceType confidenceType) {
@@ -60,7 +90,7 @@ public class Confidence implements Serializable {
     }
 
     public Integer getConfirmations() {
-        return confirmations;
+        return this.confirmations;
     }
 
     public Confidence confirmations(Integer confirmations) {
@@ -73,11 +103,11 @@ public class Confidence implements Serializable {
     }
 
     public Transaction getTransaction() {
-        return transaction;
+        return this.transaction;
     }
 
     public Confidence transaction(Transaction transaction) {
-        this.transaction = transaction;
+        this.setTransaction(transaction);
         return this;
     }
 
@@ -100,7 +130,8 @@ public class Confidence implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore
@@ -108,6 +139,7 @@ public class Confidence implements Serializable {
     public String toString() {
         return "Confidence{" +
             "id=" + getId() +
+            ", changeAt='" + getChangeAt() + "'" +
             ", confidenceType='" + getConfidenceType() + "'" +
             ", confirmations=" + getConfirmations() +
             "}";

@@ -1,4 +1,4 @@
-export const enum FeeType {
+export enum FeeType {
   ZERO = 'ZERO',
 
   LOW = 'LOW',

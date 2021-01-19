@@ -18,6 +18,14 @@ public interface ConfidenceService {
     ConfidenceDTO save(ConfidenceDTO confidenceDTO);
 
     /**
+     * Partially updates a confidence.
+     *
+     * @param confidenceDTO the entity to update partially.
+     * @return the persisted entity.
+     */
+    Optional<ConfidenceDTO> partialUpdate(ConfidenceDTO confidenceDTO);
+
+    /**
      * Get all the confidences.
      *
      * @param pageable the pagination information.

@@ -1,7 +1,6 @@
 package com.jkrumm.btcpay.config;
 
 import com.jkrumm.btcpay.security.AuthoritiesConstants;
-import io.github.jhipster.config.JHipsterProperties;
 import java.security.Principal;
 import java.util.*;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +13,12 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.*;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
+import tech.jhipster.config.JHipsterProperties;
 
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer {
+
     public static final String IP_ADDRESS = "IP_ADDRESS";
 
     private final JHipsterProperties jHipsterProperties;
@@ -48,15 +49,13 @@ public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Bean
     public HandshakeInterceptor httpSessionHandshakeInterceptor() {
         return new HandshakeInterceptor() {
-
             @Override
             public boolean beforeHandshake(
                 ServerHttpRequest request,
                 ServerHttpResponse response,
                 WebSocketHandler wsHandler,
                 Map<String, Object> attributes
-            )
-                throws Exception {
+            ) throws Exception {
                 if (request instanceof ServletServerHttpRequest) {
                     ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
                     attributes.put(IP_ADDRESS, servletRequest.getRemoteAddress());
@@ -76,7 +75,6 @@ public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     private DefaultHandshakeHandler defaultHandshakeHandler() {
         return new DefaultHandshakeHandler() {
-
             @Override
             protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
                 Principal principal = request.getPrincipal();

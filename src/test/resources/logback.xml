@@ -6,7 +6,7 @@
 
     <logger name="com.jkrumm.btcpay" level="INFO"/>
 
-    <logger name="io.github.jhipster" level="WARN"/>
+    <logger name="tech.jhipster" level="WARN"/>
 
     <logger name="javax.activation" level="WARN"/>
     <logger name="javax.mail" level="WARN"/>
@@ -26,6 +26,7 @@
     <logger name="org.hibernate.validator" level="WARN"/>
     <logger name="org.hibernate" level="WARN"/>
     <logger name="org.hibernate.ejb.HibernatePersistence" level="OFF"/>
+    <logger name="org.postgresql.jdbc" level="WARN"/>
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.springframework.web" level="WARN"/>
     <logger name="org.springframework.security" level="WARN"/>

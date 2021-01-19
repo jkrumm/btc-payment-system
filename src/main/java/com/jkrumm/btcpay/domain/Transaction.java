@@ -12,16 +12,18 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * Central table to persist transaction details. All holdings will be derived from it.
+ * Central table to persist transaction details. All holdings will be derived from it with help of BitcoinJ.
  */
 @Entity
 @Table(name = "transaction")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Transaction implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
     /**
@@ -34,17 +36,9 @@ public class Transaction implements Serializable {
     /**
      * Transaction enum type
      */
-    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_type", nullable = false)
+    @Column(name = "transaction_type")
     private TransactionType transactionType;
-
-    /**
-     * Is Transaction still in the Mempool
-     */
-    @NotNull
-    @Column(name = "is_mempool", nullable = false)
-    private Boolean isMempool;
 
     /**
      * Transaction hash
@@ -54,69 +48,55 @@ public class Transaction implements Serializable {
     private String txHash;
 
     /**
-     * Transaction send from address
-     */
-    @Column(name = "from_address")
-    private String fromAddress;
-
-    /**
-     * Transaction send to address
-     */
-    @NotNull
-    @Column(name = "to_address", nullable = false)
-    private String toAddress;
-
-    /**
      * Expected BTC amount from the customer
      */
-    @NotNull
-    @Column(name = "expected_amount", nullable = false)
+    @Column(name = "expected_amount")
     private Long expectedAmount;
 
     /**
      * Actual BTC amount of the transaction
      */
-    @Column(name = "amount")
-    private Long amount;
+    @Column(name = "actual_amount")
+    private Long actualAmount;
+
+    /**
+     * BTC transaction fee
+     */
+    @Column(name = "transaction_fee")
+    private Long transactionFee;
 
     /**
      * Service fee
      */
-    @NotNull
-    @Column(name = "service_fee", nullable = false)
+    @Column(name = "service_fee")
     private Long serviceFee;
 
     /**
      * BTC price at intiation
      */
-    @NotNull
-    @Column(name = "btc_price", nullable = false)
-    private Long btcPrice;
-
-    /**
-     * Transaction BTC amount has been forwarded
-     */
-    @NotNull
-    @Column(name = "is_withdrawed", nullable = false)
-    private Boolean isWithdrawed;
+    @Column(name = "btc_usd")
+    private Double btcUsd;
 
     /**
      * One Transaction has Many Confidence entries
      */
     @OneToMany(mappedBy = "transaction")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "transaction" }, allowSetters = true)
     private Set<Confidence> confidences = new HashSet<>();
 
     /**
      * Many Transaction can be done by One User
      */
     @ManyToOne
-    @JsonIgnoreProperties(value = "transactions", allowSetters = true)
     private User user;
 
+    /**
+     * Many Transaction can be done by One Merchant
+     */
     @ManyToOne
-    @JsonIgnoreProperties(value = "transactions", allowSetters = true)
-    private Block block;
+    @JsonIgnoreProperties(value = { "fee", "merchantUsers" }, allowSetters = true)
+    private Merchant merchant;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -127,8 +107,13 @@ public class Transaction implements Serializable {
         this.id = id;
     }
 
+    public Transaction id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public Instant getInitiatedAt() {
-        return initiatedAt;
+        return this.initiatedAt;
     }
 
     public Transaction initiatedAt(Instant initiatedAt) {
@@ -141,7 +126,7 @@ public class Transaction implements Serializable {
     }
 
     public TransactionType getTransactionType() {
-        return transactionType;
+        return this.transactionType;
     }
 
     public Transaction transactionType(TransactionType transactionType) {
@@ -153,21 +138,8 @@ public class Transaction implements Serializable {
         this.transactionType = transactionType;
     }
 
-    public Boolean isIsMempool() {
-        return isMempool;
-    }
-
-    public Transaction isMempool(Boolean isMempool) {
-        this.isMempool = isMempool;
-        return this;
-    }
-
-    public void setIsMempool(Boolean isMempool) {
-        this.isMempool = isMempool;
-    }
-
     public String getTxHash() {
-        return txHash;
+        return this.txHash;
     }
 
     public Transaction txHash(String txHash) {
@@ -179,34 +151,8 @@ public class Transaction implements Serializable {
         this.txHash = txHash;
     }
 
-    public String getFromAddress() {
-        return fromAddress;
-    }
-
-    public Transaction fromAddress(String fromAddress) {
-        this.fromAddress = fromAddress;
-        return this;
-    }
-
-    public void setFromAddress(String fromAddress) {
-        this.fromAddress = fromAddress;
-    }
-
-    public String getToAddress() {
-        return toAddress;
-    }
-
-    public Transaction toAddress(String toAddress) {
-        this.toAddress = toAddress;
-        return this;
-    }
-
-    public void setToAddress(String toAddress) {
-        this.toAddress = toAddress;
-    }
-
     public Long getExpectedAmount() {
-        return expectedAmount;
+        return this.expectedAmount;
     }
 
     public Transaction expectedAmount(Long expectedAmount) {
@@ -218,21 +164,34 @@ public class Transaction implements Serializable {
         this.expectedAmount = expectedAmount;
     }
 
-    public Long getAmount() {
-        return amount;
+    public Long getActualAmount() {
+        return this.actualAmount;
     }
 
-    public Transaction amount(Long amount) {
-        this.amount = amount;
+    public Transaction actualAmount(Long actualAmount) {
+        this.actualAmount = actualAmount;
         return this;
     }
 
-    public void setAmount(Long amount) {
-        this.amount = amount;
+    public void setActualAmount(Long actualAmount) {
+        this.actualAmount = actualAmount;
+    }
+
+    public Long getTransactionFee() {
+        return this.transactionFee;
+    }
+
+    public Transaction transactionFee(Long transactionFee) {
+        this.transactionFee = transactionFee;
+        return this;
+    }
+
+    public void setTransactionFee(Long transactionFee) {
+        this.transactionFee = transactionFee;
     }
 
     public Long getServiceFee() {
-        return serviceFee;
+        return this.serviceFee;
     }
 
     public Transaction serviceFee(Long serviceFee) {
@@ -244,38 +203,25 @@ public class Transaction implements Serializable {
         this.serviceFee = serviceFee;
     }
 
-    public Long getBtcPrice() {
-        return btcPrice;
+    public Double getBtcUsd() {
+        return this.btcUsd;
     }
 
-    public Transaction btcPrice(Long btcPrice) {
-        this.btcPrice = btcPrice;
+    public Transaction btcUsd(Double btcUsd) {
+        this.btcUsd = btcUsd;
         return this;
     }
 
-    public void setBtcPrice(Long btcPrice) {
-        this.btcPrice = btcPrice;
-    }
-
-    public Boolean isIsWithdrawed() {
-        return isWithdrawed;
-    }
-
-    public Transaction isWithdrawed(Boolean isWithdrawed) {
-        this.isWithdrawed = isWithdrawed;
-        return this;
-    }
-
-    public void setIsWithdrawed(Boolean isWithdrawed) {
-        this.isWithdrawed = isWithdrawed;
+    public void setBtcUsd(Double btcUsd) {
+        this.btcUsd = btcUsd;
     }
 
     public Set<Confidence> getConfidences() {
-        return confidences;
+        return this.confidences;
     }
 
     public Transaction confidences(Set<Confidence> confidences) {
-        this.confidences = confidences;
+        this.setConfidences(confidences);
         return this;
     }
 
@@ -292,15 +238,21 @@ public class Transaction implements Serializable {
     }
 
     public void setConfidences(Set<Confidence> confidences) {
+        if (this.confidences != null) {
+            this.confidences.forEach(i -> i.setTransaction(null));
+        }
+        if (confidences != null) {
+            confidences.forEach(i -> i.setTransaction(this));
+        }
         this.confidences = confidences;
     }
 
     public User getUser() {
-        return user;
+        return this.user;
     }
 
     public Transaction user(User user) {
-        this.user = user;
+        this.setUser(user);
         return this;
     }
 
@@ -308,17 +260,17 @@ public class Transaction implements Serializable {
         this.user = user;
     }
 
-    public Block getBlock() {
-        return block;
+    public Merchant getMerchant() {
+        return this.merchant;
     }
 
-    public Transaction block(Block block) {
-        this.block = block;
+    public Transaction merchant(Merchant merchant) {
+        this.setMerchant(merchant);
         return this;
     }
 
-    public void setBlock(Block block) {
-        this.block = block;
+    public void setMerchant(Merchant merchant) {
+        this.merchant = merchant;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -336,7 +288,8 @@ public class Transaction implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore
@@ -346,15 +299,12 @@ public class Transaction implements Serializable {
             "id=" + getId() +
             ", initiatedAt='" + getInitiatedAt() + "'" +
             ", transactionType='" + getTransactionType() + "'" +
-            ", isMempool='" + isIsMempool() + "'" +
             ", txHash='" + getTxHash() + "'" +
-            ", fromAddress='" + getFromAddress() + "'" +
-            ", toAddress='" + getToAddress() + "'" +
             ", expectedAmount=" + getExpectedAmount() +
-            ", amount=" + getAmount() +
+            ", actualAmount=" + getActualAmount() +
+            ", transactionFee=" + getTransactionFee() +
             ", serviceFee=" + getServiceFee() +
-            ", btcPrice=" + getBtcPrice() +
-            ", isWithdrawed='" + isIsWithdrawed() + "'" +
+            ", btcUsd=" + getBtcUsd() +
             "}";
     }
 }

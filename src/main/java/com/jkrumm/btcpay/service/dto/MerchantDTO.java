@@ -3,6 +3,7 @@ package com.jkrumm.btcpay.service.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.util.Objects;
 import javax.validation.constraints.*;
 
 /**
@@ -10,6 +11,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Merchant informations")
 public class MerchantDTO implements Serializable {
+
     private Long id;
 
     /**
@@ -23,16 +25,8 @@ public class MerchantDTO implements Serializable {
     @Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
     private String email;
 
-    /**
-     * One Merchant has One Fee associated
-     */
-    @ApiModelProperty(value = "One Merchant has One Fee associated")
-    private Long feeId;
+    private FeeDTO fee;
 
-    /**
-     * One Merchant has Many Users
-     */
-    @ApiModelProperty(value = "One Merchant has Many Users")
     public Long getId() {
         return id;
     }
@@ -57,12 +51,12 @@ public class MerchantDTO implements Serializable {
         this.email = email;
     }
 
-    public Long getFeeId() {
-        return feeId;
+    public FeeDTO getFee() {
+        return fee;
     }
 
-    public void setFeeId(Long feeId) {
-        this.feeId = feeId;
+    public void setFee(FeeDTO fee) {
+        this.fee = fee;
     }
 
     @Override
@@ -74,12 +68,16 @@ public class MerchantDTO implements Serializable {
             return false;
         }
 
-        return id != null && id.equals(((MerchantDTO) o).id);
+        MerchantDTO merchantDTO = (MerchantDTO) o;
+        if (this.id == null) {
+            return false;
+        }
+        return Objects.equals(this.id, merchantDTO.id);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(this.id);
     }
 
     // prettier-ignore
@@ -89,7 +87,7 @@ public class MerchantDTO implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", email='" + getEmail() + "'" +
-            ", feeId=" + getFeeId() +
+            ", fee=" + getFee() +
             "}";
     }
 }

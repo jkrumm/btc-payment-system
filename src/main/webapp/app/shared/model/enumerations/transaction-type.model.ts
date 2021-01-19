@@ -1,4 +1,4 @@
-export const enum TransactionType {
+export enum TransactionType {
   INCOMING_UNKNOWN = 'INCOMING_UNKNOWN',
 
   INCOMING_CUSTOMER = 'INCOMING_CUSTOMER',

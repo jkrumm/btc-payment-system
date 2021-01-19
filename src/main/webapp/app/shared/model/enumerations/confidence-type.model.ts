@@ -1,4 +1,4 @@
-export const enum ConfidenceType {
+export enum ConfidenceType {
   INCOMING = 'INCOMING',
 
   BUILDING = 'BUILDING',

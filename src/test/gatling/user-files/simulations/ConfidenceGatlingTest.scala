@@ -72,6 +72,7 @@ class ConfidenceGatlingTest extends Simulation {
             .headers(headers_http_authenticated)
             .body(StringBody("""{
                 "id":null
+                , "changeAt":"2020-01-01T00:00:00.000Z"
                 , "confidenceType":"INCOMING"
                 , "confirmations":"0"
                 }""")).asJson

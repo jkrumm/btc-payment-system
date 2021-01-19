@@ -9,12 +9,8 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring", uses = {})
 public interface FeeMapper extends EntityMapper<FeeDTO, Fee> {
-    default Fee fromId(Long id) {
-        if (id == null) {
-            return null;
-        }
-        Fee fee = new Fee();
-        fee.setId(id);
-        return fee;
-    }
+    @Named("id")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    FeeDTO toDtoId(Fee fee);
 }
