@@ -20,6 +20,7 @@ import { AUTHORITIES } from 'app/config/constants';
 import AppRoutes from 'app/routes';
 
 import 'antd-mobile/dist/antd-mobile.min.css';
+import User from 'app/modules/user/user';
 
 const baseHref = document.querySelector('base').getAttribute('href').replace(/\/$/, '');
 
@@ -32,30 +33,53 @@ export const App = (props: IAppProps) => {
   }, []);
 
   const paddingTop = '60px';
-  return (
-    <Router basename={baseHref}>
-      <div className="app-container" style={{ paddingTop }}>
-        <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
-        <ErrorBoundary>
-          <Header
-            isAuthenticated={props.isAuthenticated}
-            isAdmin={props.isAdmin}
-            ribbonEnv={props.ribbonEnv}
-            isInProduction={props.isInProduction}
-            isOpenAPIEnabled={props.isOpenAPIEnabled}
-          />
-        </ErrorBoundary>
-        <div className="container-fluid view-container" id="app-view-container">
-          <Card className="jh-card">
-            <ErrorBoundary>
-              <AppRoutes />
-            </ErrorBoundary>
-          </Card>
-          <Footer />
+
+  if (!props.isAuthenticated) {
+    return (
+      <Router basename={baseHref}>
+        <div className="app-container" style={{ paddingTop }}>
+          <div className="container-fluid view-container" id="app-view-container">
+            <Card className="jh-card">
+              <ErrorBoundary>
+                <AppRoutes />
+              </ErrorBoundary>
+            </Card>
+          </div>
         </div>
+      </Router>
+    );
+  } else if (props.isAdmin) {
+    return (
+      <Router basename={baseHref}>
+        <div className="app-container" style={{ paddingTop }}>
+          <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
+          <ErrorBoundary>
+            <Header
+              isAuthenticated={props.isAuthenticated}
+              isAdmin={props.isAdmin}
+              ribbonEnv={props.ribbonEnv}
+              isInProduction={props.isInProduction}
+              isOpenAPIEnabled={props.isOpenAPIEnabled}
+            />
+          </ErrorBoundary>
+          <div className="container-fluid view-container" id="app-view-container">
+            <Card className="jh-card">
+              <ErrorBoundary>
+                <AppRoutes />
+              </ErrorBoundary>
+            </Card>
+            <Footer />
+          </div>
+        </div>
+      </Router>
+    );
+  } else if (props.isAuthenticated) {
+    return (
+      <div className="app-container" style={{ paddingTop }}>
+        <User />
       </div>
-    </Router>
-  );
+    );
+  }
 };
 
 const mapStateToProps = ({ authentication, applicationProfile }: IRootState) => ({

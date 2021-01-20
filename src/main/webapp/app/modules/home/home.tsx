@@ -6,8 +6,6 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Alert } from 'reactstrap';
 
-import { Button } from 'antd-mobile';
-
 export type IHomeProp = StateProps;
 
 export const Home = (props: IHomeProp) => {
@@ -21,7 +19,6 @@ export const Home = (props: IHomeProp) => {
       <Col md="9">
         <h2>Welcome, Java Hipster!</h2>
         <p className="lead">This is your homepage</p>
-        <Button>Start</Button>
         {account && account.login ? (
           <div>
             <Alert color="success">You are logged in as user {account.login}.</Alert>
