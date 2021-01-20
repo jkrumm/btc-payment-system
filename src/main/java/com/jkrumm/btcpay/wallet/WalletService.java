@@ -12,9 +12,10 @@ import org.bitcoinj.wallet.Wallet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component
 public class WalletService {
 
     private final Logger log = LoggerFactory.getLogger(WalletConfiguration.class);
@@ -106,11 +107,15 @@ public class WalletService {
         }
     }
 
-    public float getBalance() {
+    float getBalance() {
         return walletAppKit.wallet().getBalance().getValue();
     }
 
-    public String getAddress() {
+    String getAddress() {
         return LegacyAddress.fromKey(networkParameters, walletAppKit.wallet().currentReceiveKey()).toString();
+    }
+
+    StoredBlock getCurrentBlock() {
+        return walletAppKit.chain().getChainHead();
     }
 }

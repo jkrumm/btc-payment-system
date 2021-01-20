@@ -1,6 +1,8 @@
 package com.jkrumm.btcpay.wallet;
 
 import java.net.URISyntaxException;
+import org.bitcoinj.core.Block;
+import org.bitcoinj.core.StoredBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,5 +58,16 @@ public class WalletController {
     public ResponseEntity<String> address() {
         log.debug("REST request to get wallet address");
         return ResponseEntity.ok().body(walletService.getAddress());
+    }
+
+    /**
+     * {@code GET  /address} : get current Block
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the current block in body.
+     */
+    @GetMapping("/currentBlock")
+    public ResponseEntity<Block> currentBlock() {
+        log.debug("REST request to get current block");
+        return ResponseEntity.ok().body(walletService.getCurrentBlock().getHeader());
     }
 }
