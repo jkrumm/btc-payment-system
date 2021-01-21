@@ -1,4 +1,6 @@
 import 'react-toastify/dist/ReactToastify.css';
+import 'antd/dist/antd.css';
+import 'antd-mobile/dist/antd-mobile.min.css';
 import './app.scss';
 import 'app/config/dayjs.ts';
 
@@ -19,7 +21,6 @@ import ErrorBoundary from 'app/shared/error/error-boundary';
 import { AUTHORITIES } from 'app/config/constants';
 import AppRoutes from 'app/routes';
 
-import 'antd-mobile/dist/antd-mobile.min.css';
 import User from 'app/modules/user/user';
 
 const baseHref = document.querySelector('base').getAttribute('href').replace(/\/$/, '');

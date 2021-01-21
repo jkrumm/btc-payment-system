@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { TabBar } from 'antd-mobile';
 import CompBoilerplate from 'app/shared/util/CompBoilerplate';
+import Transaction from 'app/modules/transaction/transaction';
+import './user.scss';
+
+interface IWrapUserContentProps {
+  child: any;
+}
+
+const WrapUserContent = (props: IWrapUserContentProps) => {
+  return <main>{props.child}</main>;
+};
 
 export default () => {
   const [tab, setTab] = useState('transaction');
@@ -40,7 +50,7 @@ export default () => {
           }}
           data-seed="logId"
         >
-          <CompBoilerplate state="transaction" />
+          <WrapUserContent child={<Transaction amount={10} step={2} />} />
         </TabBar.Item>
         <TabBar.Item
           icon={

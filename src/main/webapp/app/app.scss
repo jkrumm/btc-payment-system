@@ -310,3 +310,30 @@ http://stackoverflow.com/questions/23436430/bootstrap-3-input-group-100-width */
 }
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */
+
+/* ==========================================================================
+Override Ant Mobile issues
+========================================================================== */
+
+.am-button {
+  font-weight: normal;
+}
+
+.am-button-primary {
+  color: white !important;
+}
+
+/* .footer-button {
+  position: fixed !important;
+  width: calc(100% - 40px) !important;
+  left: 20px !important;
+  bottom: 70px;
+} */
+
+.am-tabs-tab-bar-wrap {
+  padding-bottom: 15px !important;
+}
+
+.no-display {
+  display: none;
+}

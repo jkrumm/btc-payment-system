@@ -13,7 +13,7 @@ const CompBoilerplate = (props: IProps) => {
 
   // On Rendering
   useEffect(() => {
-    setState('init');
+    // setState('init');
   }, []);
 
   return (
