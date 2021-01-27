@@ -3,7 +3,9 @@ package com.jkrumm.btcpay.wallet;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.jkrumm.btcpay.wallet.dto.WalletDTO;
 import java.time.Instant;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import org.bitcoinj.core.*;
 import org.bitcoinj.kits.WalletAppKit;
@@ -13,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 public class WalletService {
@@ -28,6 +29,9 @@ public class WalletService {
 
     @Autowired
     private WalletRepositoryContainer.Container repos;
+
+    @Autowired
+    private WalletWsService walletWsService;
 
     @PostConstruct
     public void start() {
@@ -57,6 +61,27 @@ public class WalletService {
             );
 
         walletAppKit
+            .wallet()
+            .addChangeEventListener(
+                (
+                    wallet -> {
+                        log.info(String.valueOf(wallet.getBalance(Wallet.BalanceType.AVAILABLE).longValue()));
+                        WalletDTO walletDto = new WalletDTO(
+                            wallet.getLastBlockSeenHeight(),
+                            Objects.requireNonNull(wallet.getLastBlockSeenTime()).toInstant(),
+                            wallet.getBalance(Wallet.BalanceType.AVAILABLE).longValue(),
+                            wallet.getBalance(Wallet.BalanceType.AVAILABLE_SPENDABLE).longValue(),
+                            wallet.getBalance(Wallet.BalanceType.ESTIMATED).longValue(),
+                            wallet.getBalance(Wallet.BalanceType.ESTIMATED_SPENDABLE).longValue()
+                        );
+                        log.info("walletChangeEventListener");
+                        log.info(wallet.toString());
+                        walletWsService.sendMessage(walletDto.toString());
+                    }
+                )
+            );
+
+        walletAppKit
             .chain()
             .addNewBestBlockListener(
                 block -> {
@@ -73,18 +98,6 @@ public class WalletService {
                     log.info("Balance: " + Wallet.BalanceType.AVAILABLE_SPENDABLE + " " + newAvailableSpendable);
                     log.info("Balance: " + Wallet.BalanceType.ESTIMATED + " " + newEstimated);
                     log.info("Balance: " + Wallet.BalanceType.ESTIMATED_SPENDABLE + " " + newEstimatedSpendable);
-                    /* Block newBlock = new Block();
-                    newBlock.setMinedAt(newBlockMinedAt);
-                    newBlock.setBlockHeight(newBlockHeight);
-                    newBlock.setBlockHash(newBlockHash);
-                    newBlock.setAvailable(newAvailable);
-                    newBlock.setAvailableSpendable(newAvailableSpendable);
-                    newBlock.setEstimated(newEstimated);
-                    newBlock.setEstimatedSpendable(newEstimatedSpendable);
-
-                    log.info(newBlock.toString());
-                    Block newBlockSave = repos.block.save(newBlock);
-                    log.info(newBlockSave.toString()); */
                 }
             );
 

@@ -1,8 +1,8 @@
 /** Central table to persist transaction details. All holdings will be derived from it with help of BitcoinJ. */
-entity Transaction {
-	initiatedAt Instant required /** Transaction initiated at */
-	transactionType TransactionType /** Transaction enum type */
-    txHash String unique /** Transaction hash */
+entity TestWebsocket {
+	initiatedAt Instant required /** TestWebsocket initiated at */
+	transactionType TransactionType /** TestWebsocket enum type */
+    txHash String unique /** TestWebsocket hash */
     expectedAmount Long /** Expected BTC amount from the customer */
     actualAmount Long /** Actual BTC amount of the transaction */
     transactionFee Long /** BTC transaction fee */
@@ -53,22 +53,22 @@ relationship OneToOne {
 }
 
 relationship OneToMany {
-	/** One Transaction has Many Confidence entries */
-	Transaction to Confidence{transaction},
+	/** One TestWebsocket has Many Confidence entries */
+	TestWebsocket to Confidence{transaction},
     /** One Merchant has Many Users */
     Merchant to MerchantUser{merchant}
 }
 
 relationship ManyToOne {
-	/** Many Transaction can be done by One User */
-	Transaction{user} to User,
-    /** Many Transaction can be done by One Merchant */
-    Transaction{merchant} to Merchant
+	/** Many TestWebsocket can be done by One User */
+	TestWebsocket{user} to User,
+    /** Many TestWebsocket can be done by One Merchant */
+    TestWebsocket{merchant} to Merchant
 }
 
 // Set pagination options
-// paginate Transaction, Block, Confidence with infinite-scroll
-paginate Transaction, Confidence with pagination
+// paginate TestWebsocket, Block, Confidence with infinite-scroll
+paginate TestWebsocket, Confidence with pagination
 
 // Use Data Transfer Objects (DTO)
 dto * with mapstruct

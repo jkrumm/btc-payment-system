@@ -7,20 +7,20 @@
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <!--
-        Added the entity Transaction.
+        Added the entity TestWebsocket.
     -->
     <changeSet id="20210119184213-1" author="jhipster">
         <createTable tableName="transaction" remarks="Central table to persist transaction details. All holdings will be derived from it with help of BitcoinJ.">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="initiated_at" type="${datetimeType}" remarks="Transaction initiated at">
+            <column name="initiated_at" type="${datetimeType}" remarks="TestWebsocket initiated at">
                 <constraints nullable="false" />
             </column>
-            <column name="transaction_type" type="varchar(255)" remarks="Transaction enum type">
+            <column name="transaction_type" type="varchar(255)" remarks="TestWebsocket enum type">
                 <constraints nullable="true" />
             </column>
-            <column name="tx_hash" type="varchar(255)" remarks="Transaction hash">
+            <column name="tx_hash" type="varchar(255)" remarks="TestWebsocket hash">
                 <constraints nullable="true" unique="true" uniqueConstraintName="ux_transaction__tx_hash" />
             </column>
             <column name="expected_amount" type="bigint" remarks="Expected BTC amount from the customer">

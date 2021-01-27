@@ -4,6 +4,7 @@ import { loadingBarReducer as loadingBar } from 'react-redux-loading-bar';
 import authentication, { AuthenticationState } from './authentication';
 import applicationProfile, { ApplicationProfileState } from './application-profile';
 
+import wallet, { WalletState } from 'app/modules/wallet/wallet.reducer';
 import administration, { AdministrationState } from 'app/modules/administration/administration.reducer';
 import userManagement, { UserManagementState } from 'app/modules/administration/user-management/user-management.reducer';
 import register, { RegisterState } from 'app/modules/account/register/register.reducer';
@@ -34,6 +35,7 @@ import merchantUser, {
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
+  readonly wallet: WalletState;
   readonly authentication: AuthenticationState;
   readonly applicationProfile: ApplicationProfileState;
   readonly administration: AdministrationState;
@@ -53,6 +55,7 @@ export interface IRootState {
 }
 
 const rootReducer = combineReducers<IRootState>({
+  wallet,
   authentication,
   applicationProfile,
   administration,

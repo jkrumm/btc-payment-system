@@ -174,4 +174,4 @@ application:
   wallet:
     network: 'testnet'
     filePrefix: 'dev'
-    btcFileLocation: '/Users/johanneskrumm/btc-payment-system'
+    btcFileLocation: '/Users/johanneskrumm/SourceRoot/btc-payment-system'
