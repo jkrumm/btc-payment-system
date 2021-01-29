@@ -1,5 +1,6 @@
 package com.jkrumm.btcpay.btc;
 
+import com.jkrumm.btcpay.btc.websocket.dto.WalletDTO;
 import java.net.URISyntaxException;
 import org.bitcoinj.core.Block;
 import org.slf4j.Logger;
@@ -68,5 +69,16 @@ public class WalletController {
     public ResponseEntity<Block> currentBlock() {
         log.debug("REST request to get current block");
         return ResponseEntity.ok().body(walletService.getCurrentBlock().getHeader());
+    }
+
+    /**
+     * {@code GET  /wallet} : get current Wallet Stats
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the current block in body.
+     */
+    @GetMapping("/wallet")
+    public ResponseEntity<WalletDTO> wallet() {
+        log.debug("REST request to get wallet stats");
+        return ResponseEntity.ok().body(walletService.getWalletDTO());
     }
 }

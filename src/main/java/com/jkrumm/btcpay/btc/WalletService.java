@@ -66,20 +66,12 @@ public class WalletService {
             .addChangeEventListener(
                 (
                     wallet -> {
-                        log.info(String.valueOf(wallet.getBalance(Wallet.BalanceType.AVAILABLE).longValue()));
-                        WalletDTO walletDto = new WalletDTO(
-                            wallet.getLastBlockSeenHeight(),
-                            Objects.requireNonNull(wallet.getLastBlockSeenTime()).toInstant(),
-                            wallet.getBalance(Wallet.BalanceType.AVAILABLE).longValue(),
-                            wallet.getBalance(Wallet.BalanceType.AVAILABLE_SPENDABLE).longValue(),
-                            wallet.getBalance(Wallet.BalanceType.ESTIMATED).longValue(),
-                            wallet.getBalance(Wallet.BalanceType.ESTIMATED_SPENDABLE).longValue(),
-                            wallet.getPendingTransactions().size(),
-                            wallet.getUnspents().size()
+                        WalletDTO walletDTO = getWalletDTO();
+                        log.info(
+                            "walletChangeEventListener : " + wallet.getLastBlockSeenHeight() + " Balance : " + walletDTO.getAvailable()
                         );
-                        log.info("walletChangeEventListener");
                         log.info(wallet.toString());
-                        walletWsService.sendMessage(walletDto);
+                        walletWsService.sendMessage(walletDTO);
                     }
                 )
             );
@@ -88,19 +80,10 @@ public class WalletService {
             .chain()
             .addNewBestBlockListener(
                 block -> {
-                    long newBlockHeight = block.getHeight();
-                    Instant newBlockMinedAt = Instant.now();
-                    String newBlockHash = block.getHeader().getHashAsString();
-                    long newAvailable = walletAppKit.wallet().getBalance(Wallet.BalanceType.AVAILABLE).longValue();
-                    long newAvailableSpendable = walletAppKit.wallet().getBalance(Wallet.BalanceType.AVAILABLE_SPENDABLE).longValue();
-                    long newEstimated = walletAppKit.wallet().getBalance(Wallet.BalanceType.ESTIMATED).longValue();
-                    long newEstimatedSpendable = walletAppKit.wallet().getBalance(Wallet.BalanceType.ESTIMATED_SPENDABLE).longValue();
-
-                    log.info("New Block Height: " + newBlockHeight + " | Hash: " + newBlockHash + " | Mined At: " + newBlockMinedAt);
-                    log.info("Balance " + Wallet.BalanceType.AVAILABLE + " " + newAvailable);
-                    log.info("Balance: " + Wallet.BalanceType.AVAILABLE_SPENDABLE + " " + newAvailableSpendable);
-                    log.info("Balance: " + Wallet.BalanceType.ESTIMATED + " " + newEstimated);
-                    log.info("Balance: " + Wallet.BalanceType.ESTIMATED_SPENDABLE + " " + newEstimatedSpendable);
+                    WalletDTO walletDTO = getWalletDTO();
+                    log.info("NewBestBlockListener : " + walletDTO.getBlockHeight());
+                    log.info(walletDTO.toString());
+                    walletWsService.sendMessage(getWalletDTO());
                 }
             );
 
@@ -133,5 +116,21 @@ public class WalletService {
 
     StoredBlock getCurrentBlock() {
         return walletAppKit.chain().getChainHead();
+    }
+
+    public WalletDTO getWalletDTO() {
+        Wallet wallet = walletAppKit.wallet();
+        WalletDTO walletDto = new WalletDTO(
+            wallet.getLastBlockSeenHeight(),
+            Objects.requireNonNull(wallet.getLastBlockSeenTime()).toInstant(),
+            wallet.getBalance(Wallet.BalanceType.AVAILABLE).longValue(),
+            wallet.getBalance(Wallet.BalanceType.AVAILABLE_SPENDABLE).longValue(),
+            wallet.getBalance(Wallet.BalanceType.ESTIMATED).longValue(),
+            wallet.getBalance(Wallet.BalanceType.ESTIMATED_SPENDABLE).longValue(),
+            wallet.getPendingTransactions().size(),
+            wallet.getUnspents().size()
+        );
+        log.info("getWalletDTO : " + walletDto.getBlockHeight());
+        return walletDto;
     }
 }
