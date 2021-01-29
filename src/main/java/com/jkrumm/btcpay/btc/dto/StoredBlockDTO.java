@@ -1,4 +1,4 @@
-package com.jkrumm.btcpay.wallet.dto;
+package com.jkrumm.btcpay.btc.dto;
 
 import com.jkrumm.btcpay.domain.enumeration.FeeType;
 import io.swagger.annotations.ApiModel;

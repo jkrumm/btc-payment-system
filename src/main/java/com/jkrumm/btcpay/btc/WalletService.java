@@ -1,9 +1,10 @@
-package com.jkrumm.btcpay.wallet;
+package com.jkrumm.btcpay.btc;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.jkrumm.btcpay.wallet.dto.WalletDTO;
+import com.jkrumm.btcpay.btc.websocket.WalletWsService;
+import com.jkrumm.btcpay.btc.websocket.dto.WalletDTO;
 import java.time.Instant;
 import java.util.Objects;
 import javax.annotation.PostConstruct;
@@ -72,11 +73,13 @@ public class WalletService {
                             wallet.getBalance(Wallet.BalanceType.AVAILABLE).longValue(),
                             wallet.getBalance(Wallet.BalanceType.AVAILABLE_SPENDABLE).longValue(),
                             wallet.getBalance(Wallet.BalanceType.ESTIMATED).longValue(),
-                            wallet.getBalance(Wallet.BalanceType.ESTIMATED_SPENDABLE).longValue()
+                            wallet.getBalance(Wallet.BalanceType.ESTIMATED_SPENDABLE).longValue(),
+                            wallet.getPendingTransactions().size(),
+                            wallet.getUnspents().size()
                         );
                         log.info("walletChangeEventListener");
                         log.info(wallet.toString());
-                        walletWsService.sendMessage(walletDto.toString());
+                        walletWsService.sendMessage(walletDto);
                     }
                 )
             );

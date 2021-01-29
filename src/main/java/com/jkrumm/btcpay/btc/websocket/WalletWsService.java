@@ -1,6 +1,6 @@
-package com.jkrumm.btcpay.wallet;
+package com.jkrumm.btcpay.btc.websocket;
 
-import com.jkrumm.btcpay.wallet.dto.WalletDTO;
+import com.jkrumm.btcpay.btc.websocket.dto.WalletDTO;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +14,7 @@ public class WalletWsService {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    public void sendMessage(String msg) {
-        simpMessagingTemplate.convertAndSend(WS_MESSAGE_TRANSFER_DESTINATION, msg);
+    public void sendMessage(WalletDTO wallet) {
+        simpMessagingTemplate.convertAndSend(WS_MESSAGE_TRANSFER_DESTINATION, wallet);
     }
-    /* public void walletChange(WalletDTO walletDTO) {
-        simpMessagingTemplate.convertAndSend(WS_MESSAGE_TRANSFER_DESTINATION, walletDTO);
-    } */
 }

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { TabBar } from 'antd-mobile';
 import CompBoilerplate from 'app/shared/util/CompBoilerplate';
-import Transaction from 'app/modules/transaction/transaction';
+import Transaction from 'app/modules/user/transaction/transaction';
 import './user.scss';
+import Wallet from 'app/modules/user/wallet/wallet';
 
 interface IWrapUserContentProps {
   child: any;
@@ -80,7 +81,7 @@ export default () => {
           }}
           data-seed="logId1"
         >
-          <CompBoilerplate state="wallet" />
+          <WrapUserContent child={<Wallet />} />
         </TabBar.Item>
         <TabBar.Item
           icon={

@@ -70,7 +70,6 @@ class H5NumberInputExample extends React.Component<INumberInputProps, INumberInp
 }
 
 import { Steps, WingBlank } from 'antd-mobile';
-import TestWebsocket from 'app/modules/testWebsocket/testWebsocket';
 
 const Step = Steps.Step;
 
@@ -184,7 +183,6 @@ const Transaction = (props: ITransactionProps) => {
           Neue Transaktion
         </Button>
       )}
-      <TestWebsocket />
     </div>
   );
 };

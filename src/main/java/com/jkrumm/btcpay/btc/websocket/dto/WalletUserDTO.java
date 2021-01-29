@@ -1,4 +1,4 @@
-package com.jkrumm.btcpay.wallet.dto;
+package com.jkrumm.btcpay.btc.websocket.dto;
 
 import java.time.Instant;
 

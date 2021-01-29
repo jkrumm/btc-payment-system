@@ -1,6 +1,9 @@
-package com.jkrumm.btcpay.wallet.dto;
+package com.jkrumm.btcpay.btc.websocket.dto;
 
 import java.time.Instant;
+import java.util.Collection;
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionOutput;
 
 public class WalletDTO {
 
@@ -10,6 +13,8 @@ public class WalletDTO {
     private Long availableSpendable;
     private Long estimated;
     private Long estimatedSpendable;
+    private Integer pending;
+    private Integer unspent;
 
     public WalletDTO(
         Integer blockHeight,
@@ -17,7 +22,9 @@ public class WalletDTO {
         Long available,
         Long availableSpendable,
         Long estimated,
-        Long estimatedSpendable
+        Long estimatedSpendable,
+        Integer pending,
+        Integer unspent
     ) {
         this.blockHeight = blockHeight;
         this.blockMinedAt = blockMinedAt;
@@ -25,6 +32,8 @@ public class WalletDTO {
         this.availableSpendable = availableSpendable;
         this.estimated = estimated;
         this.estimatedSpendable = estimatedSpendable;
+        this.pending = pending;
+        this.unspent = unspent;
     }
 
     public Integer getBlockHeight() {
@@ -75,23 +84,19 @@ public class WalletDTO {
         this.estimatedSpendable = estimatedSpendable;
     }
 
-    @Override
-    public String toString() {
-        return (
-            "WalletDTO{" +
-            "blockHeight=" +
-            blockHeight +
-            ", blockMinedAt=" +
-            blockMinedAt +
-            ", available=" +
-            available +
-            ", availableSpendable=" +
-            availableSpendable +
-            ", estimated=" +
-            estimated +
-            ", estimatedSpendable=" +
-            estimatedSpendable +
-            '}'
-        );
+    public Integer getPending() {
+        return pending;
+    }
+
+    public void setPending(Integer pending) {
+        this.pending = pending;
+    }
+
+    public Integer getUnspent() {
+        return unspent;
+    }
+
+    public void setUnspent(Integer unspent) {
+        this.unspent = unspent;
     }
 }

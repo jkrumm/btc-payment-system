@@ -1,4 +1,4 @@
-package com.jkrumm.btcpay.wallet;
+package com.jkrumm.btcpay.btc;
 
 import com.jkrumm.btcpay.repository.ConfidenceRepository;
 import com.jkrumm.btcpay.repository.TransactionRepository;

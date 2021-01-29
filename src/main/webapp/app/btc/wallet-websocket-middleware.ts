@@ -4,7 +4,7 @@ import Stomp from 'webstomp-client';
 import { Observable } from 'rxjs';
 import { Storage } from 'react-jhipster';
 
-import { ACTION_TYPES as WALLET_ACTIONS } from 'app/modules/wallet/wallet.reducer';
+import { ACTION_TYPES as WALLET_ACTIONS } from './wallet.reducer';
 import { ACTION_TYPES as AUTH_ACTIONS } from 'app/shared/reducers/authentication';
 import { SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
@@ -24,6 +24,7 @@ const createListener = (): Observable<any> =>
     listenerObserver = observer;
   });
 
+/*
 export const sendActivity = (msg: string) => {
   connection?.then(() => {
     stompClient?.send(
@@ -32,7 +33,7 @@ export const sendActivity = (msg: string) => {
       {} // header
     );
   });
-};
+}; */
 
 const subscribe = () => {
   connection.then(() => {
@@ -66,7 +67,7 @@ const connect = () => {
   stompClient.connect(headers, () => {
     connectedPromise('success');
     connectedPromise = null;
-    sendActivity('Init message');
+    // sendActivity('Init message');
     alreadyConnectedOnce = true;
   });
 };
@@ -96,10 +97,10 @@ export default store => next => action => {
     const isUser = action.payload.data.authorities.includes('ROLE_USER');
     if (!alreadyConnectedOnce && isUser) {
       subscribe();
-      receive().subscribe(activity => {
+      receive().subscribe(wallet => {
         return store.dispatch({
-          type: WALLET_ACTIONS.WEBSOCKET_ACTIVITY_MESSAGE,
-          payload: activity,
+          type: WALLET_ACTIONS.WALLET_WEBSOCKET_ACTIVITY_MESSAGE,
+          payload: wallet,
         });
       });
     }

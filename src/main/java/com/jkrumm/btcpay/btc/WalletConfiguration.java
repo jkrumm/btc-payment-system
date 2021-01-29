@@ -1,4 +1,4 @@
-package com.jkrumm.btcpay.wallet;
+package com.jkrumm.btcpay.btc;
 
 import java.io.File;
 import org.bitcoinj.core.ECKey;

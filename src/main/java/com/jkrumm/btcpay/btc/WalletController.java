@@ -1,8 +1,7 @@
-package com.jkrumm.btcpay.wallet;
+package com.jkrumm.btcpay.btc;
 
 import java.net.URISyntaxException;
 import org.bitcoinj.core.Block;
-import org.bitcoinj.core.StoredBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
