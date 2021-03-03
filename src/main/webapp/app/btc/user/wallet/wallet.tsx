@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { IRootState } from 'app/shared/reducers';
-import { getWallet } from 'app/btc/wallet.reducer';
+import { getWallet } from 'app/btc/user.reducer';
 import { WhiteSpace } from 'antd-mobile';
 import { Card, Statistic, Alert, Collapse } from 'antd';
 import dayjs from 'dayjs';
@@ -59,11 +59,11 @@ const Wallet = (props: ITransactionProps) => {
   );
 };
 
-const mapStateToProps = ({ authentication, wallet }: IRootState) => ({
+const mapStateToProps = ({ authentication, user }: IRootState) => ({
   isAuthenticated: authentication.isAuthenticated,
-  wallet: wallet.wallet,
-  loading: wallet.loading,
-  errorMessage: wallet.errorMessage,
+  wallet: user.wallet,
+  loading: user.loading,
+  errorMessage: user.errorMessage,
 });
 
 const mapDispatchToProps = { getWallet };

@@ -5,7 +5,6 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.jkrumm.btcpay.btc.websocket.WalletWsService;
 import com.jkrumm.btcpay.btc.websocket.dto.WalletDTO;
-import java.time.Instant;
 import java.util.Objects;
 import javax.annotation.PostConstruct;
 import org.bitcoinj.core.*;
@@ -29,7 +28,7 @@ public class WalletService {
     private NetworkParameters networkParameters;
 
     @Autowired
-    private WalletRepositoryContainer.Container repos;
+    private BtcRepositoryContainer.Container repos;
 
     @Autowired
     private WalletWsService walletWsService;
@@ -50,11 +49,13 @@ public class WalletService {
                         new FutureCallback<TransactionConfidence>() {
                             @Override
                             public void onSuccess(TransactionConfidence result) {
-                                System.out.println("Received tx " + value.toFriendlyString() + " is confirmed. ");
+                                System.out.println("Received tx " + value.toFriendlyString() + " is confirmed.");
                             }
 
                             @Override
-                            public void onFailure(Throwable t) {}
+                            public void onFailure(Throwable t) {
+                                System.out.println("Received tx " + value.toFriendlyString() + " failed.");
+                            }
                         },
                         MoreExecutors.directExecutor()
                     );

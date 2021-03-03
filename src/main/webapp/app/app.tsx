@@ -21,7 +21,7 @@ import ErrorBoundary from 'app/shared/error/error-boundary';
 import { AUTHORITIES } from 'app/config/constants';
 import AppRoutes from 'app/routes';
 
-import User from 'app/modules/user/user';
+import User from 'app/btc/user/user';
 
 const baseHref = document.querySelector('base').getAttribute('href').replace(/\/$/, '');
 

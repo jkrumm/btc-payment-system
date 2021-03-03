@@ -4,7 +4,7 @@ import Stomp from 'webstomp-client';
 import { Observable } from 'rxjs';
 import { Storage } from 'react-jhipster';
 
-import { ACTION_TYPES as WALLET_ACTIONS } from './wallet.reducer';
+import { ACTION_TYPES as WALLET_ACTIONS } from './user.reducer';
 import { ACTION_TYPES as AUTH_ACTIONS } from 'app/shared/reducers/authentication';
 import { SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 

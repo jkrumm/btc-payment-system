@@ -1,0 +1,26 @@
+#user {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  z-index: 999;
+}
+
+main {
+  padding: 20px;
+  position: relative;
+}
+
+.btc-price {
+  position: absolute;
+  top: 11px;
+  right: 20px;
+  text-align: right;
+
+  span:first-of-type {
+    display: block;
+    margin-bottom: 2px;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 14px;
+  }
+}

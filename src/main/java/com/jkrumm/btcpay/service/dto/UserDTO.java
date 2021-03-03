@@ -1,6 +1,7 @@
 package com.jkrumm.btcpay.service.dto;
 
 import com.jkrumm.btcpay.domain.User;
+import java.util.Optional;
 
 /**
  * A DTO representing a user, with only the public attributes.

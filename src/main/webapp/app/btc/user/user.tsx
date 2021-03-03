@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { TabBar } from 'antd-mobile';
 import CompBoilerplate from 'app/shared/util/CompBoilerplate';
-import Transaction from 'app/modules/user/transaction/transaction';
+import Transaction from 'app/btc/user/transaction/transaction';
 import './user.scss';
-import Wallet from 'app/modules/user/wallet/wallet';
+import Wallet from 'app/btc/user/wallet/wallet';
+import Profile from 'app/btc/user/profile/profile';
+
+interface IWrapUserProps {}
 
 interface IWrapUserContentProps {
   child: any;
@@ -13,7 +16,7 @@ const WrapUserContent = (props: IWrapUserContentProps) => {
   return <main>{props.child}</main>;
 };
 
-export default () => {
+export default (props: IWrapUserProps) => {
   const [tab, setTab] = useState('transaction');
 
   useEffect(() => {
@@ -21,7 +24,7 @@ export default () => {
   }, []);
 
   return (
-    <div style={{ position: 'fixed', height: '100vh', width: '100vw', top: 0, zIndex: 999 }}>
+    <div id="user">
       <TabBar unselectedTintColor="#949494" tintColor="#33A3F4" barTintColor="white">
         <TabBar.Item
           title="transaction"
@@ -122,7 +125,7 @@ export default () => {
             setTab('profile');
           }}
         >
-          <CompBoilerplate state="profile" />
+          <WrapUserContent child={<Profile />} />
         </TabBar.Item>
       </TabBar>
     </div>

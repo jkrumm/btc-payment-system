@@ -11,6 +11,7 @@ import './transaction.scss';
 import { Heading } from 'app/shared/util/ui-components';
 import { faHandshake, faMoneyBillAlt } from '@fortawesome/free-regular-svg-icons';
 import { LikeOutlined } from '@ant-design/icons';
+import { initTx, getBtcPrice } from 'app/btc/user.reducer';
 
 // 通过自定义 moneyKeyboardWrapProps 修复虚拟键盘滚动穿透问题
 // https://github.com/ant-design/ant-design-mobile/issues/307
@@ -105,12 +106,22 @@ const H5NumberInputExampleWrapper = createForm()(H5NumberInputExample);
 const Transaction = (props: ITransactionProps) => {
   const [amount, setAmount] = useState(props.amount);
   const [step, setStep] = useState(props.step);
-  const { auth } = props;
+  const { auth, btcPrice } = props;
   let inputRef = HTMLInputElement;
 
   useEffect(() => {
     setAmount(10);
+    getBtcPrice();
+    console.log(btcPrice);
   }, []);
+
+  const resetTx = () => {
+    getBtcPrice();
+    console.log(getBtcPrice());
+    console.log(btcPrice);
+    setAmount(10);
+    setStep(0);
+  };
 
   return (
     <div>
@@ -146,9 +157,21 @@ const Transaction = (props: ITransactionProps) => {
           <Slider defaultValue={10} min={0} max={50} value={amount} onChange={setAmount} />
           <WhiteSpace size={'lg'} />
           <WhiteSpace size={'lg'} />
-          <Button onClick={() => setStep(1)} type={'primary'}>
+          <Button
+            onClick={() => {
+              cl('initTX');
+              cl(amount);
+              props.initTx(amount);
+              setStep(1);
+            }}
+            type={'primary'}
+          >
             Betrag festlegen
           </Button>
+          <WhiteSpace size={'xl'} />
+          <div>
+            <Statistic title="BTC Price" value={btcPrice} suffix={' €'} precision={2} />
+          </div>
         </Card>
       )}
       {step === 1 && (
@@ -177,9 +200,11 @@ const Transaction = (props: ITransactionProps) => {
       <hr />
       <WhiteSpace size={'lg'} />
       {step !== 2 ? (
-        <Button className={'footer-button'}>Transaktion Zurücksetzen</Button>
+        <Button onClick={() => resetTx()} className={'footer-button'}>
+          Transaktion Zurücksetzen
+        </Button>
       ) : (
-        <Button type={'primary'} className={'footer-button'} onClick={() => setStep(0)}>
+        <Button type={'primary'} className={'footer-button'} onClick={() => resetTx()}>
           Neue Transaktion
         </Button>
       )}
@@ -187,11 +212,13 @@ const Transaction = (props: ITransactionProps) => {
   );
 };
 
-const mapStateToProps = ({ authentication }: IRootState) => ({
+const mapStateToProps = ({ authentication, user }: IRootState) => ({
   auth: authentication,
+  transactions: user.transactions,
+  btcPrice: user.btcPrice,
 });
 
-const mapDispatchToProps = { logout };
+const mapDispatchToProps = { initTx, getBtcPrice };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
