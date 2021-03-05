@@ -35,6 +35,27 @@ const initialState = {
     },
   },
   transactions: [],
+  currentTx: {
+    actualAmount: null,
+    address: '',
+    amount: 0,
+    btcUsd: 0,
+    expectedAmount: 0,
+    initiatedAt: null,
+    merchant: {
+      id: 0,
+      name: '',
+      email: '',
+    },
+    serviceFee: 0,
+    transactionFee: 0,
+    transactionType: '',
+    txHash: '',
+    user: {
+      id: 0,
+      login: '',
+    },
+  },
 };
 
 export type UserState = Readonly<typeof initialState>;
@@ -77,15 +98,15 @@ export default (state: UserState = initialState, action): UserState => {
       return {
         ...state,
         loading: false,
-        transactions: [...state.transactions, action.payload],
+        currentTx: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.GET_BTC_PRICE):
       console.log('ACTION_TYPES.GET_BTC_PRICE');
-      console.log(action.payload);
+      console.log(action.payload.data);
       return {
         ...state,
         loading: false,
-        btcPrice: 10000 / action.payload,
+        btcPrice: 10000 / action.payload.data,
       };
     case ACTION_TYPES.WALLET_WEBSOCKET_ACTIVITY_MESSAGE: {
       return {

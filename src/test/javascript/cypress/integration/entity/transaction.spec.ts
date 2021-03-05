@@ -101,6 +101,10 @@ describe('Transaction e2e test', () => {
 
     cy.get(`[data-cy="btcUsd"]`).type('88157').should('have.value', '88157');
 
+    cy.get(`[data-cy="address"]`).type('mission-critical', { force: true }).invoke('val').should('match', new RegExp('mission-critical'));
+
+    cy.get(`[data-cy="amount"]`).type('60942').should('have.value', '60942');
+
     cy.setFieldSelectToLastOfEntity('user');
 
     cy.setFieldSelectToLastOfEntity('merchant');

@@ -6,7 +6,7 @@ import './user.scss';
 import Wallet from 'app/btc/user/wallet/wallet';
 import Profile from 'app/btc/user/profile/profile';
 
-interface IWrapUserProps {}
+/* interface IWrapUserProps {} */
 
 interface IWrapUserContentProps {
   child: any;
@@ -16,7 +16,7 @@ const WrapUserContent = (props: IWrapUserContentProps) => {
   return <main>{props.child}</main>;
 };
 
-export default (props: IWrapUserProps) => {
+export default () => {
   const [tab, setTab] = useState('transaction');
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default (props: IWrapUserProps) => {
           }}
           data-seed="logId"
         >
-          <WrapUserContent child={<Transaction amount={10} step={2} />} />
+          <WrapUserContent child={<Transaction amount={10} step={1} />} />
         </TabBar.Item>
         <TabBar.Item
           icon={

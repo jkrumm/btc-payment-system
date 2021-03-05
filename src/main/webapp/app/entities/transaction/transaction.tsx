@@ -115,6 +115,12 @@ export const Transaction = (props: ITransactionProps) => {
                 <th className="hand" onClick={sort('btcUsd')}>
                   Btc Usd <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('address')}>
+                  Address <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('amount')}>
+                  Amount <FontAwesomeIcon icon="sort" />
+                </th>
                 <th>
                   User <FontAwesomeIcon icon="sort" />
                 </th>
@@ -142,6 +148,8 @@ export const Transaction = (props: ITransactionProps) => {
                   <td>{transaction.transactionFee}</td>
                   <td>{transaction.serviceFee}</td>
                   <td>{transaction.btcUsd}</td>
+                  <td>{transaction.address}</td>
+                  <td>{transaction.amount}</td>
                   <td>{transaction.user ? transaction.user.id : ''}</td>
                   <td>{transaction.merchant ? <Link to={`merchant/${transaction.merchant.id}`}>{transaction.merchant.id}</Link> : ''}</td>
                   <td className="text-right">

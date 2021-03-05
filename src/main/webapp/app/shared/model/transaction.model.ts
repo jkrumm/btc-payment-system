@@ -14,6 +14,8 @@ export interface ITransaction {
   transactionFee?: number | null;
   serviceFee?: number | null;
   btcUsd?: number | null;
+  address?: string | null;
+  amount?: number | null;
   confidences?: IConfidence[] | null;
   user?: IUser | null;
   merchant?: IMerchant | null;

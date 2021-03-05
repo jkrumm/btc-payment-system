@@ -43,6 +43,14 @@
       "fieldName": "btcUsd",
       "fieldType": "Double",
       "javadoc": "BTC price at intiation"
+    },
+    {
+      "fieldName": "address",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "amount",
+      "fieldType": "Double"
     }
   ],
   "relationships": [

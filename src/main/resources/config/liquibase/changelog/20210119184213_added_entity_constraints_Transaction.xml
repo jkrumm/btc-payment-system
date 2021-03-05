@@ -4,10 +4,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
     <!--
-        Added the constraints for entity TestWebsocket.
+        Added the constraints for entity Transaction.
     -->
     <changeSet id="20210119184213-2" author="jhipster">
-
+        
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="transaction"
                                  constraintName="fk_transaction__user_id"

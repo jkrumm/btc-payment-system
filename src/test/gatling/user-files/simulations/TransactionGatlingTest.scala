@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 
 /**
- * Performance test for the TestWebsocket entity.
+ * Performance test for the Transaction entity.
  */
 class TransactionGatlingTest extends Simulation {
 
@@ -43,7 +43,7 @@ class TransactionGatlingTest extends Simulation {
         "Authorization" -> "${access_token}"
     )
 
-    val scn = scenario("Test the TestWebsocket entity")
+    val scn = scenario("Test the Transaction entity")
         .exec(http("First unauthenticated request")
         .get("/api/account")
         .headers(headers_http)
@@ -80,6 +80,8 @@ class TransactionGatlingTest extends Simulation {
                 , "transactionFee":null
                 , "serviceFee":null
                 , "btcUsd":null
+                , "address":"SAMPLE_TEXT"
+                , "amount":null
                 }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_transaction_url"))).exitHereIfFailed

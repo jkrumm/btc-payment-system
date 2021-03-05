@@ -66,6 +66,10 @@ public class TransactionDTO implements Serializable {
     @ApiModelProperty(value = "BTC price at intiation")
     private Double btcUsd;
 
+    private String address;
+
+    private Double amount;
+
     private UserDTO user;
 
     private MerchantDTO merchant;
@@ -142,6 +146,22 @@ public class TransactionDTO implements Serializable {
         this.btcUsd = btcUsd;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
     public UserDTO getUser() {
         return user;
     }
@@ -192,6 +212,8 @@ public class TransactionDTO implements Serializable {
             ", transactionFee=" + getTransactionFee() +
             ", serviceFee=" + getServiceFee() +
             ", btcUsd=" + getBtcUsd() +
+            ", address='" + getAddress() + "'" +
+            ", amount=" + getAmount() +
             ", user=" + getUser() +
             ", merchant=" + getMerchant() +
             "}";

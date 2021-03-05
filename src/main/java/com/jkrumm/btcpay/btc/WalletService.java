@@ -5,12 +5,16 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.jkrumm.btcpay.btc.websocket.WalletWsService;
 import com.jkrumm.btcpay.btc.websocket.dto.WalletDTO;
+import com.jkrumm.btcpay.domain.Transaction;
 import java.util.Objects;
 import javax.annotation.PostConstruct;
+import javax.script.ScriptException;
 import org.bitcoinj.core.*;
 import org.bitcoinj.kits.WalletAppKit;
+import org.bitcoinj.script.Script;
 import org.bitcoinj.wallet.SendRequest;
 import org.bitcoinj.wallet.Wallet;
+import org.h2.engine.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +47,29 @@ public class WalletService {
             .addCoinsReceivedEventListener(
                 (wallet, tx, prevBalance, newBalance) -> {
                     Coin value = tx.getValueSentToMe(wallet);
-                    System.out.println("Received tx for " + value.toFriendlyString());
+                    log.info("Received tx for " + value.toFriendlyString());
+                    /* TransactionOutput output = tx.getOutputs().get(1); */
+                    for (TransactionOutput output : tx.getOutputs()) {
+                        if (output.isMine(wallet)) {
+                            Script script = output.getScriptPubKey();
+                            Address address = script.getToAddress(walletAppKit.wallet().getNetworkParameters(), true);
+                            log.info("Received tx for address " + address.toString());
+                            Transaction transaction = repos.transaction.findByAddress(address.toString()).get(0);
+                            log.info("Tx id: " + tx.getTxId().toString());
+                            transaction.setTxHash(tx.getTxId().toString());
+                            log.info("Tx fee: " + tx.getFee().getValue());
+                            transaction.setTransactionFee(tx.getFee().getValue());
+                            log.info("tx.getExchangeRate() : " + tx.getExchangeRate());
+                            log.info("tx.getValueSentToMe(wallet).getValue() : " + tx.getValueSentToMe(wallet).getValue());
+                            log.info("tx.getValue(wallet).getValue() : " + tx.getValue(wallet).getValue());
+                            transaction.setActualAmount(tx.getValue(wallet).getValue());
+                            log.info("Updated Tx: " + transaction.toString());
+                            transaction = repos.transaction.save(transaction);
+                            log.info("Saved Tx: " + transaction.toString());
+                        } else {
+                            log.error("Received tx NOT for this wallet!");
+                        }
+                    }
                     Futures.addCallback(
                         tx.getConfidence().getDepthFuture(1),
                         new FutureCallback<TransactionConfidence>() {
@@ -71,7 +97,7 @@ public class WalletService {
                         log.info(
                             "walletChangeEventListener : " + wallet.getLastBlockSeenHeight() + " Balance : " + walletDTO.getAvailable()
                         );
-                        log.info(wallet.toString());
+                        log.info("walletChangeEventListener : " + wallet.toString());
                         walletWsService.sendMessage(walletDTO);
                     }
                 )
@@ -83,13 +109,17 @@ public class WalletService {
                 block -> {
                     WalletDTO walletDTO = getWalletDTO();
                     log.info("NewBestBlockListener : " + walletDTO.getBlockHeight());
-                    log.info(walletDTO.toString());
+                    log.info("NewBestBlockListener : " + walletDTO.toString());
                     walletWsService.sendMessage(getWalletDTO());
                 }
             );
 
         Address sendToAddress = LegacyAddress.fromKey(networkParameters, walletAppKit.wallet().currentReceiveKey());
         System.out.println("Wallet address: " + sendToAddress);
+    }
+
+    public Address newAddress() {
+        return walletAppKit.wallet().freshReceiveAddress();
     }
 
     public void send(String value, String to) {

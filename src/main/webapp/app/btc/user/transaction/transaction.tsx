@@ -11,7 +11,7 @@ import './transaction.scss';
 import { Heading } from 'app/shared/util/ui-components';
 import { faHandshake, faMoneyBillAlt } from '@fortawesome/free-regular-svg-icons';
 import { LikeOutlined } from '@ant-design/icons';
-import { initTx, getBtcPrice } from 'app/btc/user.reducer';
+import { initTx, getBtcPrice, getMerchant } from 'app/btc/user.reducer';
 
 // 通过自定义 moneyKeyboardWrapProps 修复虚拟键盘滚动穿透问题
 // https://github.com/ant-design/ant-design-mobile/issues/307
@@ -106,17 +106,20 @@ const H5NumberInputExampleWrapper = createForm()(H5NumberInputExample);
 const Transaction = (props: ITransactionProps) => {
   const [amount, setAmount] = useState(props.amount);
   const [step, setStep] = useState(props.step);
-  const { auth, btcPrice } = props;
+  const { auth, btcPrice, currentTx, serviceFee } = props;
   let inputRef = HTMLInputElement;
 
   useEffect(() => {
     setAmount(10);
-    getBtcPrice();
+    props.getBtcPrice();
+    props.getMerchant();
     console.log(btcPrice);
+    console.log(currentTx);
   }, []);
 
   const resetTx = () => {
-    getBtcPrice();
+    props.getBtcPrice();
+    props.getMerchant();
     console.log(getBtcPrice());
     console.log(btcPrice);
     setAmount(10);
@@ -180,11 +183,20 @@ const Transaction = (props: ITransactionProps) => {
             alt="example"
             width={'200px'}
             onClick={() => setStep(2)}
-            src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=bitcoin:n2JxdYrdogmnvyiH1sWn2jfbPEUaTtY716?amount=0.00050000&label=12345&message=132"
+            src={
+              'https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=bitcoin:' +
+              currentTx.address +
+              '?amount=' +
+              currentTx.expectedAmount / 100000000
+            }
           />
-          <Statistic title="Betrag in Euro" value={amount} suffix={' €'} precision={2} />
+          <Statistic title="Adresse" value={currentTx.address} className="tiny" />
           <WhiteSpace size={'md'} />
-          <Statistic title="Betrag in BTC" value={0.0005} suffix={' BTC'} precision={8} />
+          <Statistic title="Betrag in Euro" value={currentTx.amount} suffix={' €'} precision={2} className="small" />
+          <WhiteSpace size={'md'} />
+          <Statistic title="Betrag in BTC" value={currentTx.expectedAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
+          <WhiteSpace size={'md'} />
+          <Statistic title="Service Fee" value={serviceFee} suffix={' %'} precision={2} className="small" />
         </Card>
       )}
       {step === 2 && (
@@ -216,9 +228,11 @@ const mapStateToProps = ({ authentication, user }: IRootState) => ({
   auth: authentication,
   transactions: user.transactions,
   btcPrice: user.btcPrice,
+  currentTx: user.currentTx,
+  serviceFee: user.merchant.fee.percent,
 });
 
-const mapDispatchToProps = { initTx, getBtcPrice };
+const mapDispatchToProps = { initTx, getBtcPrice, getMerchant };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

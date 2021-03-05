@@ -77,6 +77,12 @@ public class Transaction implements Serializable {
     @Column(name = "btc_usd")
     private Double btcUsd;
 
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "amount")
+    private Double amount;
+
     /**
      * One Transaction has Many Confidence entries
      */
@@ -216,6 +222,32 @@ public class Transaction implements Serializable {
         this.btcUsd = btcUsd;
     }
 
+    public String getAddress() {
+        return this.address;
+    }
+
+    public Transaction address(String address) {
+        this.address = address;
+        return this;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Double getAmount() {
+        return this.amount;
+    }
+
+    public Transaction amount(Double amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
     public Set<Confidence> getConfidences() {
         return this.confidences;
     }
@@ -305,6 +337,8 @@ public class Transaction implements Serializable {
             ", transactionFee=" + getTransactionFee() +
             ", serviceFee=" + getServiceFee() +
             ", btcUsd=" + getBtcUsd() +
+            ", address='" + getAddress() + "'" +
+            ", amount=" + getAmount() +
             "}";
     }
 }

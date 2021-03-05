@@ -56,6 +56,12 @@ class TransactionResourceIT {
     private static final Double DEFAULT_BTC_USD = 1D;
     private static final Double UPDATED_BTC_USD = 2D;
 
+    private static final String DEFAULT_ADDRESS = "AAAAAAAAAA";
+    private static final String UPDATED_ADDRESS = "BBBBBBBBBB";
+
+    private static final Double DEFAULT_AMOUNT = 1D;
+    private static final Double UPDATED_AMOUNT = 2D;
+
     @Autowired
     private TransactionRepository transactionRepository;
 
@@ -85,7 +91,9 @@ class TransactionResourceIT {
             .actualAmount(DEFAULT_ACTUAL_AMOUNT)
             .transactionFee(DEFAULT_TRANSACTION_FEE)
             .serviceFee(DEFAULT_SERVICE_FEE)
-            .btcUsd(DEFAULT_BTC_USD);
+            .btcUsd(DEFAULT_BTC_USD)
+            .address(DEFAULT_ADDRESS)
+            .amount(DEFAULT_AMOUNT);
         return transaction;
     }
 
@@ -104,7 +112,9 @@ class TransactionResourceIT {
             .actualAmount(UPDATED_ACTUAL_AMOUNT)
             .transactionFee(UPDATED_TRANSACTION_FEE)
             .serviceFee(UPDATED_SERVICE_FEE)
-            .btcUsd(UPDATED_BTC_USD);
+            .btcUsd(UPDATED_BTC_USD)
+            .address(UPDATED_ADDRESS)
+            .amount(UPDATED_AMOUNT);
         return transaction;
     }
 
@@ -137,6 +147,8 @@ class TransactionResourceIT {
         assertThat(testTransaction.getTransactionFee()).isEqualTo(DEFAULT_TRANSACTION_FEE);
         assertThat(testTransaction.getServiceFee()).isEqualTo(DEFAULT_SERVICE_FEE);
         assertThat(testTransaction.getBtcUsd()).isEqualTo(DEFAULT_BTC_USD);
+        assertThat(testTransaction.getAddress()).isEqualTo(DEFAULT_ADDRESS);
+        assertThat(testTransaction.getAmount()).isEqualTo(DEFAULT_AMOUNT);
     }
 
     @Test
@@ -199,7 +211,9 @@ class TransactionResourceIT {
             .andExpect(jsonPath("$.[*].actualAmount").value(hasItem(DEFAULT_ACTUAL_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].transactionFee").value(hasItem(DEFAULT_TRANSACTION_FEE.intValue())))
             .andExpect(jsonPath("$.[*].serviceFee").value(hasItem(DEFAULT_SERVICE_FEE.intValue())))
-            .andExpect(jsonPath("$.[*].btcUsd").value(hasItem(DEFAULT_BTC_USD.doubleValue())));
+            .andExpect(jsonPath("$.[*].btcUsd").value(hasItem(DEFAULT_BTC_USD.doubleValue())))
+            .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS)))
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.doubleValue())));
     }
 
     @Test
@@ -221,7 +235,9 @@ class TransactionResourceIT {
             .andExpect(jsonPath("$.actualAmount").value(DEFAULT_ACTUAL_AMOUNT.intValue()))
             .andExpect(jsonPath("$.transactionFee").value(DEFAULT_TRANSACTION_FEE.intValue()))
             .andExpect(jsonPath("$.serviceFee").value(DEFAULT_SERVICE_FEE.intValue()))
-            .andExpect(jsonPath("$.btcUsd").value(DEFAULT_BTC_USD.doubleValue()));
+            .andExpect(jsonPath("$.btcUsd").value(DEFAULT_BTC_USD.doubleValue()))
+            .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS))
+            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.doubleValue()));
     }
 
     @Test
@@ -251,7 +267,9 @@ class TransactionResourceIT {
             .actualAmount(UPDATED_ACTUAL_AMOUNT)
             .transactionFee(UPDATED_TRANSACTION_FEE)
             .serviceFee(UPDATED_SERVICE_FEE)
-            .btcUsd(UPDATED_BTC_USD);
+            .btcUsd(UPDATED_BTC_USD)
+            .address(UPDATED_ADDRESS)
+            .amount(UPDATED_AMOUNT);
         TransactionDTO transactionDTO = transactionMapper.toDto(updatedTransaction);
 
         restTransactionMockMvc
@@ -272,6 +290,8 @@ class TransactionResourceIT {
         assertThat(testTransaction.getTransactionFee()).isEqualTo(UPDATED_TRANSACTION_FEE);
         assertThat(testTransaction.getServiceFee()).isEqualTo(UPDATED_SERVICE_FEE);
         assertThat(testTransaction.getBtcUsd()).isEqualTo(UPDATED_BTC_USD);
+        assertThat(testTransaction.getAddress()).isEqualTo(UPDATED_ADDRESS);
+        assertThat(testTransaction.getAmount()).isEqualTo(UPDATED_AMOUNT);
     }
 
     @Test
@@ -328,6 +348,8 @@ class TransactionResourceIT {
         assertThat(testTransaction.getTransactionFee()).isEqualTo(DEFAULT_TRANSACTION_FEE);
         assertThat(testTransaction.getServiceFee()).isEqualTo(DEFAULT_SERVICE_FEE);
         assertThat(testTransaction.getBtcUsd()).isEqualTo(UPDATED_BTC_USD);
+        assertThat(testTransaction.getAddress()).isEqualTo(DEFAULT_ADDRESS);
+        assertThat(testTransaction.getAmount()).isEqualTo(DEFAULT_AMOUNT);
     }
 
     @Test
@@ -350,7 +372,9 @@ class TransactionResourceIT {
             .actualAmount(UPDATED_ACTUAL_AMOUNT)
             .transactionFee(UPDATED_TRANSACTION_FEE)
             .serviceFee(UPDATED_SERVICE_FEE)
-            .btcUsd(UPDATED_BTC_USD);
+            .btcUsd(UPDATED_BTC_USD)
+            .address(UPDATED_ADDRESS)
+            .amount(UPDATED_AMOUNT);
 
         restTransactionMockMvc
             .perform(
@@ -372,6 +396,8 @@ class TransactionResourceIT {
         assertThat(testTransaction.getTransactionFee()).isEqualTo(UPDATED_TRANSACTION_FEE);
         assertThat(testTransaction.getServiceFee()).isEqualTo(UPDATED_SERVICE_FEE);
         assertThat(testTransaction.getBtcUsd()).isEqualTo(UPDATED_BTC_USD);
+        assertThat(testTransaction.getAddress()).isEqualTo(UPDATED_ADDRESS);
+        assertThat(testTransaction.getAmount()).isEqualTo(UPDATED_AMOUNT);
     }
 
     @Test

@@ -176,6 +176,18 @@ export const TransactionUpdate = (props: ITransactionUpdateProps) => {
                 <UncontrolledTooltip target="btcUsdLabel">BTC price at intiation</UncontrolledTooltip>
               </AvGroup>
               <AvGroup>
+                <Label id="addressLabel" for="transaction-address">
+                  Address
+                </Label>
+                <AvField id="transaction-address" data-cy="address" type="text" name="address" />
+              </AvGroup>
+              <AvGroup>
+                <Label id="amountLabel" for="transaction-amount">
+                  Amount
+                </Label>
+                <AvField id="transaction-amount" data-cy="amount" type="string" className="form-control" name="amount" />
+              </AvGroup>
+              <AvGroup>
                 <Label for="transaction-user">User</Label>
                 <AvInput id="transaction-user" data-cy="user" type="select" className="form-control" name="user.id">
                   <option value="" key="0" />

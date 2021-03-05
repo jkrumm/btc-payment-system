@@ -68,6 +68,14 @@ export const TransactionDetail = (props: ITransactionDetailProps) => {
             <UncontrolledTooltip target="btcUsd">BTC price at intiation</UncontrolledTooltip>
           </dt>
           <dd>{transactionEntity.btcUsd}</dd>
+          <dt>
+            <span id="address">Address</span>
+          </dt>
+          <dd>{transactionEntity.address}</dd>
+          <dt>
+            <span id="amount">Amount</span>
+          </dt>
+          <dd>{transactionEntity.amount}</dd>
           <dt>User</dt>
           <dd>{transactionEntity.user ? transactionEntity.user.id : ''}</dd>
           <dt>Merchant</dt>
