@@ -12,6 +12,7 @@ import { Heading } from 'app/shared/util/ui-components';
 import { faHandshake, faMoneyBillAlt } from '@fortawesome/free-regular-svg-icons';
 import { LikeOutlined } from '@ant-design/icons';
 import { initTx, getBtcPrice, getMerchant } from 'app/btc/user.reducer';
+import dayjs from 'dayjs';
 
 // 通过自定义 moneyKeyboardWrapProps 修复虚拟键盘滚动穿透问题
 // https://github.com/ant-design/ant-design-mobile/issues/307
@@ -106,7 +107,8 @@ const H5NumberInputExampleWrapper = createForm()(H5NumberInputExample);
 const Transaction = (props: ITransactionProps) => {
   const [amount, setAmount] = useState(props.amount);
   const [step, setStep] = useState(props.step);
-  const { auth, btcPrice, currentTx, serviceFee } = props;
+  const { auth, btcPrice, currentTx, serviceFee, tx } = props;
+  const [confirmation, setConfirmation] = useState(tx[0]);
   let inputRef = HTMLInputElement;
 
   useEffect(() => {
@@ -115,7 +117,24 @@ const Transaction = (props: ITransactionProps) => {
     props.getMerchant();
     console.log(btcPrice);
     console.log(currentTx);
-  }, []);
+    console.log(tx);
+
+    if (tx.length > 1) {
+      tx.forEach(item => {
+        if (item.address === currentTx.address) {
+          console.log('SUCCESS' + item);
+          if (item.confidence.confidenceType === 'BUILDING') {
+            setConfirmation(item);
+            setStep(2);
+          }
+          if (item.confidence.confidenceType === 'CONFIRMED') {
+            setConfirmation(item);
+            setStep(2);
+          }
+        }
+      });
+    }
+  }, [currentTx, tx]);
 
   const resetTx = () => {
     props.getBtcPrice();
@@ -130,15 +149,15 @@ const Transaction = (props: ITransactionProps) => {
     <div>
       <Heading icon={faHandshake} heading="Transaktion" />
       <WhiteSpace size="xl" />
-      <WhiteSpace size="xl" />
+      {/*<WhiteSpace size="xl"/>*/}
       <WingBlank className="stepsExample">
         <Steps current={step} direction="horizontal" size="small">
           {steps}
         </Steps>
       </WingBlank>
       <WhiteSpace size="xl" />
-      <hr />
-      <WhiteSpace size="lg" />
+      {/*<hr/>*/}
+      {/*<WhiteSpace size="lg"/>*/}
       {step === 0 && (
         <Card title="Transaktion initiieren">
           <div onClick={() => inputRef.focus()}>
@@ -182,7 +201,6 @@ const Transaction = (props: ITransactionProps) => {
           <img
             alt="example"
             width={'200px'}
-            onClick={() => setStep(2)}
             src={
               'https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=bitcoin:' +
               currentTx.address +
@@ -194,22 +212,46 @@ const Transaction = (props: ITransactionProps) => {
           <WhiteSpace size={'md'} />
           <Statistic title="Betrag in Euro" value={currentTx.amount} suffix={' €'} precision={2} className="small" />
           <WhiteSpace size={'md'} />
-          <Statistic title="Betrag in BTC" value={currentTx.expectedAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
+          <Statistic title="Betrag in BTC" value={currentTx.actualAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
           <WhiteSpace size={'md'} />
           <Statistic title="Service Fee" value={serviceFee} suffix={' %'} precision={2} className="small" />
         </Card>
       )}
       {step === 2 && (
         <Card title="Bitcoins erhalten">
-          <Alert message="Transaktion im Mempool" description="Transaktion wurde gefunden jedoch noch nicht bestätigt." type="success" />
+          {confirmation.confidence.confidenceType === 'CONFIRMED' && (
+            <Alert
+              message="Transaktion abgeschlossen!"
+              description="Transaktion wurde erfolgreich validiert jedoch noch nicht bestätigt."
+              type="success"
+            />
+          )}
+          {confirmation.confidence.confidenceType === 'BUILDING' && (
+            <Alert message="Transaktion im Mempool!" description="Transaktion wurde gefunden jedoch noch nicht validiert." type="warning" />
+          )}
           <WhiteSpace size={'xl'} />
-          <Statistic title="Betrag in Euro" value={amount} suffix={' €'} precision={2} />
+          <Statistic title="Betrag in Euro" value={currentTx.amount} suffix={' €'} precision={2} className="small" />
           <WhiteSpace size={'md'} />
-          <Statistic title="Betrag in BTC" value={0.0005} suffix={' BTC'} precision={8} />
+          <Statistic title="Betrag in BTC" value={currentTx.expectedAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
+          <Statistic
+            title="Erhaltene BTC"
+            value={confirmation.confidence.transaction.actualAmount / 100000000}
+            suffix={' BTC'}
+            precision={8}
+            className="small"
+          />
+          <WhiteSpace size={'md'} />
+          <Statistic
+            title="Vergangene Zeit"
+            value={dayjs(confirmation.confidence.changeAt).diff(currentTx.initiatedAt, 's', true)}
+            suffix={' Sekunden'}
+            precision={2}
+            className="small"
+          />
         </Card>
       )}
-      <WhiteSpace size={'lg'} />
-      <hr />
+      {/*<WhiteSpace size={'lg'}/>
+      <hr/>*/}
       <WhiteSpace size={'lg'} />
       {step !== 2 ? (
         <Button onClick={() => resetTx()} className={'footer-button'}>
@@ -226,7 +268,7 @@ const Transaction = (props: ITransactionProps) => {
 
 const mapStateToProps = ({ authentication, user }: IRootState) => ({
   auth: authentication,
-  transactions: user.transactions,
+  tx: user.tx,
   btcPrice: user.btcPrice,
   currentTx: user.currentTx,
   serviceFee: user.merchant.fee.percent,

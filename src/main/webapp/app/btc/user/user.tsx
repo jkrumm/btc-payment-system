@@ -54,7 +54,7 @@ export default () => {
           }}
           data-seed="logId"
         >
-          <WrapUserContent child={<Transaction amount={10} step={1} />} />
+          <WrapUserContent child={<Transaction amount={10} step={0} />} />
         </TabBar.Item>
         <TabBar.Item
           icon={

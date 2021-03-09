@@ -15,4 +15,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByUserIsCurrentUser();
 
     List<Transaction> findByAddress(String address);
+
+    Transaction findTopByOrderByIdDesc();
 }

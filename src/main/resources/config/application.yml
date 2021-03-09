@@ -94,6 +94,7 @@ spring:
       hibernate.order_updates: true
       hibernate.query.fail_on_pagination_over_collection_fetch: true
       hibernate.query.in_clause_parameter_padding: true
+      hibernate.enable_lazy_load_no_trans: true
     hibernate:
       ddl-auto: none
       naming:

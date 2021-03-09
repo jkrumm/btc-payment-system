@@ -9,6 +9,7 @@ import notificationMiddleware from './notification-middleware';
 import loggerMiddleware from './logger-middleware';
 import websocketMiddleware from './websocket-middleware';
 import walletWebsocketMiddleware from '../btc/wallet-websocket-middleware';
+import txWebsocketMiddleware from '../btc/tx-websocket-middleware';
 import { loadingBarMiddleware } from 'react-redux-loading-bar';
 
 const defaultMiddlewares = [
@@ -19,6 +20,7 @@ const defaultMiddlewares = [
   loadingBarMiddleware(),
   websocketMiddleware,
   walletWebsocketMiddleware,
+  txWebsocketMiddleware,
   loggerMiddleware,
 ];
 const composedMiddlewares = middlewares =>

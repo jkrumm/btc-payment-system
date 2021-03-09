@@ -49,6 +49,7 @@ public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer 
             .withSockJS()
             .setInterceptors(httpSessionHandshakeInterceptor());
         registry.addEndpoint("/websocket/wallet").withSockJS();
+        registry.addEndpoint("/websocket/tx").withSockJS();
         log.info("registered Websockets");
     }
 

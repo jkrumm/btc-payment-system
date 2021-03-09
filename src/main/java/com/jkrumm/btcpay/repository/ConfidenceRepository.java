@@ -1,6 +1,7 @@
 package com.jkrumm.btcpay.repository;
 
 import com.jkrumm.btcpay.domain.Confidence;
+import com.jkrumm.btcpay.domain.Transaction;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ConfidenceRepository extends JpaRepository<Confidence, Long> {}
+public interface ConfidenceRepository extends JpaRepository<Confidence, Long> {
+    Confidence findFirstByTransactionOrderByChangeAt(Transaction tx);
+}

@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { FAILURE, REQUEST, SUCCESS } from 'app/shared/reducers/action-type.util';
+import Transaction from 'app/btc/user/transaction/transaction';
 
 export const ACTION_TYPES = {
   WALLET_WEBSOCKET_ACTIVITY_MESSAGE: 'wallet/WALLET_WEBSOCKET_ACTIVITY_MESSAGE',
+  TX_WEBSOCKET_ACTIVITY_MESSAGE: 'wallet/TX_WEBSOCKET_ACTIVITY_MESSAGE',
   FETCH_WALLET: 'wallet/FETCH_WALLET',
   FETCH_MERCHANT: 'user/FETCH_MERCHANT',
   INIT_TX: 'user/INIT_TX',
@@ -34,9 +36,40 @@ const initialState = {
       percentSecure: 0,
     },
   },
-  transactions: [],
+  tx: [
+    {
+      address: '',
+      confidence: {
+        id: 0,
+        confidenceType: '',
+        confirmations: 0,
+        changeAt: 0,
+        transaction: {
+          actualAmount: null,
+          address: '',
+          amount: 0,
+          btcUsd: 0,
+          expectedAmount: 0,
+          initiatedAt: null,
+          merchant: {
+            id: 0,
+            name: '',
+            email: '',
+          },
+          serviceFee: 0,
+          transactionFee: 0,
+          transactionType: '',
+          txHash: '',
+          user: {
+            id: 0,
+            login: '',
+          },
+        },
+      },
+    },
+  ],
   currentTx: {
-    actualAmount: null,
+    actualAmount: 0,
     address: '',
     amount: 0,
     btcUsd: 0,
@@ -101,18 +134,24 @@ export default (state: UserState = initialState, action): UserState => {
         currentTx: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.GET_BTC_PRICE):
-      console.log('ACTION_TYPES.GET_BTC_PRICE');
-      console.log(action.payload.data);
       return {
         ...state,
         loading: false,
         btcPrice: 10000 / action.payload.data,
       };
-    case ACTION_TYPES.WALLET_WEBSOCKET_ACTIVITY_MESSAGE: {
+    case ACTION_TYPES.WALLET_WEBSOCKET_ACTIVITY_MESSAGE:
       return {
         ...state,
         wallet: action.payload,
       };
+    case ACTION_TYPES.TX_WEBSOCKET_ACTIVITY_MESSAGE: {
+      const index = state.tx.findIndex(tx => tx.address === action.payload.address);
+      const stateX = {
+        ...state,
+        tx: [...state.tx.slice(0, index), action.payload, ...state.tx.slice(index + 1)],
+      };
+      console.log(stateX);
+      return stateX;
     }
     default:
       return state;
