@@ -1,9 +1,8 @@
 package com.jkrumm.btcpay.btc.websocket.dto;
 
-import com.jkrumm.btcpay.domain.Confidence;
+import com.jkrumm.btcpay.btc.websocket.dto.blockcypher.BlockCypherCompactDTO;
 import com.jkrumm.btcpay.service.dto.ConfidenceDTO;
 import com.jkrumm.btcpay.service.dto.TransactionDTO;
-import java.util.Collection;
 
 public class ConfirmationDTO {
 
@@ -11,10 +10,13 @@ public class ConfirmationDTO {
 
     private ConfidenceDTO confidence;
 
-    public ConfirmationDTO(String address, ConfidenceDTO confidence, TransactionDTO transaction) {
+    private BlockCypherCompactDTO blockCypher;
+
+    public ConfirmationDTO(String address, ConfidenceDTO confidence, TransactionDTO transaction, BlockCypherCompactDTO bc) {
         this.address = address;
         this.confidence = confidence;
         this.confidence.setTransaction(transaction);
+        this.blockCypher = bc;
     }
 
     public String getAddress() {
@@ -33,8 +35,16 @@ public class ConfirmationDTO {
         this.confidence = confidence;
     }
 
+    public BlockCypherCompactDTO getBlockCypher() {
+        return blockCypher;
+    }
+
+    public void setBlockCypher(BlockCypherCompactDTO blockCypher) {
+        this.blockCypher = blockCypher;
+    }
+
     @Override
     public String toString() {
-        return "ConfirmationDTO{" + "address='" + address + '\'' + ", confidence=" + confidence + '}';
+        return "ConfirmationDTO{" + "address='" + address + '\'' + ", confidence=" + confidence + ", blockCypher=" + blockCypher + '}';
     }
 }

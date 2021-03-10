@@ -149,15 +149,12 @@ const Transaction = (props: ITransactionProps) => {
     <div>
       <Heading icon={faHandshake} heading="Transaktion" />
       <WhiteSpace size="xl" />
-      {/*<WhiteSpace size="xl"/>*/}
       <WingBlank className="stepsExample">
         <Steps current={step} direction="horizontal" size="small">
           {steps}
         </Steps>
       </WingBlank>
       <WhiteSpace size="xl" />
-      {/*<hr/>*/}
-      {/*<WhiteSpace size="lg"/>*/}
       {step === 0 && (
         <Card title="Transaktion initiieren">
           <div onClick={() => inputRef.focus()}>
@@ -212,7 +209,7 @@ const Transaction = (props: ITransactionProps) => {
           <WhiteSpace size={'md'} />
           <Statistic title="Betrag in Euro" value={currentTx.amount} suffix={' €'} precision={2} className="small" />
           <WhiteSpace size={'md'} />
-          <Statistic title="Betrag in BTC" value={currentTx.actualAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
+          <Statistic title="Betrag in BTC" value={currentTx.expectedAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
           <WhiteSpace size={'md'} />
           <Statistic title="Service Fee" value={serviceFee} suffix={' %'} precision={2} className="small" />
         </Card>
@@ -248,10 +245,14 @@ const Transaction = (props: ITransactionProps) => {
             precision={2}
             className="small"
           />
+          {confirmation.blockCypher != null && (
+            <>
+              <WhiteSpace size={'md'} />
+              <Statistic title="Double Spend" value={confirmation.blockCypher.double_spend.valueOf().toString()} className="small" />
+            </>
+          )}
         </Card>
       )}
-      {/*<WhiteSpace size={'lg'}/>
-      <hr/>*/}
       <WhiteSpace size={'lg'} />
       {step !== 2 ? (
         <Button onClick={() => resetTx()} className={'footer-button'}>

@@ -1,9 +1,11 @@
 package com.jkrumm.btcpay.btc;
 
 import com.jkrumm.btcpay.domain.Merchant;
+import com.jkrumm.btcpay.domain.Transaction;
 import com.jkrumm.btcpay.service.dto.MerchantDTO;
 import com.jkrumm.btcpay.web.rest.MerchantResource;
 import java.security.Principal;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 public class ProfileController {
 
-    private final Logger log = LoggerFactory.getLogger(MerchantResource.class);
+    private final Logger log = LoggerFactory.getLogger(ProfileController.class);
 
     private final ProfileService profileService;
 
@@ -32,5 +34,11 @@ public class ProfileController {
     public Merchant getMerchant(Principal principal) {
         log.debug("REST request to get all Merchants");
         return profileService.getMerchant(principal);
+    }
+
+    @GetMapping("/transactions")
+    public List<Transaction> getTransactions(Principal principal) {
+        log.debug("REST request to get all users transactions");
+        return profileService.getTransactions(principal);
     }
 }

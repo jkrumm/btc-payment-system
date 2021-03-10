@@ -24,7 +24,7 @@ public class TxWsController {
     @MessageMapping("/txWs")
     @SendTo("/topic/tx")
     public ConfirmationDTO connectTxtWs() {
-        ConfirmationDTO confirmationDTO = new ConfirmationDTO("", null, null);
+        ConfirmationDTO confirmationDTO = new ConfirmationDTO("", null, null, null);
         log.info("Registered new listener for topic/tx / Current Tx: " + confirmationDTO.toString());
         return confirmationDTO;
     }

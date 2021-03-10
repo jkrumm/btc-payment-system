@@ -127,6 +127,14 @@ Generic styles
   white-space: pre-wrap;
 }
 
+.no-padding .ant-card-body {
+  padding: 0;
+}
+
+.transaction-list {
+  border-bottom: 1px solid lightgray;
+}
+
 /* padding helpers */
 
 @mixin pad($size, $side) {

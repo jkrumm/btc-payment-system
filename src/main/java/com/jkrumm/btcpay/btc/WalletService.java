@@ -1,12 +1,16 @@
 package com.jkrumm.btcpay.btc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.jkrumm.btcpay.btc.dto.StoredBlockDTO;
 import com.jkrumm.btcpay.btc.websocket.TxWsService;
 import com.jkrumm.btcpay.btc.websocket.WalletWsService;
 import com.jkrumm.btcpay.btc.websocket.dto.ConfirmationDTO;
 import com.jkrumm.btcpay.btc.websocket.dto.WalletDTO;
+import com.jkrumm.btcpay.btc.websocket.dto.blockcypher.BlockCypherCompactDTO;
+import com.jkrumm.btcpay.btc.websocket.dto.blockcypher.BlockCypherDTO;
 import com.jkrumm.btcpay.domain.Confidence;
 import com.jkrumm.btcpay.domain.Transaction;
 import com.jkrumm.btcpay.domain.enumeration.ConfidenceType;
@@ -14,6 +18,8 @@ import com.jkrumm.btcpay.service.dto.ConfidenceDTO;
 import com.jkrumm.btcpay.service.dto.TransactionDTO;
 import com.jkrumm.btcpay.service.mapper.ConfidenceMapper;
 import com.jkrumm.btcpay.service.mapper.TransactionMapper;
+import java.io.IOException;
+import java.net.URL;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,7 +40,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WalletService {
 
-    private final Logger log = LoggerFactory.getLogger(WalletConfiguration.class);
+    private final Logger log = LoggerFactory.getLogger(WalletService.class);
 
     @Autowired
     private WalletAppKit walletAppKit;
@@ -98,7 +104,8 @@ public class WalletService {
                             ConfirmationDTO confirmationDTO = new ConfirmationDTO(
                                 address.toString(),
                                 confidenceMapper.toDto(confidence),
-                                transactionMapper.toDto(transaction)
+                                transactionMapper.toDto(transaction),
+                                null
                             );
                             log.info("confirmationDTO : " + confirmationDTO.toString());
                             txWsService.sendMessage(confirmationDTO);
@@ -111,7 +118,7 @@ public class WalletService {
                         new FutureCallback<TransactionConfidence>() {
                             @Override
                             public void onSuccess(TransactionConfidence result) {
-                                System.out.println("Received tx " + value.toFriendlyString() + " is confirmed.");
+                                System.out.println("Received tx " + tx.getTxId() + " is confirmed.");
                                 /*
                                 for (TransactionOutput output : tx.getOutputs()) {
                                     if (output.isMine(wallet)) {
@@ -134,30 +141,69 @@ public class WalletService {
 
                             @Override
                             public void onFailure(Throwable t) {
-                                System.out.println("Received tx " + value.toFriendlyString() + " failed.");
-                                /*
-                                for (TransactionOutput output : tx.getOutputs()) {
-                                    if (output.isMine(wallet)) {
-                                        Script script = output.getScriptPubKey();
-                                        Address address = script.getToAddress(walletAppKit.wallet().getNetworkParameters(), true);
-                                        log.info("Failed tx by blockchain for address " + address.toString());
-                                        Transaction txDb = repos.transaction.findByAddress(address.toString()).get(0);
-                                        Confidence confidence = new Confidence();
-                                        confidence.setChangeAt(Instant.now());
-                                        confidence.setConfidenceType(ConfidenceType.DEAD);
-                                        confidence.setConfirmations(1);
-                                        txDb.addConfidence(confidence);
-                                        log.info("Saved Tx: " + txDb.toString());
-                                        txWsService.sendMessage(transactionMapper.toDto(txDb));
-                                    } else {
-                                        log.error("Received tx NOT for this wallet!");
-                                    }
-                                }*/
+                                System.out.println("Received tx " + tx.getTxId() + " failed.");
+
+                                // Persist updated Transaction and Confirmation to db
+                                Transaction txDb = repos.transaction.findTopByTxHash(tx.getTxId().toString());
+                                Confidence confidence = new Confidence();
+                                confidence.setChangeAt(Instant.now());
+                                confidence.setConfidenceType(ConfidenceType.DEAD);
+                                confidence.setConfirmations(tx.getConfidence().getDepthInBlocks());
+                                confidence.setTransaction(txDb);
+                                confidence = repos.confidence.save(confidence);
+                                log.info("Saved confidence: " + confidence.toString());
+                                txDb.addConfidence(confidence);
+                                log.info("Saved Tx: " + txDb.toString());
+
+                                // Update Frontend using WebSocket
+                                ConfirmationDTO confirmationDTO = new ConfirmationDTO(
+                                    txDb.getAddress(),
+                                    confidenceMapper.toDto(confidence),
+                                    transactionMapper.toDto(txDb),
+                                    null
+                                );
+                                log.info("confirmationDTO : " + confirmationDTO.toString());
+                                txWsService.sendMessage(confirmationDTO);
                             }
                         },
                         MoreExecutors.directExecutor()
                     );
                 }
+            );
+
+        walletAppKit
+            .wallet()
+            .addTransactionConfidenceEventListener(
+                (
+                    (wallet, tx) -> {
+                        int depth = tx.getConfidence().getDepthInBlocks();
+                        if (depth > 0 && depth <= 6) {
+                            log.info("TransactionConfidenceEventListener : " + tx.getTxId() + " : " + depth);
+
+                            // Persist updated Transaction and Confirmation to db
+                            Transaction txDb = repos.transaction.findTopByTxHash(tx.getTxId().toString());
+                            Confidence confidence = new Confidence();
+                            confidence.setChangeAt(Instant.now());
+                            confidence.setConfidenceType(ConfidenceType.CONFIRMED);
+                            confidence.setConfirmations(depth);
+                            confidence.setTransaction(txDb);
+                            confidence = repos.confidence.save(confidence);
+                            log.info("Saved confidence: " + confidence.toString());
+                            txDb.addConfidence(confidence);
+                            log.info("Saved Tx: " + txDb.toString());
+
+                            // Update Frontend using WebSocket
+                            ConfirmationDTO confirmationDTO = new ConfirmationDTO(
+                                txDb.getAddress(),
+                                confidenceMapper.toDto(confidence),
+                                transactionMapper.toDto(txDb),
+                                null
+                            );
+                            log.info("confirmationDTO : " + confirmationDTO.toString());
+                            txWsService.sendMessage(confirmationDTO);
+                        }
+                    }
+                )
             );
 
         walletAppKit
@@ -170,16 +216,18 @@ public class WalletService {
                         log.info(
                             "walletChangeEventListener : " + wallet.getLastBlockSeenHeight() + " Balance : " + walletDTO.getAvailable()
                         );
-                        /* log.info("walletChangeEventListener : " + wallet.toString()); */
                         for (org.bitcoinj.core.Transaction tx : wallet.getPendingTransactions()) {
                             log.info("numBroadcastPeers() " + tx.getConfidence().numBroadcastPeers());
-                            if (tx.getConfidence().numBroadcastPeers() == 12) {
+                            if (tx.getConfidence().numBroadcastPeers() == 10) {
                                 for (TransactionOutput output : tx.getOutputs()) {
                                     if (output.isMine(wallet)) {
+                                        // Get Transaction from db
                                         Script script = output.getScriptPubKey();
                                         Address address = script.getToAddress(walletAppKit.wallet().getNetworkParameters(), true);
                                         log.info("Confirmed tx by peers for address " + address.toString());
                                         Transaction txDb = repos.transaction.findByAddress(address.toString()).get(0);
+
+                                        // Persist updated Transaction and Confirmation to db
                                         Confidence confidence = new Confidence();
                                         confidence.setChangeAt(Instant.now());
                                         confidence.setConfidenceType(ConfidenceType.CONFIRMED);
@@ -189,13 +237,43 @@ public class WalletService {
                                         log.info("Saved confidence: " + confidence.toString());
                                         txDb.addConfidence(confidence);
                                         log.info("Saved Tx: " + txDb.toString());
-                                        ConfirmationDTO confirmationDTO = new ConfirmationDTO(
-                                            address.toString(),
-                                            confidenceMapper.toDto(confidence),
-                                            transactionMapper.toDto(txDb)
-                                        );
-                                        log.info("confirmationDTO : " + confirmationDTO.toString());
-                                        txWsService.sendMessage(confirmationDTO);
+
+                                        // Fetch BlockCypher validation
+                                        ObjectMapper objectMapper = new ObjectMapper();
+                                        try {
+                                            BlockCypherDTO bc = objectMapper.readValue(
+                                                new URL(
+                                                    "https://api.blockcypher.com/v1/btc/test3/txs/" +
+                                                    txDb.getTxHash() +
+                                                    "?includeConfidence=true?token=4309e288604540068f4395ae1a54a907"
+                                                ),
+                                                BlockCypherDTO.class
+                                            );
+
+                                            BlockCypherCompactDTO blockCypherCompactDTO = new BlockCypherCompactDTO(
+                                                bc.getTotal(),
+                                                bc.getFees(),
+                                                bc.getSize(),
+                                                bc.getVsize(),
+                                                bc.getPreference(),
+                                                bc.getDoubleSpend(),
+                                                bc.getConfirmations(),
+                                                bc.getConfidence()
+                                            );
+                                            log.info("blockCypherDTO: " + blockCypherCompactDTO.toString());
+
+                                            // Update Frontend using WebSocket
+                                            ConfirmationDTO confirmationDTO = new ConfirmationDTO(
+                                                address.toString(),
+                                                confidenceMapper.toDto(confidence),
+                                                transactionMapper.toDto(txDb),
+                                                blockCypherCompactDTO
+                                            );
+                                            log.info("confirmationDTO : " + confirmationDTO.toString());
+                                            txWsService.sendMessage(confirmationDTO);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
                                     } else {
                                         log.info("Received tx NOT for this wallet!");
                                     }

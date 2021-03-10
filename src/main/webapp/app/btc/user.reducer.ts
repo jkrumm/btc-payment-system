@@ -7,6 +7,7 @@ export const ACTION_TYPES = {
   TX_WEBSOCKET_ACTIVITY_MESSAGE: 'wallet/TX_WEBSOCKET_ACTIVITY_MESSAGE',
   FETCH_WALLET: 'wallet/FETCH_WALLET',
   FETCH_MERCHANT: 'user/FETCH_MERCHANT',
+  FETCH_TRANSACTIONS: 'user/FETCH_TRANSACTIONS',
   INIT_TX: 'user/INIT_TX',
   GET_BTC_PRICE: 'user/GET_BTC_PRICE',
 };
@@ -66,6 +67,16 @@ const initialState = {
           },
         },
       },
+      blockCypher: {
+        total: 0,
+        fees: 0,
+        size: 0,
+        vsize: 0,
+        preference: '',
+        double_spend: false,
+        confirmations: 0,
+        confidence: 0,
+      },
     },
   ],
   currentTx: {
@@ -89,6 +100,41 @@ const initialState = {
       login: '',
     },
   },
+  transactions: [
+    {
+      actualAmount: 0,
+      address: '',
+      amount: 0,
+      btcUsd: 0,
+      expectedAmount: 0,
+      initiatedAt: null,
+      confidence: {
+        id: 0,
+        confidenceType: '',
+        confirmations: 0,
+        changeAt: 0,
+      },
+      dateDiff: {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      },
+      merchant: {
+        id: 0,
+        name: '',
+        email: '',
+      },
+      serviceFee: 0,
+      transactionFee: 0,
+      transactionType: '',
+      txHash: '',
+      user: {
+        id: 0,
+        login: '',
+      },
+    },
+  ],
 };
 
 export type UserState = Readonly<typeof initialState>;
@@ -99,6 +145,7 @@ export default (state: UserState = initialState, action): UserState => {
   switch (action.type) {
     case (REQUEST(ACTION_TYPES.FETCH_WALLET),
     REQUEST(ACTION_TYPES.FETCH_MERCHANT),
+    REQUEST(ACTION_TYPES.FETCH_TRANSACTIONS),
     REQUEST(ACTION_TYPES.INIT_TX),
     REQUEST(ACTION_TYPES.GET_BTC_PRICE)):
       return {
@@ -108,6 +155,7 @@ export default (state: UserState = initialState, action): UserState => {
       };
     case (FAILURE(ACTION_TYPES.FETCH_WALLET),
     FAILURE(ACTION_TYPES.FETCH_MERCHANT),
+    FAILURE(ACTION_TYPES.FETCH_TRANSACTIONS),
     FAILURE(ACTION_TYPES.INIT_TX),
     FAILURE(ACTION_TYPES.GET_BTC_PRICE)):
       return {
@@ -126,6 +174,12 @@ export default (state: UserState = initialState, action): UserState => {
         ...state,
         loading: false,
         merchant: action.payload.data,
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_TRANSACTIONS):
+      return {
+        ...state,
+        loading: false,
+        transactions: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.INIT_TX):
       return {
@@ -168,6 +222,11 @@ export const getWallet = () => ({
 export const getMerchant = () => ({
   type: ACTION_TYPES.FETCH_MERCHANT,
   payload: axios.get('/api/user/merchant'),
+});
+
+export const getTransactions = () => ({
+  type: ACTION_TYPES.FETCH_TRANSACTIONS,
+  payload: axios.get('/api/user/transactions'),
 });
 
 export const initTx = amount => ({
