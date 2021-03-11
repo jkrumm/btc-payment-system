@@ -1,15 +1,16 @@
 package com.jkrumm.btcpay.btc;
 
+import com.jkrumm.btcpay.btc.dto.TimeAgo;
+import com.jkrumm.btcpay.btc.dto.TransactionHistory;
+import com.jkrumm.btcpay.btc.dto.TransactionHistoryConfidence;
+import com.jkrumm.btcpay.domain.Confidence;
 import com.jkrumm.btcpay.domain.Merchant;
-import com.jkrumm.btcpay.domain.MerchantUser;
 import com.jkrumm.btcpay.domain.Transaction;
 import com.jkrumm.btcpay.domain.User;
-import com.jkrumm.btcpay.service.dto.MerchantDTO;
-import com.jkrumm.btcpay.service.dto.MerchantUserDTO;
-import com.jkrumm.btcpay.service.mapper.MerchantMapper;
+import com.jkrumm.btcpay.domain.enumeration.ConfidenceType;
 import java.security.Principal;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import org.bitcoinj.core.TransactionConfidence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,16 +37,52 @@ public class ProfileService {
         }
     }
 
-    List<Transaction> getTransactions(Principal principal) {
+    List<TransactionHistory> getTransactions() {
         log.info("Called getTransactions() in ProfileService");
-        Optional<User> user = repos.user.findOneByLogin(principal.getName());
-        log.info(user.toString());
-        if (user.isPresent()) {
-            List<Transaction> transactions = repos.transaction.findByUserIsCurrentUserOrderByInitiatedAtDesc();
-            log.info("getTransactions(): " + transactions.size());
-            return transactions;
-        } else {
-            throw new NullPointerException();
+        List<Transaction> transactions = repos.transaction.findByUserIsCurrentUser();
+        List<TransactionHistory> transactionHistories = new ArrayList<>();
+        for (Transaction tx : transactions) {
+            List<Confidence> confidences = repos.confidence.findByTransactionOrderByChangeAtDesc(tx);
+            List<TransactionHistoryConfidence> transactionHistoryConfidences = new ArrayList<>();
+            ConfidenceType confidenceType = ConfidenceType.UNKNOWN;
+            Integer confirmations = 0;
+            if (confidences.size() > 0) {
+                confidenceType = confidences.get(0).getConfidenceType();
+                confirmations = confidences.get(0).getConfirmations();
+                for (Confidence conf : confidences) {
+                    transactionHistoryConfidences.add(
+                        new TransactionHistoryConfidence(
+                            conf.getId(),
+                            conf.getChangeAt(),
+                            conf.getConfidenceType(),
+                            conf.getConfirmations()
+                        )
+                    );
+                }
+            }
+            String timeAgoString = TimeAgo.toRelative(Date.from(tx.getInitiatedAt()), new Date());
+            transactionHistories.add(
+                new TransactionHistory(
+                    tx.getId(),
+                    tx.getAddress(),
+                    tx.getInitiatedAt(),
+                    tx.getTransactionType(),
+                    tx.getTxHash(),
+                    tx.getExpectedAmount(),
+                    tx.getActualAmount(),
+                    tx.getTransactionFee(),
+                    tx.getServiceFee(),
+                    tx.getBtcUsd(),
+                    tx.getAmount(),
+                    transactionHistoryConfidences,
+                    timeAgoString,
+                    confidenceType,
+                    confirmations
+                )
+            );
         }
+        Collections.reverse(transactionHistories);
+        log.info("getTransactions(): " + transactionHistories.size());
+        return transactionHistories;
     }
 }

@@ -1,5 +1,6 @@
 package com.jkrumm.btcpay.btc;
 
+import com.jkrumm.btcpay.btc.dto.TransactionHistory;
 import com.jkrumm.btcpay.domain.Merchant;
 import com.jkrumm.btcpay.domain.Transaction;
 import com.jkrumm.btcpay.service.dto.MerchantDTO;
@@ -37,8 +38,8 @@ public class ProfileController {
     }
 
     @GetMapping("/transactions")
-    public List<Transaction> getTransactions(Principal principal) {
+    public List<TransactionHistory> getTransactions() {
         log.debug("REST request to get all users transactions");
-        return profileService.getTransactions(principal);
+        return profileService.getTransactions();
     }
 }

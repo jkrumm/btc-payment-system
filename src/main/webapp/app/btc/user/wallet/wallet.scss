@@ -1,0 +1,16 @@
+.ant-collapse-item {
+  &.success .ant-collapse-header {
+    background: rgba(0, 128, 0, 0.1);
+  }
+  &.warning .ant-collapse-header {
+    background: rgba(255, 165, 0, 0.1);
+  }
+
+  .ant-collapse-header > div > span:last-of-type {
+    float: right;
+  }
+
+  .tiny span {
+    word-wrap: anywhere;
+  }
+}

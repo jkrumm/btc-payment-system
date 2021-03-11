@@ -19,18 +19,8 @@ export interface ITransactionProps extends StateProps, DispatchProps {
   dateDiff: any;
 }
 
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
-}
-
 const Wallet = (props: ITransactionProps) => {
   const { wallet, tx, transactions } = props;
-  const [txData, setTxData] = useState(transactions);
-  const [trigger, setTrigger] = useState(false);
   const [timeAgo, setTimeAgo] = useState(new DateDiff(new Date(), new Date(wallet.blockMinedAt)));
 
   useEffect(() => {
@@ -40,39 +30,9 @@ const Wallet = (props: ITransactionProps) => {
       const date = new Date();
       const dateDiff = new DateDiff(date.getTime(), new Date(wallet.blockMinedAt));
       setTimeAgo(dateDiff);
-      const newTxData = txData;
-      newTxData.forEach(txDataItem => {
-        const df = new DateDiff(new Date(), new Date(txDataItem.initiatedAt));
-        txDataItem.dateDiff = {
-          days: 0,
-          hours: 0,
-          minutes: 0,
-          seconds: 0,
-        };
-        txDataItem.dateDiff.days = df.days;
-        txDataItem.dateDiff.hours = df.hours;
-        txDataItem.dateDiff.minutes = df.minutes;
-        txDataItem.dateDiff.seconds = df.seconds;
-      });
-      newTxData.sort((a, b) => {
-        const date1 = new Date(a.initiatedAt);
-        const date2 = new Date(b.initiatedAt);
-        return date2.getTime() - date1.getTime();
-      });
-      if (tx.length > 1) {
-        tx.forEach(txItem => {
-          newTxData.forEach(txDataItem => {
-            if (txItem.address === txDataItem.address) {
-              txDataItem.confidence = txItem.confidence;
-            }
-          });
-        });
-        setTxData(newTxData);
-      }
-      setTrigger(!trigger);
-    }, 15000);
+    }, 1000);
     return () => clearInterval(interval);
-  }, [trigger]);
+  }, [tx, wallet.blockHeight]);
 
   return (
     <div>
@@ -105,36 +65,60 @@ const Wallet = (props: ITransactionProps) => {
       <WhiteSpace size={'md'} />
       <Card title="Transaktionen" className="no-padding">
         <Collapse>
-          {txData[1].dateDiff != null ? (
+          {transactions[1] !== undefined && transactions[1] !== null ? (
             <>
-              {txData.map((item, index) => (
-                <div key={index} className="transaction-list">
-                  <span>{item.transactionType}</span>
-                  <div>
-                    <div>
-                      <span>
-                        {item.dateDiff.days}d {item.dateDiff.hours}h {item.dateDiff.minutes}m {item.dateDiff.seconds}s
-                      </span>
-                    </div>
-                    {item.confidence != null ? (
-                      <div>
-                        Bestätigungen <span>{item.confidence.confirmations}</span>
-                      </div>
-                    ) : (
-                      <div>
-                        Bestätigungen <span>Nan</span>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <div>
-                      Amount <span>{item.amount}</span>
-                    </div>
-                    <div>
-                      BTC <span>{item.actualAmount}</span>
-                    </div>
-                  </div>
-                </div>
+              {transactions.map(item => (
+                <>
+                  {item.actualAmount != null && (
+                    <Collapse.Panel
+                      key={item.id}
+                      className={item.confidenceType === 'CONFIRMED' ? 'success' : 'warning'}
+                      header={
+                        <div>
+                          <span>
+                            {item.amount}€ | {item.confirmations} | {item.transactionType}
+                          </span>
+                          <span>{item.timeAgo}</span>
+                        </div>
+                      }
+                    >
+                      <Statistic title="Addresse" value={item.address} className="tiny" />
+                      <Statistic title="Transaktion Hash" value={item.txHash} className="tiny" />
+                      <Statistic
+                        title="Transaktion initiiert"
+                        value={dayjs(item.initiatedAt).format('DD.MM.YY HH:mm:ss')}
+                        className="tiny"
+                      />
+                      <Statistic title="Validierung" value={item.confidenceType} className="tiny" />
+                      <Statistic title="Bestätigungen" value={item.confirmations} className="tiny" />
+                      <WhiteSpace size={'md'} />
+                      <Statistic title="Preis" value={item.amount} suffix={' €'} precision={2} className="tiny" />
+                      <Statistic title="BTC / Euro" value={item.btcUsd} suffix={' €'} precision={2} className="tiny" />
+                      <Statistic
+                        title="Erwartete BTC"
+                        value={item.expectedAmount / 100000000}
+                        suffix={' BTC'}
+                        precision={8}
+                        className="tiny"
+                      />
+                      <Statistic
+                        title="Erhaltene BTC"
+                        value={item.actualAmount / 100000000}
+                        suffix={' BTC'}
+                        precision={8}
+                        className="tiny"
+                      />
+                      <Statistic
+                        title="Transaktionskosten"
+                        value={item.transactionFee / 100000000}
+                        suffix={' BTC'}
+                        precision={8}
+                        className="tiny"
+                      />
+                      <Statistic title="Servicekosten" value={item.serviceFee / 100000000} suffix={' BTC'} precision={8} className="tiny" />
+                    </Collapse.Panel>
+                  )}
+                </>
               ))}
             </>
           ) : (

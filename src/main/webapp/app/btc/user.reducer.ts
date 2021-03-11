@@ -102,37 +102,28 @@ const initialState = {
   },
   transactions: [
     {
-      actualAmount: 0,
+      id: 0,
       address: '',
+      initiatedAt: null,
+      actualAmount: 0,
       amount: 0,
       btcUsd: 0,
       expectedAmount: 0,
-      initiatedAt: null,
-      confidence: {
-        id: 0,
-        confidenceType: '',
-        confirmations: 0,
-        changeAt: 0,
-      },
-      dateDiff: {
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-      },
-      merchant: {
-        id: 0,
-        name: '',
-        email: '',
-      },
+      confidences: [
+        {
+          id: 0,
+          confidenceType: '',
+          confirmations: 0,
+          changeAt: 0,
+        },
+      ],
       serviceFee: 0,
       transactionFee: 0,
       transactionType: '',
       txHash: '',
-      user: {
-        id: 0,
-        login: '',
-      },
+      timeAgo: '',
+      confidenceType: '',
+      confirmations: 0,
     },
   ],
 };
