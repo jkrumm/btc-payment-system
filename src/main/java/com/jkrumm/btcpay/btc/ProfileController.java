@@ -1,10 +1,12 @@
 package com.jkrumm.btcpay.btc;
 
+import com.jkrumm.btcpay.btc.dto.MerchantWallet;
 import com.jkrumm.btcpay.btc.dto.TransactionHistory;
 import com.jkrumm.btcpay.domain.Merchant;
 import com.jkrumm.btcpay.domain.Transaction;
 import com.jkrumm.btcpay.service.dto.MerchantDTO;
 import com.jkrumm.btcpay.web.rest.MerchantResource;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import org.slf4j.Logger;
@@ -33,13 +35,19 @@ public class ProfileController {
      */
     @GetMapping("/merchant")
     public Merchant getMerchant(Principal principal) {
-        log.debug("REST request to get all Merchants");
+        log.debug("REST request to get merchant");
         return profileService.getMerchant(principal);
+    }
+
+    @GetMapping("/wallet")
+    public MerchantWallet getWallet() throws IOException {
+        log.debug("REST request to get merchant wallet");
+        return profileService.getWallet();
     }
 
     @GetMapping("/transactions")
     public List<TransactionHistory> getTransactions() {
-        log.debug("REST request to get all users transactions");
+        log.debug("REST request to get all merchant transactions");
         return profileService.getTransactions();
     }
 }

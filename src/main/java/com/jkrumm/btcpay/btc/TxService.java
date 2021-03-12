@@ -100,12 +100,10 @@ public class TxService {
         } catch (IOException e) {
             log.info("I/O Error: " + e.getMessage());
         }
-        log.info("getEuroToBtc : " + String.valueOf(result));
         return result;
     }
 
     Double getBtcEuroPrice() throws IOException {
-        log.info("getBtcEuroPrice : " + String.valueOf(10000 / getEuroToBtc(10000.0)));
         return 10000 / getEuroToBtc(10000.0);
     }
 

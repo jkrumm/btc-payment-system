@@ -75,7 +75,6 @@ public class WalletService {
                     log.info("Triggered: addCoinsReceivedEventListener");
                     Coin value = tx.getValueSentToMe(wallet);
                     log.info("Received tx for " + value.toFriendlyString());
-                    /* TransactionOutput output = tx.getOutputs().get(1); */
                     for (TransactionOutput output : tx.getOutputs()) {
                         if (output.isMine(wallet)) {
                             Script script = output.getScriptPubKey();
@@ -201,6 +200,24 @@ public class WalletService {
                             );
                             log.info("confirmationDTO : " + confirmationDTO.toString());
                             txWsService.sendMessage(confirmationDTO);
+                        } else if (depth > 6 && !tx.getConfidence().getConfidenceType().equals(TransactionConfidence.ConfidenceType.DEAD)) {
+                            log.info("TransactionConfidenceEventListener 6 : " + tx.getTxId() + " : " + depth);
+                            log.info("TransactionConfidenceEventListener 6 : " + tx.getConfidence().getConfidenceType());
+
+                            // Persist updated Transaction and Confirmation to db
+                            Transaction txDb = repos.transaction.findTopByTxHash(tx.getTxId().toString());
+                            Confidence conf = repos.confidence.findFirstByTransactionOrderByChangeAt(txDb);
+                            if (conf.getConfirmations() != 6) {
+                                Confidence confidence = new Confidence();
+                                confidence.setChangeAt(Instant.now());
+                                confidence.setConfidenceType(ConfidenceType.CONFIRMED);
+                                confidence.setConfirmations(depth);
+                                confidence.setTransaction(txDb);
+                                confidence = repos.confidence.save(confidence);
+                                log.info("Saved confidence: " + confidence.toString());
+                                txDb.addConfidence(confidence);
+                                log.info("Saved Tx: " + txDb.toString());
+                            }
                         }
                     }
                 )
@@ -278,9 +295,9 @@ public class WalletService {
                                         log.info("Received tx NOT for this wallet!");
                                     }
                                 }
+                                walletWsService.sendMessage(walletDTO);
                             }
                         }
-                        walletWsService.sendMessage(walletDTO);
                     }
                 )
             );

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { IRootState } from 'app/shared/reducers';
-import { getWallet, getTransactions } from 'app/btc/user.reducer';
+import { getWallet, getTransactions, getMerchantWallet } from 'app/btc/user.reducer';
 import { WhiteSpace } from 'antd-mobile';
-import { Card, Statistic, Alert, Collapse } from 'antd';
+import { Card, Statistic, Alert, Collapse, Button } from 'antd';
 import dayjs from 'dayjs';
 
 import { Heading } from 'app/shared/util/ui-components';
@@ -20,19 +20,24 @@ export interface ITransactionProps extends StateProps, DispatchProps {
 }
 
 const Wallet = (props: ITransactionProps) => {
-  const { wallet, tx, transactions } = props;
+  const { wallet, merchantWallet, tx, transactions } = props;
+  const [refresh, setRefresh] = useState(0);
   const [timeAgo, setTimeAgo] = useState(new DateDiff(new Date(), new Date(wallet.blockMinedAt)));
 
   useEffect(() => {
     props.getTransactions();
     props.getWallet();
+    props.getMerchantWallet();
     const interval = setInterval(() => {
       const date = new Date();
       const dateDiff = new DateDiff(date.getTime(), new Date(wallet.blockMinedAt));
+      if (dateDiff.seconds < 0) {
+        setRefresh(refresh + 1);
+      }
       setTimeAgo(dateDiff);
     }, 1000);
     return () => clearInterval(interval);
-  }, [tx, wallet.blockHeight]);
+  }, [tx, refresh, wallet.blockHeight]);
 
   return (
     <div>
@@ -40,6 +45,10 @@ const Wallet = (props: ITransactionProps) => {
       {props.loading && <h1>LOADING</h1>}
       {props.errorMessage && <Alert message="Error Message" description={props.errorMessage} type="warning" closable />}
       <WhiteSpace size={'xl'} />
+      <Button onClick={() => setRefresh(refresh + 1)} style={{ width: '100%' }}>
+        Aktualisieren
+      </Button>
+      <WhiteSpace size={'md'} />
       <Card title="Letzter Block">
         <Statistic title="Block Höhe" value={wallet.blockHeight} />
         <WhiteSpace size={'lg'} />
@@ -52,16 +61,52 @@ const Wallet = (props: ITransactionProps) => {
           <br />
           Mined: {wallet.blockMinedAt}
           <WhiteSpace size={'md'} />
-          <Statistic title="Available" value={wallet.available} />
-          <Statistic title="Available spendable" value={wallet.availableSpendable} />
-          <Statistic title="Estimated" value={wallet.estimated} />
-          <Statistic title="Estimated Spendable" value={wallet.estimatedSpendable} />
-          <Statistic title="Tx Pending" value={wallet.pending} />
-          <Statistic title="Tx Unspent" value={wallet.unspent} />
-          <Statistic title="Tx Spent" value={wallet.spent} />
-          <Statistic title="Tx Dead" value={wallet.dead} />
+          <Statistic title="Available" value={wallet.available / 100000000} suffix={' BTC'} precision={8} className="tiny" />
+          <Statistic
+            title="Available spendable"
+            value={wallet.availableSpendable / 100000000}
+            suffix={' BTC'}
+            precision={8}
+            className="tiny"
+          />
+          <Statistic title="Estimated" value={wallet.estimated / 100000000} suffix={' BTC'} precision={8} className="tiny" />
+          <Statistic
+            title="Estimated Spendable"
+            value={wallet.estimatedSpendable / 100000000}
+            suffix={' BTC'}
+            precision={8}
+            className="tiny"
+          />
+          <Statistic title="Tx Pending" value={wallet.pending} className="tiny" />
+          <Statistic title="Tx Unspent" value={wallet.unspent} className="tiny" />
+          <Statistic title="Tx Spent" value={wallet.spent} className="tiny" />
+          <Statistic title="Tx Dead" value={wallet.dead} className="tiny" />
         </Collapse.Panel>
       </Collapse>
+      <WhiteSpace size={'md'} />
+      <Card title="Wallet">
+        <Statistic
+          title="Erwartet"
+          value={merchantWallet.estimated / 100000000}
+          suffix={merchantWallet.estimatedUsd + ' €'}
+          precision={8}
+          className="small suffix"
+        />
+        <Statistic
+          title="Verfügbar"
+          value={merchantWallet.spendable / 100000000}
+          suffix={merchantWallet.spendableUsd + ' €'}
+          precision={8}
+          className="small suffix"
+        />
+        <Statistic
+          title="Servicekosten"
+          value={merchantWallet.serviceFee / 100000000}
+          suffix={merchantWallet.serviceFeeUsd + ' €'}
+          precision={8}
+          className="small suffix"
+        />
+      </Card>
       <WhiteSpace size={'md'} />
       <Card title="Transaktionen" className="no-padding">
         <Collapse>
@@ -83,7 +128,7 @@ const Wallet = (props: ITransactionProps) => {
                       }
                     >
                       <Statistic title="Addresse" value={item.address} className="tiny" />
-                      <Statistic title="Transaktion Hash" value={item.txHash} className="tiny" />
+                      <Statistic title="Transaktion Hash" value={item.txHash} className="tiny margin-top" />
                       <Statistic
                         title="Transaktion initiiert"
                         value={dayjs(item.initiatedAt).format('DD.MM.YY HH:mm:ss')}
@@ -116,6 +161,13 @@ const Wallet = (props: ITransactionProps) => {
                         className="tiny"
                       />
                       <Statistic title="Servicekosten" value={item.serviceFee / 100000000} suffix={' BTC'} precision={8} className="tiny" />
+                      <WhiteSpace size={'md'} />
+                      <h6>Bestätigungen</h6>
+                      {item.confidences.map(conf => (
+                        <div key={conf.id}>
+                          {dayjs(conf.changeAt).format('DD.MM.YY HH:mm:ss')} | {conf.confidenceType} | {conf.confirmations}
+                        </div>
+                      ))}
                     </Collapse.Panel>
                   )}
                 </>
@@ -133,13 +185,18 @@ const Wallet = (props: ITransactionProps) => {
 const mapStateToProps = ({ authentication, user }: IRootState) => ({
   isAuthenticated: authentication.isAuthenticated,
   wallet: user.wallet,
+  merchantWallet: user.merchantWallet,
   tx: user.tx,
   transactions: user.transactions,
   loading: user.loading,
   errorMessage: user.errorMessage,
 });
 
-const mapDispatchToProps = { getWallet, getTransactions };
+const mapDispatchToProps = {
+  getWallet,
+  getTransactions,
+  getMerchantWallet,
+};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

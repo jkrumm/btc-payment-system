@@ -8,6 +8,11 @@
     line-height: 1;
     margin-bottom: -3px;
   }
+
+  &.suffix .ant-statistic-content-suffix {
+    float: right;
+    margin-top: 8px;
+  }
 }
 
 .tiny {

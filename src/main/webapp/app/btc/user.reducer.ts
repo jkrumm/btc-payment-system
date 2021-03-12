@@ -7,6 +7,7 @@ export const ACTION_TYPES = {
   TX_WEBSOCKET_ACTIVITY_MESSAGE: 'wallet/TX_WEBSOCKET_ACTIVITY_MESSAGE',
   FETCH_WALLET: 'wallet/FETCH_WALLET',
   FETCH_MERCHANT: 'user/FETCH_MERCHANT',
+  FETCH_MERCHANT_WALLET: 'user/FETCH_MERCHANT_WALLET',
   FETCH_TRANSACTIONS: 'user/FETCH_TRANSACTIONS',
   INIT_TX: 'user/INIT_TX',
   GET_BTC_PRICE: 'user/GET_BTC_PRICE',
@@ -36,6 +37,14 @@ const initialState = {
       percent: 0,
       percentSecure: 0,
     },
+  },
+  merchantWallet: {
+    estimated: 0,
+    estimatedUsd: 0,
+    spendable: 0,
+    spendableUsd: 0,
+    serviceFee: 0,
+    serviceFeeUsd: 0,
   },
   tx: [
     {
@@ -136,6 +145,7 @@ export default (state: UserState = initialState, action): UserState => {
   switch (action.type) {
     case (REQUEST(ACTION_TYPES.FETCH_WALLET),
     REQUEST(ACTION_TYPES.FETCH_MERCHANT),
+    REQUEST(ACTION_TYPES.FETCH_MERCHANT_WALLET),
     REQUEST(ACTION_TYPES.FETCH_TRANSACTIONS),
     REQUEST(ACTION_TYPES.INIT_TX),
     REQUEST(ACTION_TYPES.GET_BTC_PRICE)):
@@ -146,6 +156,7 @@ export default (state: UserState = initialState, action): UserState => {
       };
     case (FAILURE(ACTION_TYPES.FETCH_WALLET),
     FAILURE(ACTION_TYPES.FETCH_MERCHANT),
+    FAILURE(ACTION_TYPES.FETCH_MERCHANT_WALLET),
     FAILURE(ACTION_TYPES.FETCH_TRANSACTIONS),
     FAILURE(ACTION_TYPES.INIT_TX),
     FAILURE(ACTION_TYPES.GET_BTC_PRICE)):
@@ -165,6 +176,12 @@ export default (state: UserState = initialState, action): UserState => {
         ...state,
         loading: false,
         merchant: action.payload.data,
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_MERCHANT_WALLET):
+      return {
+        ...state,
+        loading: false,
+        merchantWallet: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.FETCH_TRANSACTIONS):
       return {
@@ -213,6 +230,11 @@ export const getWallet = () => ({
 export const getMerchant = () => ({
   type: ACTION_TYPES.FETCH_MERCHANT,
   payload: axios.get('/api/user/merchant'),
+});
+
+export const getMerchantWallet = () => ({
+  type: ACTION_TYPES.FETCH_MERCHANT_WALLET,
+  payload: axios.get('/api/user/wallet'),
 });
 
 export const getTransactions = () => ({

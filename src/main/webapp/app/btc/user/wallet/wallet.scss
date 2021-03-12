@@ -10,7 +10,8 @@
     float: right;
   }
 
-  .tiny span {
+  .tiny.margin-top span {
     word-wrap: anywhere;
+    margin-top: 11px;
   }
 }
