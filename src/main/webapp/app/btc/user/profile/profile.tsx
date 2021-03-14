@@ -26,25 +26,25 @@ const Profile = (props: IProfileProps) => {
 
   return (
     <div>
-      <Heading icon={faHandshake} heading="Profil" />
+      <Heading icon={'https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/profile_1tbUqj2YI.svg'} heading="Profil" />
       <WhiteSpace size="xl" />
-      <Card title="Nutzer Details">
+      <Card title="Nutzer">
         <Statistic title="Benutzername" value={account.login} className={'small'} />
-        <WhiteSpace size={'lg'} />
+        <WhiteSpace size={'xs'} />
         <Statistic title="Name" value={account.firstName + ' ' + account.lastName} className={'small'} />
-        <WhiteSpace size={'lg'} />
+        <WhiteSpace size={'xs'} />
         <Statistic title="E-Mail" value={account.email} className={'small'} />
       </Card>
       <WhiteSpace size={'lg'} />
-      <Card title="Händler Details">
+      <Card title="Händler">
         <Statistic title="Name" value={merchant.name} className={'small'} />
-        <WhiteSpace size={'lg'} />
+        <WhiteSpace size={'xs'} />
         <Statistic title="E-Mail" value={merchant.email} className={'small'} />
-        <WhiteSpace size={'lg'} />
+        <WhiteSpace size={'xs'} />
         <Statistic title="Gebühr" value={merchant.fee.feeType} className={'small'} />
-        <WhiteSpace size={'md'} />
+        <WhiteSpace size={'xs'} />
         <Statistic title="Gebühr prozent" value={merchant.fee.percent} className={'small'} />
-        <WhiteSpace size={'md'} />
+        <WhiteSpace size={'xs'} />
         <Statistic title="Gebühr prozent sicher" value={merchant.fee.percentSecure} className={'small'} />
       </Card>
     </div>

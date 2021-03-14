@@ -15,9 +15,7 @@ import { DateDiff } from 'app/btc/datediff';
 
 import './wallet.scss';
 
-export interface ITransactionProps extends StateProps, DispatchProps {
-  dateDiff: any;
-}
+export interface ITransactionProps extends StateProps, DispatchProps {}
 
 const Wallet = (props: ITransactionProps) => {
   const { wallet, merchantWallet, tx, transactions } = props;
@@ -39,9 +37,21 @@ const Wallet = (props: ITransactionProps) => {
     return () => clearInterval(interval);
   }, [tx, refresh, wallet.blockHeight]);
 
+  const getTxHistoryClass = item => {
+    if (item.transactionType === 'FORWARD') {
+      return 'primary';
+    } else if (item.confirmations > 0 && item.confidenceType === 'CONFIRMED') {
+      return 'success';
+    } else if (item.confidenceType === 'CONFIRMED') {
+      return 'warning';
+    } else {
+      return 'danger';
+    }
+  };
+
   return (
     <div>
-      <Heading icon={faHandshake} heading="Wallet" />
+      <Heading icon={'https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/wallet_lLs8p3Te3QEx.svg'} heading="Wallet" />
       {props.loading && <h1>LOADING</h1>}
       {props.errorMessage && <Alert message="Error Message" description={props.errorMessage} type="warning" closable />}
       <WhiteSpace size={'xl'} />
@@ -50,12 +60,15 @@ const Wallet = (props: ITransactionProps) => {
       </Button>
       <WhiteSpace size={'md'} />
       <Card title="Letzter Block">
-        <Statistic title="Block Höhe" value={wallet.blockHeight} />
-        <WhiteSpace size={'lg'} />
-        <Statistic title="Zeit seit letztem Block" value={timeAgo.minutes + ' Minuten ' + timeAgo.seconds + ' Sekunden'} />
+        <Statistic title="Block Höhe" value={wallet.blockHeight} className="small" />
+        <WhiteSpace size={'xs'} />
+        <Statistic
+          title="Zeit seit letztem Block"
+          className="small"
+          value={timeAgo.minutes + ' Minuten ' + timeAgo.seconds + ' Sekunden'}
+        />
       </Card>
-      <WhiteSpace size={'md'} />
-      <Collapse>
+      <Collapse style={{ display: 'none' }}>
         <Collapse.Panel header="Weitere Details" key={1}>
           {props.isAuthenticated && 'Authenticated'}
           <br />
@@ -87,22 +100,16 @@ const Wallet = (props: ITransactionProps) => {
       <Card title="Wallet">
         <Statistic
           title="Erwartet"
-          value={merchantWallet.estimated / 100000000}
+          value={merchantWallet.estimated / 100000000 + ' BTC'}
           suffix={merchantWallet.estimatedUsd + ' €'}
           precision={8}
           className="small suffix"
         />
+        <WhiteSpace size={'xs'} />
         <Statistic
           title="Verfügbar"
-          value={merchantWallet.spendable / 100000000}
+          value={merchantWallet.spendable / 100000000 + ' BTC'}
           suffix={merchantWallet.spendableUsd + ' €'}
-          precision={8}
-          className="small suffix"
-        />
-        <Statistic
-          title="Servicekosten"
-          value={merchantWallet.serviceFee / 100000000}
-          suffix={merchantWallet.serviceFeeUsd + ' €'}
           precision={8}
           className="small suffix"
         />
@@ -117,18 +124,28 @@ const Wallet = (props: ITransactionProps) => {
                   {item.actualAmount != null && (
                     <Collapse.Panel
                       key={item.id}
-                      className={item.confidenceType === 'CONFIRMED' ? 'success' : 'warning'}
+                      className={getTxHistoryClass(item)}
                       header={
                         <div>
-                          <span>
-                            {item.amount}€ | {item.confirmations} | {item.transactionType}
-                          </span>
-                          <span>{item.timeAgo}</span>
+                          <div>
+                            <span>{item.amount}€</span>
+                            <span>{item.confirmations}</span>
+                            <span>{item.transactionType}</span>
+                          </div>
+                          <div className="float-right">
+                            <span>{item.timeAgo}</span>
+                          </div>
                         </div>
                       }
                     >
                       <Statistic title="Addresse" value={item.address} className="tiny" />
-                      <Statistic title="Transaktion Hash" value={item.txHash} className="tiny margin-top" />
+                      <a
+                        href="https://live.blockcypher.com/btc-testnet/tx/22a878c2117854a698e856d18f964d006f5a3fe81efa581408aa57a191a2eccb/"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Statistic title="Transaktion Hash" value={item.txHash} className="tiny margin-top" />
+                      </a>
                       <Statistic
                         title="Transaktion initiiert"
                         value={dayjs(item.initiatedAt).format('DD.MM.YY HH:mm:ss')}
@@ -164,8 +181,10 @@ const Wallet = (props: ITransactionProps) => {
                       <WhiteSpace size={'md'} />
                       <h6>Bestätigungen</h6>
                       {item.confidences.map(conf => (
-                        <div key={conf.id}>
-                          {dayjs(conf.changeAt).format('DD.MM.YY HH:mm:ss')} | {conf.confidenceType} | {conf.confirmations}
+                        <div key={conf.id} className={conf.confirmations === 0 ? 'conf warning' : 'conf success'}>
+                          <span>{dayjs(conf.changeAt).format('DD.MM.YY HH:mm:ss')}</span>
+                          <span>{conf.confidenceType}</span>
+                          <span>{conf.confirmations}</span>
                         </div>
                       ))}
                     </Collapse.Panel>

@@ -1,17 +1,81 @@
 .ant-collapse-item {
   &.success .ant-collapse-header {
-    background: rgba(0, 128, 0, 0.1);
+    border-left: #52c41a 5px solid;
   }
+
   &.warning .ant-collapse-header {
-    background: rgba(255, 165, 0, 0.1);
+    border-left: #faad14 5px solid;
   }
 
-  .ant-collapse-header > div > span:last-of-type {
-    float: right;
+  &.danger .ant-collapse-header {
+    border-left: #ff4d4f 5px solid;
   }
 
-  .tiny.margin-top span {
-    word-wrap: anywhere;
-    margin-top: 11px;
+  &.primary .ant-collapse-header {
+    border-left: #1890ff 5px solid;
+  }
+
+  .ant-collapse-header > div {
+    > div {
+      display: inline;
+    }
+
+    span {
+      display: inline-block;
+      min-width: 30px;
+      text-align: right;
+
+      &:nth-of-type(2) {
+        min-width: 0;
+        margin: 0 12px;
+      }
+    }
+
+    > .float-right {
+      margin-left: auto;
+    }
+  }
+}
+
+.tiny.margin-top span {
+  word-wrap: anywhere;
+  margin-top: 11px;
+}
+
+.conf {
+  border-bottom: 1px solid #d9d9d9;
+  padding: 2px 0 2px 5px;
+
+  > span {
+    display: inline-block;
+
+    &:first-of-type {
+      width: 160px;
+    }
+
+    &:nth-of-type(2) {
+      width: 100px;
+    }
+
+    &:last-of-type {
+      margin-left: auto;
+      float: right;
+    }
+  }
+
+  &.success {
+    border-left: #52c41a 3px solid;
+  }
+
+  &.warning {
+    border-left: #faad14 3px solid;
+  }
+
+  &.danger {
+    border-left: #ff4d4f 3px solid;
+  }
+
+  &:last-of-type {
+    border-bottom: none;
   }
 }

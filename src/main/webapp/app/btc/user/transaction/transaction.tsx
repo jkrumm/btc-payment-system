@@ -5,12 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { logout } from 'app/shared/reducers/authentication';
 
 import { List, InputItem, WhiteSpace, Slider, Button } from 'antd-mobile';
-import { Card, Statistic, Alert } from 'antd';
+import { Card, Statistic, Alert, Radio, Divider } from 'antd';
 import { createForm } from 'rc-form';
 import './transaction.scss';
 import { Heading } from 'app/shared/util/ui-components';
 import { faHandshake, faMoneyBillAlt } from '@fortawesome/free-regular-svg-icons';
-import { LikeOutlined } from '@ant-design/icons';
 import { initTx, getBtcPrice, getMerchant } from 'app/btc/user.reducer';
 import dayjs from 'dayjs';
 
@@ -72,6 +71,7 @@ class H5NumberInputExample extends React.Component<INumberInputProps, INumberInp
 }
 
 import { Steps, WingBlank } from 'antd-mobile';
+import set = Reflect.set;
 
 const Step = Steps.Step;
 
@@ -107,7 +107,8 @@ const H5NumberInputExampleWrapper = createForm()(H5NumberInputExample);
 const Transaction = (props: ITransactionProps) => {
   const [amount, setAmount] = useState(props.amount);
   const [step, setStep] = useState(props.step);
-  const { auth, btcPrice, currentTx, serviceFee, tx } = props;
+  const [transactionType, setTransactionType] = useState('fast');
+  const { auth, btcPrice, currentTx, serviceFee, tx, merchant } = props;
   const [confirmation, setConfirmation] = useState(tx[0]);
   let inputRef = HTMLInputElement;
 
@@ -143,11 +144,17 @@ const Transaction = (props: ITransactionProps) => {
     console.log(btcPrice);
     setAmount(10);
     setStep(0);
+    setTransactionType('fast');
+  };
+
+  const onChangeTransactionType = e => {
+    console.log('change :' + e.target.value);
+    setTransactionType(e.target.value);
   };
 
   return (
     <div>
-      <Heading icon={faHandshake} heading="Transaktion" />
+      <Heading icon="https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/transaction__q2idGE7pGWVL.svg" heading="Transaktion" />
       <WhiteSpace size="xl" />
       <WingBlank className="stepsExample">
         <Steps current={step} direction="horizontal" size="small">
@@ -156,26 +163,51 @@ const Transaction = (props: ITransactionProps) => {
       </WingBlank>
       <WhiteSpace size="xl" />
       {step === 0 && (
-        <Card title="Transaktion initiieren">
-          <div onClick={() => inputRef.focus()}>
-            <Statistic title="Betrag in Euro" value={amount} suffix={' €'} precision={2} />
-          </div>
-          <InputItem
-            type={'money'}
-            placeholder="Bestimmen Sie einen Betrag"
-            clear
-            value={amount}
-            onChange={setAmount}
-            ref={el => (inputRef = el)}
-            moneyKeyboardAlign="left"
-            moneyKeyboardWrapProps={moneyKeyboardWrapProps}
-            className="no-display"
-          />
-          <WhiteSpace size={'lg'} />
-          <WhiteSpace size={'lg'} />
-          <Slider defaultValue={10} min={0} max={50} value={amount} onChange={setAmount} />
-          <WhiteSpace size={'lg'} />
-          <WhiteSpace size={'lg'} />
+        <>
+          <Card title="Transaktion initiieren">
+            <div onClick={() => inputRef.focus()} className="amount">
+              <Statistic title="Betrag in Euro" value={amount} suffix={' €'} precision={2} />
+            </div>
+            <InputItem
+              type={'money'}
+              placeholder="Bestimmen Sie einen Betrag"
+              clear
+              value={amount}
+              onChange={setAmount}
+              ref={el => (inputRef = el)}
+              moneyKeyboardAlign="left"
+              moneyKeyboardWrapProps={moneyKeyboardWrapProps}
+              className="no-display"
+            />
+            <WhiteSpace size={'lg'} />
+            <WhiteSpace size={'lg'} />
+            <Slider defaultValue={10} min={0} max={50} value={amount} onChange={setAmount} />
+            <WhiteSpace size={'lg'} />
+            <Divider />
+            <Radio.Group onChange={onChangeTransactionType} defaultValue="fast">
+              <Radio.Button value="fast">Schnell</Radio.Button>
+              <Radio.Button value="secure">Sicher</Radio.Button>
+            </Radio.Group>
+            {transactionType === 'fast' ? (
+              <div>
+                <WhiteSpace size={'md'} />
+                <Statistic title="Transaktionsdauer" value={'~1 Minute'} className="small" />
+                <Statistic title="Servicekosten" value={merchant.fee.percentSecure} suffix=" %" className="small" />
+              </div>
+            ) : (
+              <div>
+                <WhiteSpace size={'md'} />
+                <Statistic title="Transaktionsdauer" value={'~15 Minuten'} className="small" />
+                <Statistic title="Servicekosten" value={merchant.fee.percent} suffix=" %" className="small" />
+              </div>
+            )}
+            <Divider className="smaller" />
+            <div>
+              <Statistic title="BTC Price" value={btcPrice} suffix={' €'} precision={2} className="small" />
+            </div>
+          </Card>
+          <WhiteSpace size={'md'} />
+          <WhiteSpace size={'md'} />
           <Button
             onClick={() => {
               cl('initTX');
@@ -185,13 +217,10 @@ const Transaction = (props: ITransactionProps) => {
             }}
             type={'primary'}
           >
-            Betrag festlegen
+            Transaktion initiieren
           </Button>
-          <WhiteSpace size={'xl'} />
-          <div>
-            <Statistic title="BTC Price" value={btcPrice} suffix={' €'} precision={2} />
-          </div>
-        </Card>
+          <WhiteSpace size={'md'} />
+        </>
       )}
       {step === 1 && (
         <Card title="Bitcoins versenden">
@@ -256,7 +285,7 @@ const Transaction = (props: ITransactionProps) => {
       <WhiteSpace size={'lg'} />
       {step !== 2 ? (
         <Button onClick={() => resetTx()} className={'footer-button'}>
-          Transaktion Zurücksetzen
+          Transaktion zurücksetzen
         </Button>
       ) : (
         <Button type={'primary'} className={'footer-button'} onClick={() => resetTx()}>
@@ -270,6 +299,7 @@ const Transaction = (props: ITransactionProps) => {
 const mapStateToProps = ({ authentication, user }: IRootState) => ({
   auth: authentication,
   tx: user.tx,
+  merchant: user.merchant,
   btcPrice: user.btcPrice,
   currentTx: user.currentTx,
   serviceFee: user.merchant.fee.percent,

@@ -24,3 +24,38 @@ main {
     font-size: 14px;
   }
 }
+
+.icon-navbar {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 2px;
+  background-color: rgb(148, 148, 148);
+
+  &.active {
+    background-color: rgb(51, 163, 244);
+  }
+
+  &.icon-atm {
+    width: 19px;
+    height: 19px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    -webkit-mask-image: url(https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/atm_lG3So2-jMt.svg);
+    mask-image: url(https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/atm_lG3So2-jMt.svg);
+  }
+
+  &.icon-transaction {
+    -webkit-mask-image: url(https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/transaction__q2idGE7pGWVL.svg);
+    mask-image: url(https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/transaction__q2idGE7pGWVL.svg);
+  }
+
+  &.icon-wallet {
+    -webkit-mask-image: url(https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/wallet_lLs8p3Te3QEx.svg);
+    mask-image: url(https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/wallet_lLs8p3Te3QEx.svg);
+  }
+
+  &.icon-profile {
+    -webkit-mask-image: url(https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/profile_1tbUqj2YI.svg);
+    mask-image: url(https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/profile_1tbUqj2YI.svg);
+  }
+}

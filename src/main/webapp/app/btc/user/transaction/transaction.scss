@@ -2,7 +2,32 @@
   margin-bottom: 50px;
 } */
 
+.amount {
+  margin-top: -4px;
+}
+
 img {
   margin: -20px auto 0 auto;
   display: block;
+}
+
+.ant-divider-horizontal {
+  margin: 20px 0;
+}
+
+.ant-radio-group {
+  width: 100%;
+  display: block;
+
+  label {
+    width: 50%;
+    text-align: center;
+
+    span {
+      pointer-events: none;
+    }
+  }
+}
+.smaller {
+  margin: 14px auto 19px;
 }

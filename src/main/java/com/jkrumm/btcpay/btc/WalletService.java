@@ -200,7 +200,7 @@ public class WalletService {
                             );
                             log.info("confirmationDTO : " + confirmationDTO.toString());
                             txWsService.sendMessage(confirmationDTO);
-                        } else if (depth > 6 && !tx.getConfidence().getConfidenceType().equals(TransactionConfidence.ConfidenceType.DEAD)) {
+                        } else if (depth > 6) {
                             log.info("TransactionConfidenceEventListener 6 : " + tx.getTxId() + " : " + depth);
                             log.info("TransactionConfidenceEventListener 6 : " + tx.getConfidence().getConfidenceType());
 
@@ -211,7 +211,7 @@ public class WalletService {
                                 Confidence confidence = new Confidence();
                                 confidence.setChangeAt(Instant.now());
                                 confidence.setConfidenceType(ConfidenceType.CONFIRMED);
-                                confidence.setConfirmations(depth);
+                                confidence.setConfirmations(6);
                                 confidence.setTransaction(txDb);
                                 confidence = repos.confidence.save(confidence);
                                 log.info("Saved confidence: " + confidence.toString());
@@ -295,9 +295,9 @@ public class WalletService {
                                         log.info("Received tx NOT for this wallet!");
                                     }
                                 }
-                                walletWsService.sendMessage(walletDTO);
                             }
                         }
+                        walletWsService.sendMessage(walletDTO);
                     }
                 )
             );
