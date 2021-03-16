@@ -35,6 +35,9 @@ class MerchantResourceIT {
     private static final String DEFAULT_EMAIL = "I@#>.rkt";
     private static final String UPDATED_EMAIL = "+@~3'i).6H4$>!";
 
+    private static final String DEFAULT_FORWARD = "AAAAAAAAAA";
+    private static final String UPDATED_FORWARD = "BBBBBBBBBB";
+
     @Autowired
     private MerchantRepository merchantRepository;
 
@@ -56,7 +59,7 @@ class MerchantResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Merchant createEntity(EntityManager em) {
-        Merchant merchant = new Merchant().name(DEFAULT_NAME).email(DEFAULT_EMAIL);
+        Merchant merchant = new Merchant().name(DEFAULT_NAME).email(DEFAULT_EMAIL).forward(DEFAULT_FORWARD);
         return merchant;
     }
 
@@ -67,7 +70,7 @@ class MerchantResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Merchant createUpdatedEntity(EntityManager em) {
-        Merchant merchant = new Merchant().name(UPDATED_NAME).email(UPDATED_EMAIL);
+        Merchant merchant = new Merchant().name(UPDATED_NAME).email(UPDATED_EMAIL).forward(UPDATED_FORWARD);
         return merchant;
     }
 
@@ -92,6 +95,7 @@ class MerchantResourceIT {
         Merchant testMerchant = merchantList.get(merchantList.size() - 1);
         assertThat(testMerchant.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testMerchant.getEmail()).isEqualTo(DEFAULT_EMAIL);
+        assertThat(testMerchant.getForward()).isEqualTo(DEFAULT_FORWARD);
     }
 
     @Test
@@ -162,7 +166,8 @@ class MerchantResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(merchant.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)));
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
+            .andExpect(jsonPath("$.[*].forward").value(hasItem(DEFAULT_FORWARD)));
     }
 
     @Test
@@ -178,7 +183,8 @@ class MerchantResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(merchant.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
-            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL));
+            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
+            .andExpect(jsonPath("$.forward").value(DEFAULT_FORWARD));
     }
 
     @Test
@@ -200,7 +206,7 @@ class MerchantResourceIT {
         Merchant updatedMerchant = merchantRepository.findById(merchant.getId()).get();
         // Disconnect from session so that the updates on updatedMerchant are not directly saved in db
         em.detach(updatedMerchant);
-        updatedMerchant.name(UPDATED_NAME).email(UPDATED_EMAIL);
+        updatedMerchant.name(UPDATED_NAME).email(UPDATED_EMAIL).forward(UPDATED_FORWARD);
         MerchantDTO merchantDTO = merchantMapper.toDto(updatedMerchant);
 
         restMerchantMockMvc
@@ -213,6 +219,7 @@ class MerchantResourceIT {
         Merchant testMerchant = merchantList.get(merchantList.size() - 1);
         assertThat(testMerchant.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testMerchant.getEmail()).isEqualTo(UPDATED_EMAIL);
+        assertThat(testMerchant.getForward()).isEqualTo(UPDATED_FORWARD);
     }
 
     @Test
@@ -261,6 +268,7 @@ class MerchantResourceIT {
         Merchant testMerchant = merchantList.get(merchantList.size() - 1);
         assertThat(testMerchant.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testMerchant.getEmail()).isEqualTo(DEFAULT_EMAIL);
+        assertThat(testMerchant.getForward()).isEqualTo(DEFAULT_FORWARD);
     }
 
     @Test
@@ -275,7 +283,7 @@ class MerchantResourceIT {
         Merchant partialUpdatedMerchant = new Merchant();
         partialUpdatedMerchant.setId(merchant.getId());
 
-        partialUpdatedMerchant.name(UPDATED_NAME).email(UPDATED_EMAIL);
+        partialUpdatedMerchant.name(UPDATED_NAME).email(UPDATED_EMAIL).forward(UPDATED_FORWARD);
 
         restMerchantMockMvc
             .perform(
@@ -291,6 +299,7 @@ class MerchantResourceIT {
         Merchant testMerchant = merchantList.get(merchantList.size() - 1);
         assertThat(testMerchant.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testMerchant.getEmail()).isEqualTo(UPDATED_EMAIL);
+        assertThat(testMerchant.getForward()).isEqualTo(UPDATED_FORWARD);
     }
 
     @Test

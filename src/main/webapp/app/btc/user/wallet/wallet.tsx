@@ -117,7 +117,7 @@ const Wallet = (props: ITransactionProps) => {
       <WhiteSpace size={'md'} />
       <Card title="Transaktionen" className="no-padding">
         <Collapse>
-          {transactions[1] !== undefined && transactions[1] !== null ? (
+          {transactions[0] !== undefined && transactions[0] !== null && transactions[0].expectedAmount !== 0 ? (
             <>
               {transactions.map(item => (
                 <>
@@ -138,6 +138,7 @@ const Wallet = (props: ITransactionProps) => {
                         </div>
                       }
                     >
+                      <Statistic title="Nutzer" value={item.user} className="tiny" />
                       <Statistic title="Addresse" value={item.address} className="tiny" />
                       <a
                         href="https://live.blockcypher.com/btc-testnet/tx/22a878c2117854a698e856d18f964d006f5a3fe81efa581408aa57a191a2eccb/"
@@ -181,7 +182,7 @@ const Wallet = (props: ITransactionProps) => {
                       <WhiteSpace size={'md'} />
                       <h6>Bestätigungen</h6>
                       {item.confidences.map(conf => (
-                        <div key={conf.id} className={conf.confirmations === 0 ? 'conf warning' : 'conf success'}>
+                        <div key={conf.id} className={conf.confidenceType !== 'CONFIRMED' ? 'conf warning' : 'conf success'}>
                           <span>{dayjs(conf.changeAt).format('DD.MM.YY HH:mm:ss')}</span>
                           <span>{conf.confidenceType}</span>
                           <span>{conf.confirmations}</span>

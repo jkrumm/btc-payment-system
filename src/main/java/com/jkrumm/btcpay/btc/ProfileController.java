@@ -1,5 +1,6 @@
 package com.jkrumm.btcpay.btc;
 
+import com.jkrumm.btcpay.btc.dto.Forward;
 import com.jkrumm.btcpay.btc.dto.MerchantWallet;
 import com.jkrumm.btcpay.btc.dto.TransactionHistory;
 import com.jkrumm.btcpay.domain.Merchant;
@@ -7,14 +8,14 @@ import com.jkrumm.btcpay.domain.Transaction;
 import com.jkrumm.btcpay.service.dto.MerchantDTO;
 import com.jkrumm.btcpay.web.rest.MerchantResource;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.List;
+import org.bitcoinj.wallet.Wallet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -40,14 +41,20 @@ public class ProfileController {
     }
 
     @GetMapping("/wallet")
-    public MerchantWallet getWallet() throws IOException {
+    public MerchantWallet getWallet(Principal principal) throws IOException {
         log.debug("REST request to get merchant wallet");
-        return profileService.getWallet();
+        return profileService.getWallet(principal);
     }
 
     @GetMapping("/transactions")
-    public List<TransactionHistory> getTransactions() {
+    public List<TransactionHistory> getTransactions(Principal principal) {
         log.debug("REST request to get all merchant transactions");
-        return profileService.getTransactions();
+        return profileService.getTransactions(principal);
+    }
+
+    @GetMapping("/forward")
+    public Forward forward(Principal principal) throws IOException {
+        log.debug("REST request to send user btc");
+        return profileService.send(principal);
     }
 }

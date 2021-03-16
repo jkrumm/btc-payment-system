@@ -1,17 +1,12 @@
 package com.jkrumm.btcpay.btc;
 
-import com.jkrumm.btcpay.btc.dto.MerchantWallet;
-import com.jkrumm.btcpay.btc.dto.TimeAgo;
-import com.jkrumm.btcpay.btc.dto.TransactionHistory;
-import com.jkrumm.btcpay.btc.dto.TransactionHistoryConfidence;
-import com.jkrumm.btcpay.domain.Confidence;
-import com.jkrumm.btcpay.domain.Merchant;
-import com.jkrumm.btcpay.domain.Transaction;
-import com.jkrumm.btcpay.domain.User;
+import com.jkrumm.btcpay.btc.dto.*;
+import com.jkrumm.btcpay.domain.*;
 import com.jkrumm.btcpay.domain.enumeration.ConfidenceType;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
+import org.bitcoinj.wallet.Wallet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +23,9 @@ public class ProfileService {
     @Autowired
     private TxService txService;
 
+    @Autowired
+    private WalletService WalletService;
+
     Merchant getMerchant(Principal principal) {
         log.info("Called getMerchant() in ProfileService");
         Optional<User> user = repos.user.findOneByLogin(principal.getName());
@@ -41,20 +39,37 @@ public class ProfileService {
         }
     }
 
-    MerchantWallet getWallet() throws IOException {
+    List<Transaction> getMerchantTransactions(Principal principal) {
+        log.info("Called getMerchantTransactions() in ProfileService");
+        Optional<User> user = repos.user.findOneByLogin(principal.getName());
+        log.info(user.toString());
+        if (user.isPresent()) {
+            Merchant merchant = repos.merchantUser.findMerchantUserByUser(user).getMerchant();
+            List<MerchantUser> merchantUsers = repos.merchantUser.findByMerchant(merchant);
+            List<User> users = new ArrayList<>();
+            for (MerchantUser mu : merchantUsers) {
+                users.add(mu.getUser());
+            }
+            log.info("getMerchantTransactions(): " + repos.transaction.findByUserIsIn(users).toString());
+            return repos.transaction.findByUserIsIn(users);
+        }
+        return null;
+    }
+
+    MerchantWallet getWallet(Principal principal) throws IOException {
         log.info("Called getWallet() in ProfileService");
-        List<Transaction> transactions = repos.transaction.findByUserIsCurrentUser();
+        List<Transaction> transactions = getMerchantTransactions(principal);
         MerchantWallet merchantWallet = new MerchantWallet();
         for (Transaction tx : transactions) {
             if (tx.getActualAmount() != null) {
                 List<Confidence> confidences = repos.confidence.findByTransactionOrderByChangeAtDesc(tx);
                 if (confidences.size() > 0 && confidences.get(0).getConfirmations() > 0) {
-                    merchantWallet.setEstimated(merchantWallet.getEstimated() + tx.getActualAmount());
-                    merchantWallet.setSpendable(merchantWallet.getSpendable() + tx.getActualAmount());
+                    merchantWallet.setEstimated(merchantWallet.getEstimated() + tx.getActualAmount() - tx.getServiceFee());
+                    merchantWallet.setSpendable(merchantWallet.getSpendable() + tx.getActualAmount() - tx.getServiceFee());
                     merchantWallet.setServiceFee(merchantWallet.getServiceFee() + tx.getServiceFee());
                 } else if (confidences.size() > 0 && confidences.get(0).getConfidenceType() == ConfidenceType.BUILDING) {
-                    merchantWallet.setEstimated(merchantWallet.getEstimated() + tx.getActualAmount());
-                    merchantWallet.setServiceFee(merchantWallet.getServiceFee() + tx.getServiceFee());
+                    merchantWallet.setEstimated(merchantWallet.getEstimated() + tx.getActualAmount() - tx.getServiceFee());
+                    merchantWallet.setServiceFee(merchantWallet.getServiceFee() + tx.getServiceFee() - tx.getServiceFee());
                 }
             }
         }
@@ -66,9 +81,9 @@ public class ProfileService {
         return merchantWallet;
     }
 
-    List<TransactionHistory> getTransactions() {
+    List<TransactionHistory> getTransactions(Principal principal) {
         log.info("Called getTransactions() in ProfileService");
-        List<Transaction> transactions = repos.transaction.findByUserIsCurrentUser();
+        List<Transaction> transactions = getMerchantTransactions(principal);
         List<TransactionHistory> transactionHistories = new ArrayList<>();
         for (Transaction tx : transactions) {
             if (tx.getActualAmount() != null) {
@@ -94,6 +109,7 @@ public class ProfileService {
                 transactionHistories.add(
                     new TransactionHistory(
                         tx.getId(),
+                        tx.getUser().getFirstName() + " " + tx.getUser().getLastName(),
                         tx.getAddress(),
                         tx.getInitiatedAt(),
                         tx.getTransactionType(),
@@ -115,5 +131,29 @@ public class ProfileService {
         Collections.reverse(transactionHistories);
         log.info("getTransactions(): " + transactionHistories.size());
         return transactionHistories;
+    }
+
+    Forward send(Principal principal) throws IOException {
+        Merchant merchant = getMerchant(principal);
+        String spendable = getWallet(principal).getSpendable().toString();
+        log.info(
+            "Merchant: " +
+            merchant.getName() +
+            " | User: " +
+            principal.getName() +
+            " | Forward " +
+            spendable +
+            " to " +
+            merchant.getForward()
+        );
+        Wallet.SendResult sendResult = WalletService.send(spendable, merchant.getForward());
+        Forward forward = new Forward(
+            Long.valueOf(spendable),
+            merchant.getForward(),
+            sendResult.tx.getTxId().toString(),
+            sendResult.tx.getFee().getValue()
+        );
+        log.info(forward.toString());
+        return forward;
     }
 }

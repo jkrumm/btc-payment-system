@@ -33,6 +33,10 @@ export const MerchantDetail = (props: IMerchantDetailProps) => {
             <span id="email">Email</span>
           </dt>
           <dd>{merchantEntity.email}</dd>
+          <dt>
+            <span id="forward">Forward</span>
+          </dt>
+          <dd>{merchantEntity.forward}</dd>
           <dt>Fee</dt>
           <dd>{merchantEntity.fee ? merchantEntity.fee.id : ''}</dd>
         </dl>

@@ -56,6 +56,10 @@ public class MerchantServiceImpl implements MerchantService {
                         existingMerchant.setEmail(merchantDTO.getEmail());
                     }
 
+                    if (merchantDTO.getForward() != null) {
+                        existingMerchant.setForward(merchantDTO.getForward());
+                    }
+
                     return existingMerchant;
                 }
             )

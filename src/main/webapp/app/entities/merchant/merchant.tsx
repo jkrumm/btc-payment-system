@@ -44,6 +44,7 @@ export const Merchant = (props: IMerchantProps) => {
                 <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Forward</th>
                 <th>Fee</th>
                 <th />
               </tr>
@@ -58,6 +59,7 @@ export const Merchant = (props: IMerchantProps) => {
                   </td>
                   <td>{merchant.name}</td>
                   <td>{merchant.email}</td>
+                  <td>{merchant.forward}</td>
                   <td>{merchant.fee ? <Link to={`fee/${merchant.fee.id}`}>{merchant.fee.id}</Link> : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">

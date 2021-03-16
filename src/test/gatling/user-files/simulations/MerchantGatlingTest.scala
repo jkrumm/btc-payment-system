@@ -74,6 +74,7 @@ class MerchantGatlingTest extends Simulation {
                 "id":null
                 , "name":"SAMPLE_TEXT"
                 , "email":"SAMPLE_TEXT"
+                , "forward":"SAMPLE_TEXT"
                 }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_merchant_url"))).exitHereIfFailed

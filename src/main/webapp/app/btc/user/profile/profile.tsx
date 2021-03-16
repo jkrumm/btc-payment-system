@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { IRootState } from 'app/shared/reducers';
 import { logout } from 'app/shared/reducers/authentication';
-import { getMerchant } from 'app/btc/user.reducer';
+import { getMerchant, getMerchantWallet } from 'app/btc/user.reducer';
 
 import { WhiteSpace } from 'antd-mobile';
 import { Card, Statistic, Alert } from 'antd';
@@ -14,7 +14,7 @@ import './profile.scss';
 export interface IProfileProps extends StateProps, DispatchProps {}
 
 const Profile = (props: IProfileProps) => {
-  const { account, merchantUser, merchant } = props;
+  const { account, merchantUser, merchant, merchantWallet } = props;
 
   console.log(merchantUser);
   console.log(merchant);
@@ -22,6 +22,7 @@ const Profile = (props: IProfileProps) => {
 
   useEffect(() => {
     props.getMerchant();
+    props.getMerchantWallet();
   }, []);
 
   return (
@@ -41,11 +42,13 @@ const Profile = (props: IProfileProps) => {
         <WhiteSpace size={'xs'} />
         <Statistic title="E-Mail" value={merchant.email} className={'small'} />
         <WhiteSpace size={'xs'} />
-        <Statistic title="Gebühr" value={merchant.fee.feeType} className={'small'} />
+        <Statistic title="Servicegebühr" value={merchant.fee.feeType} className={'small'} />
         <WhiteSpace size={'xs'} />
-        <Statistic title="Gebühr prozent" value={merchant.fee.percent} className={'small'} />
+        <Statistic title="Servicegebühr prozent" value={merchant.fee.percent} suffix=" %" className={'small'} />
         <WhiteSpace size={'xs'} />
-        <Statistic title="Gebühr prozent sicher" value={merchant.fee.percentSecure} className={'small'} />
+        <Statistic title="Servicegebühr prozent sicher" value={merchant.fee.percentSecure} suffix=" %" className={'small'} />
+        <WhiteSpace size={'xs'} />
+        <Statistic title="Angefallene Servicegebühren" value={merchantWallet.serviceFeeUsd} suffix=" €" className={'small'} />
       </Card>
     </div>
   );
@@ -55,9 +58,10 @@ const mapStateToProps = ({ authentication, merchantUser, merchant, user }: IRoot
   account: authentication.account,
   merchantUser,
   merchant: user.merchant,
+  merchantWallet: user.merchantWallet,
 });
 
-const mapDispatchToProps = { logout, getMerchant };
+const mapDispatchToProps = { logout, getMerchant, getMerchantWallet };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

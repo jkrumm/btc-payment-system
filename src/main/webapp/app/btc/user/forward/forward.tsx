@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { IRootState } from 'app/shared/reducers';
 import { logout } from 'app/shared/reducers/authentication';
-import { getMerchantWallet } from 'app/btc/user.reducer';
+import { getMerchantWallet, forward } from 'app/btc/user.reducer';
 
 import { WhiteSpace } from 'antd-mobile';
-import { Card, Statistic, Alert } from 'antd';
+import { Card, Statistic, Button } from 'antd';
 import { Heading } from 'app/shared/util/ui-components';
 import { faHandshake } from '@fortawesome/free-regular-svg-icons';
 
@@ -14,7 +14,7 @@ import './forward.scss';
 export interface IProfileProps extends StateProps, DispatchProps {}
 
 const Forward = (props: IProfileProps) => {
-  const { merchantWallet } = props;
+  const { merchantWallet, merchant } = props;
 
   useEffect(() => {
     props.getMerchantWallet();
@@ -25,6 +25,7 @@ const Forward = (props: IProfileProps) => {
       <Heading icon={'https://ik.imagekit.io/jtrj8won4m0/BtcPaymentSystem/atm_lG3So2-jMt.svg'} heading="Auszahlung" />
       <WhiteSpace size="xl" />
       <Card title="Wallet">
+        <Statistic title="Addresse" value={merchant.forward} className="small small-text" />
         <Statistic
           title="Erwartet"
           value={merchantWallet.estimated / 100000000 + ' BTC'}
@@ -41,15 +42,18 @@ const Forward = (props: IProfileProps) => {
           className="small suffix"
         />
       </Card>
+      <WhiteSpace size="lg" />
+      <Button onClick={() => props.forward()}>Forward</Button>
     </div>
   );
 };
 
 const mapStateToProps = ({ user }: IRootState) => ({
   merchantWallet: user.merchantWallet,
+  merchant: user.merchant,
 });
 
-const mapDispatchToProps = { getMerchantWallet };
+const mapDispatchToProps = { getMerchantWallet, forward };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

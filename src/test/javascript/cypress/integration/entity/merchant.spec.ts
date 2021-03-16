@@ -92,6 +92,11 @@ describe('Merchant e2e test', () => {
 
     cy.get(`[data-cy="email"]`).type('nR@.z3', { force: true }).invoke('val').should('match', new RegExp('nR@.z3'));
 
+    cy.get(`[data-cy="forward"]`)
+      .type('Computers Kirgisistan Customer', { force: true })
+      .invoke('val')
+      .should('match', new RegExp('Computers Kirgisistan Customer'));
+
     cy.setFieldSelectToLastOfEntity('fee');
 
     cy.get(entityCreateSaveButtonSelector).click({ force: true });

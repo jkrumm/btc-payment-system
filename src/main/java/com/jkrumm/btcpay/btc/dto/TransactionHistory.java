@@ -8,6 +8,7 @@ import java.util.List;
 public class TransactionHistory {
 
     private Long id;
+    private String user;
     private String address;
     private Instant initiatedAt;
     private String transactionType;
@@ -25,6 +26,7 @@ public class TransactionHistory {
 
     public TransactionHistory(
         Long id,
+        String user,
         String address,
         Instant initiatedAt,
         TransactionType transactionType,
@@ -41,6 +43,7 @@ public class TransactionHistory {
         Integer confirmations
     ) {
         this.id = id;
+        this.user = user;
         this.address = address;
         this.initiatedAt = initiatedAt;
         switch (transactionType) {
@@ -76,6 +79,14 @@ public class TransactionHistory {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getAddress() {
@@ -196,6 +207,8 @@ public class TransactionHistory {
             "TransactionHistory{" +
             "id=" +
             id +
+            ", user='" +
+            user +
             ", address='" +
             address +
             '\'' +

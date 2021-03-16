@@ -146,6 +146,10 @@ Generic styles
   }
 }
 
+.am-tabs-tab-bar-wrap {
+  background-color: white;
+}
+
 /* padding helpers */
 
 @mixin pad($size, $side) {

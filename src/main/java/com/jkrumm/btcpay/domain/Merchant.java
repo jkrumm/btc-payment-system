@@ -36,6 +36,9 @@ public class Merchant implements Serializable {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "forward")
+    private String forward;
+
     /**
      * One Merchant has One Fee associated
      */
@@ -89,6 +92,19 @@ public class Merchant implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getForward() {
+        return this.forward;
+    }
+
+    public Merchant forward(String forward) {
+        this.forward = forward;
+        return this;
+    }
+
+    public void setForward(String forward) {
+        this.forward = forward;
     }
 
     public Fee getFee() {
@@ -161,6 +177,7 @@ public class Merchant implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", email='" + getEmail() + "'" +
+            ", forward='" + getForward() + "'" +
             "}";
     }
 }

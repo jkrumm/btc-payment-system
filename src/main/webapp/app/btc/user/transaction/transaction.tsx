@@ -203,11 +203,10 @@ const Transaction = (props: ITransactionProps) => {
             )}
             <Divider className="smaller" />
             <div>
-              <Statistic title="BTC Price" value={btcPrice} suffix={' €'} precision={2} className="small" />
+              <Statistic title="BTC / EURO" value={btcPrice} suffix={' €'} precision={2} className="small" />
             </div>
           </Card>
-          <WhiteSpace size={'md'} />
-          <WhiteSpace size={'md'} />
+          <WhiteSpace size={'lg'} />
           <Button
             onClick={() => {
               cl('initTX');
@@ -219,78 +218,83 @@ const Transaction = (props: ITransactionProps) => {
           >
             Transaktion initiieren
           </Button>
-          <WhiteSpace size={'md'} />
         </>
       )}
       {step === 1 && (
-        <Card title="Bitcoins versenden">
-          <img
-            alt="example"
-            width={'200px'}
-            src={
-              'https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=bitcoin:' +
-              currentTx.address +
-              '?amount=' +
-              currentTx.expectedAmount / 100000000
-            }
-          />
-          <Statistic title="Adresse" value={currentTx.address} className="tiny" />
-          <WhiteSpace size={'md'} />
-          <Statistic title="Betrag in Euro" value={currentTx.amount} suffix={' €'} precision={2} className="small" />
-          <WhiteSpace size={'md'} />
-          <Statistic title="Betrag in BTC" value={currentTx.expectedAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
-          <WhiteSpace size={'md'} />
-          <Statistic title="Service Fee" value={serviceFee} suffix={' %'} precision={2} className="small" />
-        </Card>
+        <>
+          <Card title="Bitcoins versenden">
+            <img
+              alt="example"
+              width={'200px'}
+              src={
+                'https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=bitcoin:' +
+                currentTx.address +
+                '?amount=' +
+                currentTx.expectedAmount / 100000000
+              }
+            />
+            <Statistic title="Bitcoin Adresse" value={currentTx.address} className="tiny" />
+            <WhiteSpace size={'md'} />
+            <Statistic title="Betrag in Euro" value={currentTx.amount} suffix={' €'} precision={2} className="small" />
+            <WhiteSpace size={'md'} />
+            <Statistic title="Betrag in BTC" value={currentTx.expectedAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
+            <WhiteSpace size={'md'} />
+            <Statistic title="Servicegebühren" value={serviceFee} suffix={' %'} precision={2} className="small" />
+          </Card>
+          <WhiteSpace size={'lg'} />
+          <Button onClick={() => resetTx()} className={'footer-button'}>
+            Transaktion zurücksetzen
+          </Button>
+        </>
       )}
       {step === 2 && (
-        <Card title="Bitcoins erhalten">
-          {confirmation.confidence.confidenceType === 'CONFIRMED' && (
-            <Alert
-              message="Transaktion abgeschlossen!"
-              description="Transaktion wurde erfolgreich validiert jedoch noch nicht bestätigt."
-              type="success"
+        <>
+          <Card title="Bitcoins erhalten">
+            {confirmation.confidence.confidenceType === 'CONFIRMED' && (
+              <Alert
+                message="Transaktion abgeschlossen!"
+                description="Transaktion wurde erfolgreich validiert jedoch noch nicht bestätigt."
+                type="success"
+              />
+            )}
+            {confirmation.confidence.confidenceType === 'BUILDING' && (
+              <Alert
+                message="Transaktion im Mempool!"
+                description="Transaktion wurde gefunden jedoch noch nicht validiert."
+                type="warning"
+              />
+            )}
+            <WhiteSpace size={'xl'} />
+            <Statistic title="Betrag in Euro" value={currentTx.amount} suffix={' €'} precision={2} className="small" />
+            <WhiteSpace size={'md'} />
+            <Statistic title="Betrag in BTC" value={currentTx.expectedAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
+            <Statistic
+              title="Erhaltene BTC"
+              value={confirmation.confidence.transaction.actualAmount / 100000000}
+              suffix={' BTC'}
+              precision={8}
+              className="small"
             />
-          )}
-          {confirmation.confidence.confidenceType === 'BUILDING' && (
-            <Alert message="Transaktion im Mempool!" description="Transaktion wurde gefunden jedoch noch nicht validiert." type="warning" />
-          )}
-          <WhiteSpace size={'xl'} />
-          <Statistic title="Betrag in Euro" value={currentTx.amount} suffix={' €'} precision={2} className="small" />
-          <WhiteSpace size={'md'} />
-          <Statistic title="Betrag in BTC" value={currentTx.expectedAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
-          <Statistic
-            title="Erhaltene BTC"
-            value={confirmation.confidence.transaction.actualAmount / 100000000}
-            suffix={' BTC'}
-            precision={8}
-            className="small"
-          />
-          <WhiteSpace size={'md'} />
-          <Statistic
-            title="Vergangene Zeit"
-            value={dayjs(confirmation.confidence.changeAt).diff(currentTx.initiatedAt, 's', true)}
-            suffix={' Sekunden'}
-            precision={2}
-            className="small"
-          />
-          {confirmation.blockCypher != null && (
-            <>
-              <WhiteSpace size={'md'} />
-              <Statistic title="Double Spend" value={confirmation.blockCypher.double_spend.valueOf().toString()} className="small" />
-            </>
-          )}
-        </Card>
-      )}
-      <WhiteSpace size={'lg'} />
-      {step !== 2 ? (
-        <Button onClick={() => resetTx()} className={'footer-button'}>
-          Transaktion zurücksetzen
-        </Button>
-      ) : (
-        <Button type={'primary'} className={'footer-button'} onClick={() => resetTx()}>
-          Neue Transaktion
-        </Button>
+            <WhiteSpace size={'md'} />
+            <Statistic
+              title="Vergangene Zeit"
+              value={dayjs(confirmation.confidence.changeAt).diff(currentTx.initiatedAt, 's', true)}
+              suffix={' Sekunden'}
+              precision={2}
+              className="small"
+            />
+            {confirmation.blockCypher != null && (
+              <>
+                <WhiteSpace size={'md'} />
+                <Statistic title="Double Spend" value={confirmation.blockCypher.double_spend.valueOf() ? 'JA' : 'Nein'} className="small" />
+              </>
+            )}
+          </Card>
+          <WhiteSpace size={'lg'} />
+          <Button type={'primary'} className={'footer-button'} onClick={() => resetTx()}>
+            Neue Transaktion
+          </Button>
+        </>
       )}
     </div>
   );

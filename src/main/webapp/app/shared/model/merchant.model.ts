@@ -5,6 +5,7 @@ export interface IMerchant {
   id?: number;
   name?: string;
   email?: string;
+  forward?: string | null;
   fee?: IFee | null;
   merchantUsers?: IMerchantUser[] | null;
 }

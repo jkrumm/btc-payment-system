@@ -13,6 +13,19 @@
     float: right;
     margin-top: 8px;
   }
+
+  &.small-text {
+    margin-bottom: 5px;
+
+    .ant-statistic-content {
+      font-size: 18px;
+    }
+
+    span {
+      margin-bottom: -7px;
+      font-size: 14px;
+    }
+  }
 }
 
 .tiny {

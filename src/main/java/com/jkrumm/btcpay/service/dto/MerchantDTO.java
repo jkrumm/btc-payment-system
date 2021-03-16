@@ -25,6 +25,8 @@ public class MerchantDTO implements Serializable {
     @Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
     private String email;
 
+    private String forward;
+
     private FeeDTO fee;
 
     public Long getId() {
@@ -49,6 +51,14 @@ public class MerchantDTO implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getForward() {
+        return forward;
+    }
+
+    public void setForward(String forward) {
+        this.forward = forward;
     }
 
     public FeeDTO getFee() {
@@ -87,6 +97,7 @@ public class MerchantDTO implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", email='" + getEmail() + "'" +
+            ", forward='" + getForward() + "'" +
             ", fee=" + getFee() +
             "}";
     }

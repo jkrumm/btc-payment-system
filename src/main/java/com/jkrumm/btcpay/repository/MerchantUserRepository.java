@@ -1,7 +1,9 @@
 package com.jkrumm.btcpay.repository;
 
+import com.jkrumm.btcpay.domain.Merchant;
 import com.jkrumm.btcpay.domain.MerchantUser;
 import com.jkrumm.btcpay.domain.User;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
@@ -13,4 +15,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MerchantUserRepository extends JpaRepository<MerchantUser, Long> {
     MerchantUser findMerchantUserByUser(Optional<User> user);
+
+    List<MerchantUser> findByMerchant(Merchant merchant);
 }

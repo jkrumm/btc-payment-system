@@ -12,6 +12,10 @@
       "fieldType": "String",
       "fieldValidateRules": ["required", "pattern"],
       "fieldValidateRulesPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+    },
+    {
+      "fieldName": "forward",
+      "fieldType": "String"
     }
   ],
   "relationships": [

@@ -23,6 +23,7 @@ import java.net.URL;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.script.ScriptException;
@@ -206,18 +207,21 @@ public class WalletService {
 
                             // Persist updated Transaction and Confirmation to db
                             Transaction txDb = repos.transaction.findTopByTxHash(tx.getTxId().toString());
-                            Confidence conf = repos.confidence.findFirstByTransactionOrderByChangeAt(txDb);
-                            if (conf.getConfirmations() != 6) {
-                                Confidence confidence = new Confidence();
-                                confidence.setChangeAt(Instant.now());
-                                confidence.setConfidenceType(ConfidenceType.CONFIRMED);
-                                confidence.setConfirmations(6);
-                                confidence.setTransaction(txDb);
-                                confidence = repos.confidence.save(confidence);
-                                log.info("Saved confidence: " + confidence.toString());
-                                txDb.addConfidence(confidence);
-                                log.info("Saved Tx: " + txDb.toString());
+                            List<Confidence> conf = repos.confidence.findByTransactionOrderByChangeAtDesc(txDb);
+                            for (Confidence c : conf) {
+                                if (c.getConfirmations() >= 6 || c.getConfidenceType() == ConfidenceType.DEAD) {
+                                    return;
+                                }
                             }
+                            Confidence confidence = new Confidence();
+                            confidence.setChangeAt(Instant.now());
+                            confidence.setConfidenceType(ConfidenceType.CONFIRMED);
+                            confidence.setConfirmations(6);
+                            confidence.setTransaction(txDb);
+                            confidence = repos.confidence.save(confidence);
+                            log.info("Saved confidence: " + confidence.toString());
+                            txDb.addConfidence(confidence);
+                            log.info("Saved Tx: " + txDb.toString());
                         }
                     }
                 )
@@ -322,16 +326,17 @@ public class WalletService {
         return walletAppKit.wallet().freshReceiveAddress();
     }
 
-    public void send(String value, String to) {
+    public Wallet.SendResult send(String value, String to) {
         try {
             Address toAddress = LegacyAddress.fromBase58(networkParameters, to);
             SendRequest sendRequest = SendRequest.to(toAddress, Coin.parseCoin(value));
-            sendRequest.feePerKb = Coin.parseCoin("0.0005");
+            sendRequest.feePerKb = Coin.parseCoin("0.00000001");
             Wallet.SendResult sendResult = walletAppKit.wallet().sendCoins(walletAppKit.peerGroup(), sendRequest);
             sendResult.broadcastComplete.addListener(
                 () -> System.out.println("Sent coins onwards! Transaction hash is " + sendResult.tx.getTxId()),
                 MoreExecutors.directExecutor()
             );
+            return sendResult;
         } catch (InsufficientMoneyException e) {
             throw new RuntimeException(e);
         }

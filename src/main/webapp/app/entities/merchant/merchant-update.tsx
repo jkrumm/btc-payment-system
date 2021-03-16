@@ -112,6 +112,12 @@ export const MerchantUpdate = (props: IMerchantUpdateProps) => {
                 />
               </AvGroup>
               <AvGroup>
+                <Label id="forwardLabel" for="merchant-forward">
+                  Forward
+                </Label>
+                <AvField id="merchant-forward" data-cy="forward" type="text" name="forward" />
+              </AvGroup>
+              <AvGroup>
                 <Label for="merchant-fee">Fee</Label>
                 <AvInput id="merchant-fee" data-cy="fee" type="select" className="form-control" name="fee.id">
                   <option value="" key="0" />
