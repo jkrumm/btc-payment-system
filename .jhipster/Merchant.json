@@ -15,7 +15,8 @@
     },
     {
       "fieldName": "forward",
-      "fieldType": "String"
+      "fieldType": "String",
+      "javadoc": "Forward address"
     }
   ],
   "relationships": [

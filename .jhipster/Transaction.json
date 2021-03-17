@@ -11,7 +11,7 @@
       "fieldName": "transactionType",
       "fieldType": "TransactionType",
       "javadoc": "Transaction enum type",
-      "fieldValues": "INCOMING_UNKNOWN,INCOMING_CUSTOMER,FORWARD_MERCHANT,FORWARD_HOLDINGS"
+      "fieldValues": "INCOMING_UNKNOWN,INCOMING_FAST,INCOMING_SECURE,FORWARD_MERCHANT,FORWARD_HOLDINGS"
     },
     {
       "fieldName": "txHash",
@@ -40,17 +40,19 @@
       "javadoc": "Service fee"
     },
     {
-      "fieldName": "btcUsd",
+      "fieldName": "btcEuro",
       "fieldType": "Double",
-      "javadoc": "BTC price at intiation"
+      "javadoc": "BTC/Euro price at intiation"
     },
     {
       "fieldName": "address",
-      "fieldType": "String"
+      "fieldType": "String",
+      "javadoc": "Transaction address"
     },
     {
       "fieldName": "amount",
-      "fieldType": "Double"
+      "fieldType": "Double",
+      "javadoc": "Euro price"
     }
   ],
   "relationships": [
@@ -67,13 +69,6 @@
       "otherEntityRelationshipName": "transaction",
       "javadoc": "Many Transaction can be done by One User",
       "relationshipName": "user"
-    },
-    {
-      "relationshipType": "many-to-one",
-      "otherEntityName": "merchant",
-      "otherEntityRelationshipName": "transaction",
-      "javadoc": "Many Transaction can be done by One Merchant",
-      "relationshipName": "merchant"
     }
   ],
   "javadoc": "Central table to persist transaction details. All holdings will be derived from it with help of BitcoinJ.",
