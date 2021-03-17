@@ -64,22 +64,22 @@ export const TransactionDetail = (props: ITransactionDetailProps) => {
           </dt>
           <dd>{transactionEntity.serviceFee}</dd>
           <dt>
-            <span id="btcUsd">Btc Usd</span>
-            <UncontrolledTooltip target="btcUsd">BTC price at intiation</UncontrolledTooltip>
+            <span id="btcEuro">Btc Euro</span>
+            <UncontrolledTooltip target="btcEuro">BTC/Euro price at intiation</UncontrolledTooltip>
           </dt>
-          <dd>{transactionEntity.btcUsd}</dd>
+          <dd>{transactionEntity.btcEuro}</dd>
           <dt>
             <span id="address">Address</span>
+            <UncontrolledTooltip target="address">Transaction address</UncontrolledTooltip>
           </dt>
           <dd>{transactionEntity.address}</dd>
           <dt>
             <span id="amount">Amount</span>
+            <UncontrolledTooltip target="amount">Euro price</UncontrolledTooltip>
           </dt>
           <dd>{transactionEntity.amount}</dd>
           <dt>User</dt>
           <dd>{transactionEntity.user ? transactionEntity.user.id : ''}</dd>
-          <dt>Merchant</dt>
-          <dd>{transactionEntity.merchant ? transactionEntity.merchant.id : ''}</dd>
         </dl>
         <Button tag={Link} to="/transaction" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

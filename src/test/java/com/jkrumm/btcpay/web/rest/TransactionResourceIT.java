@@ -36,7 +36,7 @@ class TransactionResourceIT {
     private static final Instant UPDATED_INITIATED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     private static final TransactionType DEFAULT_TRANSACTION_TYPE = TransactionType.INCOMING_UNKNOWN;
-    private static final TransactionType UPDATED_TRANSACTION_TYPE = TransactionType.INCOMING_CUSTOMER;
+    private static final TransactionType UPDATED_TRANSACTION_TYPE = TransactionType.INCOMING_FAST;
 
     private static final String DEFAULT_TX_HASH = "AAAAAAAAAA";
     private static final String UPDATED_TX_HASH = "BBBBBBBBBB";
@@ -53,8 +53,8 @@ class TransactionResourceIT {
     private static final Long DEFAULT_SERVICE_FEE = 1L;
     private static final Long UPDATED_SERVICE_FEE = 2L;
 
-    private static final Double DEFAULT_BTC_USD = 1D;
-    private static final Double UPDATED_BTC_USD = 2D;
+    private static final Double DEFAULT_BTC_EURO = 1D;
+    private static final Double UPDATED_BTC_EURO = 2D;
 
     private static final String DEFAULT_ADDRESS = "AAAAAAAAAA";
     private static final String UPDATED_ADDRESS = "BBBBBBBBBB";
@@ -91,7 +91,7 @@ class TransactionResourceIT {
             .actualAmount(DEFAULT_ACTUAL_AMOUNT)
             .transactionFee(DEFAULT_TRANSACTION_FEE)
             .serviceFee(DEFAULT_SERVICE_FEE)
-            .btcUsd(DEFAULT_BTC_USD)
+            .btcEuro(DEFAULT_BTC_EURO)
             .address(DEFAULT_ADDRESS)
             .amount(DEFAULT_AMOUNT);
         return transaction;
@@ -112,7 +112,7 @@ class TransactionResourceIT {
             .actualAmount(UPDATED_ACTUAL_AMOUNT)
             .transactionFee(UPDATED_TRANSACTION_FEE)
             .serviceFee(UPDATED_SERVICE_FEE)
-            .btcUsd(UPDATED_BTC_USD)
+            .btcEuro(UPDATED_BTC_EURO)
             .address(UPDATED_ADDRESS)
             .amount(UPDATED_AMOUNT);
         return transaction;
@@ -146,7 +146,7 @@ class TransactionResourceIT {
         assertThat(testTransaction.getActualAmount()).isEqualTo(DEFAULT_ACTUAL_AMOUNT);
         assertThat(testTransaction.getTransactionFee()).isEqualTo(DEFAULT_TRANSACTION_FEE);
         assertThat(testTransaction.getServiceFee()).isEqualTo(DEFAULT_SERVICE_FEE);
-        assertThat(testTransaction.getBtcUsd()).isEqualTo(DEFAULT_BTC_USD);
+        assertThat(testTransaction.getBtcEuro()).isEqualTo(DEFAULT_BTC_EURO);
         assertThat(testTransaction.getAddress()).isEqualTo(DEFAULT_ADDRESS);
         assertThat(testTransaction.getAmount()).isEqualTo(DEFAULT_AMOUNT);
     }
@@ -211,7 +211,7 @@ class TransactionResourceIT {
             .andExpect(jsonPath("$.[*].actualAmount").value(hasItem(DEFAULT_ACTUAL_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].transactionFee").value(hasItem(DEFAULT_TRANSACTION_FEE.intValue())))
             .andExpect(jsonPath("$.[*].serviceFee").value(hasItem(DEFAULT_SERVICE_FEE.intValue())))
-            .andExpect(jsonPath("$.[*].btcUsd").value(hasItem(DEFAULT_BTC_USD.doubleValue())))
+            .andExpect(jsonPath("$.[*].btcEuro").value(hasItem(DEFAULT_BTC_EURO.doubleValue())))
             .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS)))
             .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.doubleValue())));
     }
@@ -235,7 +235,7 @@ class TransactionResourceIT {
             .andExpect(jsonPath("$.actualAmount").value(DEFAULT_ACTUAL_AMOUNT.intValue()))
             .andExpect(jsonPath("$.transactionFee").value(DEFAULT_TRANSACTION_FEE.intValue()))
             .andExpect(jsonPath("$.serviceFee").value(DEFAULT_SERVICE_FEE.intValue()))
-            .andExpect(jsonPath("$.btcUsd").value(DEFAULT_BTC_USD.doubleValue()))
+            .andExpect(jsonPath("$.btcEuro").value(DEFAULT_BTC_EURO.doubleValue()))
             .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS))
             .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.doubleValue()));
     }
@@ -267,7 +267,7 @@ class TransactionResourceIT {
             .actualAmount(UPDATED_ACTUAL_AMOUNT)
             .transactionFee(UPDATED_TRANSACTION_FEE)
             .serviceFee(UPDATED_SERVICE_FEE)
-            .btcUsd(UPDATED_BTC_USD)
+            .btcEuro(UPDATED_BTC_EURO)
             .address(UPDATED_ADDRESS)
             .amount(UPDATED_AMOUNT);
         TransactionDTO transactionDTO = transactionMapper.toDto(updatedTransaction);
@@ -289,7 +289,7 @@ class TransactionResourceIT {
         assertThat(testTransaction.getActualAmount()).isEqualTo(UPDATED_ACTUAL_AMOUNT);
         assertThat(testTransaction.getTransactionFee()).isEqualTo(UPDATED_TRANSACTION_FEE);
         assertThat(testTransaction.getServiceFee()).isEqualTo(UPDATED_SERVICE_FEE);
-        assertThat(testTransaction.getBtcUsd()).isEqualTo(UPDATED_BTC_USD);
+        assertThat(testTransaction.getBtcEuro()).isEqualTo(UPDATED_BTC_EURO);
         assertThat(testTransaction.getAddress()).isEqualTo(UPDATED_ADDRESS);
         assertThat(testTransaction.getAmount()).isEqualTo(UPDATED_AMOUNT);
     }
@@ -326,7 +326,7 @@ class TransactionResourceIT {
         Transaction partialUpdatedTransaction = new Transaction();
         partialUpdatedTransaction.setId(transaction.getId());
 
-        partialUpdatedTransaction.transactionType(UPDATED_TRANSACTION_TYPE).btcUsd(UPDATED_BTC_USD);
+        partialUpdatedTransaction.transactionType(UPDATED_TRANSACTION_TYPE).btcEuro(UPDATED_BTC_EURO);
 
         restTransactionMockMvc
             .perform(
@@ -347,7 +347,7 @@ class TransactionResourceIT {
         assertThat(testTransaction.getActualAmount()).isEqualTo(DEFAULT_ACTUAL_AMOUNT);
         assertThat(testTransaction.getTransactionFee()).isEqualTo(DEFAULT_TRANSACTION_FEE);
         assertThat(testTransaction.getServiceFee()).isEqualTo(DEFAULT_SERVICE_FEE);
-        assertThat(testTransaction.getBtcUsd()).isEqualTo(UPDATED_BTC_USD);
+        assertThat(testTransaction.getBtcEuro()).isEqualTo(UPDATED_BTC_EURO);
         assertThat(testTransaction.getAddress()).isEqualTo(DEFAULT_ADDRESS);
         assertThat(testTransaction.getAmount()).isEqualTo(DEFAULT_AMOUNT);
     }
@@ -372,7 +372,7 @@ class TransactionResourceIT {
             .actualAmount(UPDATED_ACTUAL_AMOUNT)
             .transactionFee(UPDATED_TRANSACTION_FEE)
             .serviceFee(UPDATED_SERVICE_FEE)
-            .btcUsd(UPDATED_BTC_USD)
+            .btcEuro(UPDATED_BTC_EURO)
             .address(UPDATED_ADDRESS)
             .amount(UPDATED_AMOUNT);
 
@@ -395,7 +395,7 @@ class TransactionResourceIT {
         assertThat(testTransaction.getActualAmount()).isEqualTo(UPDATED_ACTUAL_AMOUNT);
         assertThat(testTransaction.getTransactionFee()).isEqualTo(UPDATED_TRANSACTION_FEE);
         assertThat(testTransaction.getServiceFee()).isEqualTo(UPDATED_SERVICE_FEE);
-        assertThat(testTransaction.getBtcUsd()).isEqualTo(UPDATED_BTC_USD);
+        assertThat(testTransaction.getBtcEuro()).isEqualTo(UPDATED_BTC_EURO);
         assertThat(testTransaction.getAddress()).isEqualTo(UPDATED_ADDRESS);
         assertThat(testTransaction.getAmount()).isEqualTo(UPDATED_AMOUNT);
     }

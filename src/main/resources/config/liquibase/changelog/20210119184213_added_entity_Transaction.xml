@@ -35,19 +35,16 @@
             <column name="service_fee" type="bigint" remarks="Service fee">
                 <constraints nullable="true" />
             </column>
-            <column name="btc_usd" type="double" remarks="BTC price at intiation">
+            <column name="btc_euro" type="double" remarks="BTC/Euro price at intiation">
                 <constraints nullable="true" />
             </column>
-            <column name="address" type="varchar(255)">
+            <column name="address" type="varchar(255)" remarks="Transaction address">
                 <constraints nullable="true" />
             </column>
-            <column name="amount" type="double">
+            <column name="amount" type="double" remarks="Euro price">
                 <constraints nullable="true" />
             </column>
             <column name="user_id" type="bigint">
-                <constraints nullable="true" />
-            </column>
-            <column name="merchant_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
@@ -78,7 +75,7 @@
             <column name="actual_amount" type="numeric"/>
             <column name="transaction_fee" type="numeric"/>
             <column name="service_fee" type="numeric"/>
-            <column name="btc_usd" type="numeric"/>
+            <column name="btc_euro" type="numeric"/>
             <column name="address" type="string"/>
             <column name="amount" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->

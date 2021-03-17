@@ -112,8 +112,8 @@ export const Transaction = (props: ITransactionProps) => {
                 <th className="hand" onClick={sort('serviceFee')}>
                   Service Fee <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('btcUsd')}>
-                  Btc Usd <FontAwesomeIcon icon="sort" />
+                <th className="hand" onClick={sort('btcEuro')}>
+                  Btc Euro <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('address')}>
                   Address <FontAwesomeIcon icon="sort" />
@@ -123,9 +123,6 @@ export const Transaction = (props: ITransactionProps) => {
                 </th>
                 <th>
                   User <FontAwesomeIcon icon="sort" />
-                </th>
-                <th>
-                  Merchant <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
@@ -147,11 +144,10 @@ export const Transaction = (props: ITransactionProps) => {
                   <td>{transaction.actualAmount}</td>
                   <td>{transaction.transactionFee}</td>
                   <td>{transaction.serviceFee}</td>
-                  <td>{transaction.btcUsd}</td>
+                  <td>{transaction.btcEuro}</td>
                   <td>{transaction.address}</td>
                   <td>{transaction.amount}</td>
                   <td>{transaction.user ? transaction.user.id : ''}</td>
-                  <td>{transaction.merchant ? <Link to={`merchant/${transaction.merchant.id}`}>{transaction.merchant.id}</Link> : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${transaction.id}`} color="info" size="sm" data-cy="entityDetailsButton">

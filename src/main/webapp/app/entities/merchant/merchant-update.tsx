@@ -116,6 +116,7 @@ export const MerchantUpdate = (props: IMerchantUpdateProps) => {
                   Forward
                 </Label>
                 <AvField id="merchant-forward" data-cy="forward" type="text" name="forward" />
+                <UncontrolledTooltip target="forwardLabel">Forward address</UncontrolledTooltip>
               </AvGroup>
               <AvGroup>
                 <Label for="merchant-fee">Fee</Label>

@@ -79,7 +79,7 @@ class TransactionGatlingTest extends Simulation {
                 , "actualAmount":null
                 , "transactionFee":null
                 , "serviceFee":null
-                , "btcUsd":null
+                , "btcEuro":null
                 , "address":"SAMPLE_TEXT"
                 , "amount":null
                 }""")).asJson

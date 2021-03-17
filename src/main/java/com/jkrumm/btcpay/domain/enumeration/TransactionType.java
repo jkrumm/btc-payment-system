@@ -5,7 +5,8 @@ package com.jkrumm.btcpay.domain.enumeration;
  */
 public enum TransactionType {
     INCOMING_UNKNOWN,
-    INCOMING_CUSTOMER,
+    INCOMING_FAST,
+    INCOMING_SECURE,
     FORWARD_MERCHANT,
     FORWARD_HOLDINGS,
 }

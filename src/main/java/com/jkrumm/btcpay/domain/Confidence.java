@@ -46,7 +46,7 @@ public class Confidence implements Serializable {
     private Integer confirmations;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "confidences", "user", "merchant" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "confidences", "user" }, allowSetters = true)
     private Transaction transaction;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

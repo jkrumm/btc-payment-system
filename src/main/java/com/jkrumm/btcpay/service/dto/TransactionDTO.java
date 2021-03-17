@@ -61,18 +61,24 @@ public class TransactionDTO implements Serializable {
     private Long serviceFee;
 
     /**
-     * BTC price at intiation
+     * BTC/Euro price at intiation
      */
-    @ApiModelProperty(value = "BTC price at intiation")
-    private Double btcUsd;
+    @ApiModelProperty(value = "BTC/Euro price at intiation")
+    private Double btcEuro;
 
+    /**
+     * Transaction address
+     */
+    @ApiModelProperty(value = "Transaction address")
     private String address;
 
+    /**
+     * Euro price
+     */
+    @ApiModelProperty(value = "Euro price")
     private Double amount;
 
     private UserDTO user;
-
-    private MerchantDTO merchant;
 
     public Long getId() {
         return id;
@@ -138,12 +144,12 @@ public class TransactionDTO implements Serializable {
         this.serviceFee = serviceFee;
     }
 
-    public Double getBtcUsd() {
-        return btcUsd;
+    public Double getBtcEuro() {
+        return btcEuro;
     }
 
-    public void setBtcUsd(Double btcUsd) {
-        this.btcUsd = btcUsd;
+    public void setBtcEuro(Double btcEuro) {
+        this.btcEuro = btcEuro;
     }
 
     public String getAddress() {
@@ -168,14 +174,6 @@ public class TransactionDTO implements Serializable {
 
     public void setUser(UserDTO user) {
         this.user = user;
-    }
-
-    public MerchantDTO getMerchant() {
-        return merchant;
-    }
-
-    public void setMerchant(MerchantDTO merchant) {
-        this.merchant = merchant;
     }
 
     @Override
@@ -211,11 +209,10 @@ public class TransactionDTO implements Serializable {
             ", actualAmount=" + getActualAmount() +
             ", transactionFee=" + getTransactionFee() +
             ", serviceFee=" + getServiceFee() +
-            ", btcUsd=" + getBtcUsd() +
+            ", btcEuro=" + getBtcEuro() +
             ", address='" + getAddress() + "'" +
             ", amount=" + getAmount() +
             ", user=" + getUser() +
-            ", merchant=" + getMerchant() +
             "}";
     }
 }

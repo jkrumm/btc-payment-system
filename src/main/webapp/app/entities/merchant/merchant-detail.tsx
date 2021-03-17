@@ -35,6 +35,7 @@ export const MerchantDetail = (props: IMerchantDetailProps) => {
           <dd>{merchantEntity.email}</dd>
           <dt>
             <span id="forward">Forward</span>
+            <UncontrolledTooltip target="forward">Forward address</UncontrolledTooltip>
           </dt>
           <dd>{merchantEntity.forward}</dd>
           <dt>Fee</dt>

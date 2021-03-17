@@ -25,6 +25,10 @@ public class MerchantDTO implements Serializable {
     @Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
     private String email;
 
+    /**
+     * Forward address
+     */
+    @ApiModelProperty(value = "Forward address")
     private String forward;
 
     private FeeDTO fee;

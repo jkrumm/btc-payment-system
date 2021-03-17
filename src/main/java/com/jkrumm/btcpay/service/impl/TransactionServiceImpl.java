@@ -75,8 +75,8 @@ public class TransactionServiceImpl implements TransactionService {
                         existingTransaction.setServiceFee(transactionDTO.getServiceFee());
                     }
 
-                    if (transactionDTO.getBtcUsd() != null) {
-                        existingTransaction.setBtcUsd(transactionDTO.getBtcUsd());
+                    if (transactionDTO.getBtcEuro() != null) {
+                        existingTransaction.setBtcEuro(transactionDTO.getBtcEuro());
                     }
 
                     if (transactionDTO.getAddress() != null) {

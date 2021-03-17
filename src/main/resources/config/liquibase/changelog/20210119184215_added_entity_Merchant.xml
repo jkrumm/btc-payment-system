@@ -20,7 +20,7 @@
             <column name="email" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="forward" type="varchar(255)">
+            <column name="forward" type="varchar(255)" remarks="Forward address">
                 <constraints nullable="true" />
             </column>
             <column name="fee_id" type="bigint">

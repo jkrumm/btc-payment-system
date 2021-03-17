@@ -9,8 +9,6 @@ import { IRootState } from 'app/shared/reducers';
 
 import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { IMerchant } from 'app/shared/model/merchant.model';
-import { getEntities as getMerchants } from 'app/entities/merchant/merchant.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './transaction.reducer';
 import { ITransaction } from 'app/shared/model/transaction.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
@@ -20,10 +18,9 @@ export interface ITransactionUpdateProps extends StateProps, DispatchProps, Rout
 
 export const TransactionUpdate = (props: ITransactionUpdateProps) => {
   const [userId, setUserId] = useState('0');
-  const [merchantId, setMerchantId] = useState('0');
   const [isNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { transactionEntity, users, merchants, loading, updating } = props;
+  const { transactionEntity, users, loading, updating } = props;
 
   const handleClose = () => {
     props.history.push('/transaction' + props.location.search);
@@ -37,7 +34,6 @@ export const TransactionUpdate = (props: ITransactionUpdateProps) => {
     }
 
     props.getUsers();
-    props.getMerchants();
   }, []);
 
   useEffect(() => {
@@ -115,7 +111,8 @@ export const TransactionUpdate = (props: ITransactionUpdateProps) => {
                   value={(!isNew && transactionEntity.transactionType) || 'INCOMING_UNKNOWN'}
                 >
                   <option value="INCOMING_UNKNOWN">INCOMING_UNKNOWN</option>
-                  <option value="INCOMING_CUSTOMER">INCOMING_CUSTOMER</option>
+                  <option value="INCOMING_FAST">INCOMING_FAST</option>
+                  <option value="INCOMING_SECURE">INCOMING_SECURE</option>
                   <option value="FORWARD_MERCHANT">FORWARD_MERCHANT</option>
                   <option value="FORWARD_HOLDINGS">FORWARD_HOLDINGS</option>
                 </AvInput>
@@ -169,23 +166,25 @@ export const TransactionUpdate = (props: ITransactionUpdateProps) => {
                 <UncontrolledTooltip target="serviceFeeLabel">Service fee</UncontrolledTooltip>
               </AvGroup>
               <AvGroup>
-                <Label id="btcUsdLabel" for="transaction-btcUsd">
-                  Btc Usd
+                <Label id="btcEuroLabel" for="transaction-btcEuro">
+                  Btc Euro
                 </Label>
-                <AvField id="transaction-btcUsd" data-cy="btcUsd" type="string" className="form-control" name="btcUsd" />
-                <UncontrolledTooltip target="btcUsdLabel">BTC price at intiation</UncontrolledTooltip>
+                <AvField id="transaction-btcEuro" data-cy="btcEuro" type="string" className="form-control" name="btcEuro" />
+                <UncontrolledTooltip target="btcEuroLabel">BTC/Euro price at intiation</UncontrolledTooltip>
               </AvGroup>
               <AvGroup>
                 <Label id="addressLabel" for="transaction-address">
                   Address
                 </Label>
                 <AvField id="transaction-address" data-cy="address" type="text" name="address" />
+                <UncontrolledTooltip target="addressLabel">Transaction address</UncontrolledTooltip>
               </AvGroup>
               <AvGroup>
                 <Label id="amountLabel" for="transaction-amount">
                   Amount
                 </Label>
                 <AvField id="transaction-amount" data-cy="amount" type="string" className="form-control" name="amount" />
+                <UncontrolledTooltip target="amountLabel">Euro price</UncontrolledTooltip>
               </AvGroup>
               <AvGroup>
                 <Label for="transaction-user">User</Label>
@@ -193,19 +192,6 @@ export const TransactionUpdate = (props: ITransactionUpdateProps) => {
                   <option value="" key="0" />
                   {users
                     ? users.map(otherEntity => (
-                        <option value={otherEntity.id} key={otherEntity.id}>
-                          {otherEntity.id}
-                        </option>
-                      ))
-                    : null}
-                </AvInput>
-              </AvGroup>
-              <AvGroup>
-                <Label for="transaction-merchant">Merchant</Label>
-                <AvInput id="transaction-merchant" data-cy="merchant" type="select" className="form-control" name="merchant.id">
-                  <option value="" key="0" />
-                  {merchants
-                    ? merchants.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
                           {otherEntity.id}
                         </option>
@@ -233,7 +219,6 @@ export const TransactionUpdate = (props: ITransactionUpdateProps) => {
 
 const mapStateToProps = (storeState: IRootState) => ({
   users: storeState.userManagement.users,
-  merchants: storeState.merchant.entities,
   transactionEntity: storeState.transaction.entity,
   loading: storeState.transaction.loading,
   updating: storeState.transaction.updating,
@@ -242,7 +227,6 @@ const mapStateToProps = (storeState: IRootState) => ({
 
 const mapDispatchToProps = {
   getUsers,
-  getMerchants,
   getEntity,
   updateEntity,
   createEntity,

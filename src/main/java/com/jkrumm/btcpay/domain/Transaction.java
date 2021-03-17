@@ -72,14 +72,20 @@ public class Transaction implements Serializable {
     private Long serviceFee;
 
     /**
-     * BTC price at intiation
+     * BTC/Euro price at intiation
      */
-    @Column(name = "btc_usd")
-    private Double btcUsd;
+    @Column(name = "btc_euro")
+    private Double btcEuro;
 
+    /**
+     * Transaction address
+     */
     @Column(name = "address")
     private String address;
 
+    /**
+     * Euro price
+     */
     @Column(name = "amount")
     private Double amount;
 
@@ -96,13 +102,6 @@ public class Transaction implements Serializable {
      */
     @ManyToOne
     private User user;
-
-    /**
-     * Many Transaction can be done by One Merchant
-     */
-    @ManyToOne
-    @JsonIgnoreProperties(value = { "fee", "merchantUsers" }, allowSetters = true)
-    private Merchant merchant;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -209,17 +208,17 @@ public class Transaction implements Serializable {
         this.serviceFee = serviceFee;
     }
 
-    public Double getBtcUsd() {
-        return this.btcUsd;
+    public Double getBtcEuro() {
+        return this.btcEuro;
     }
 
-    public Transaction btcUsd(Double btcUsd) {
-        this.btcUsd = btcUsd;
+    public Transaction btcEuro(Double btcEuro) {
+        this.btcEuro = btcEuro;
         return this;
     }
 
-    public void setBtcUsd(Double btcUsd) {
-        this.btcUsd = btcUsd;
+    public void setBtcEuro(Double btcEuro) {
+        this.btcEuro = btcEuro;
     }
 
     public String getAddress() {
@@ -292,19 +291,6 @@ public class Transaction implements Serializable {
         this.user = user;
     }
 
-    public Merchant getMerchant() {
-        return this.merchant;
-    }
-
-    public Transaction merchant(Merchant merchant) {
-        this.setMerchant(merchant);
-        return this;
-    }
-
-    public void setMerchant(Merchant merchant) {
-        this.merchant = merchant;
-    }
-
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -336,7 +322,7 @@ public class Transaction implements Serializable {
             ", actualAmount=" + getActualAmount() +
             ", transactionFee=" + getTransactionFee() +
             ", serviceFee=" + getServiceFee() +
-            ", btcUsd=" + getBtcUsd() +
+            ", btcEuro=" + getBtcEuro() +
             ", address='" + getAddress() + "'" +
             ", amount=" + getAmount() +
             "}";
