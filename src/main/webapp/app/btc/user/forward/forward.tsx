@@ -44,7 +44,7 @@ const Forward = (props: IProfileProps) => {
       </Card>
       <WhiteSpace size="lg" />
       <Button onClick={() => props.forward()} type={'primary'}>
-        Zahle verfügbare Bitcoin aus. ({merchantWallet.spendableUsd} €)
+        Zahle verfügbare Bitcoin aus. {merchantWallet.spendableUsd} €
       </Button>
     </div>
   );

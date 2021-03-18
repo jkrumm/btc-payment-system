@@ -333,7 +333,7 @@ public class WalletService {
         try {
             Address toAddress = LegacyAddress.fromBase58(networkParameters, to);
             SendRequest sendRequest = SendRequest.to(toAddress, Coin.parseCoin(value));
-            sendRequest.feePerKb = Coin.parseCoin("0.00000001");
+            sendRequest.feePerKb = Coin.parseCoin("0.00015");
             Wallet.SendResult sendResult = walletAppKit.wallet().sendCoins(walletAppKit.peerGroup(), sendRequest);
             sendResult.broadcastComplete.addListener(
                 () -> System.out.println("Sent coins onwards! Transaction hash is " + sendResult.tx.getTxId()),
