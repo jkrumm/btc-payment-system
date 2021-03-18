@@ -17,7 +17,7 @@ public class TransactionHistory {
     private Long actualAmount;
     private Long transactionFee;
     private Long serviceFee;
-    private Double btcUsd;
+    private Double btcEuro;
     private Double amount;
     List<TransactionHistoryConfidence> confidences;
     private String timeAgo;
@@ -35,7 +35,7 @@ public class TransactionHistory {
         Long actualAmount,
         Long transactionFee,
         Long serviceFee,
-        Double btcUsd,
+        Double btcEuro,
         Double amount,
         List<TransactionHistoryConfidence> confidences,
         String timeAgo,
@@ -47,8 +47,11 @@ public class TransactionHistory {
         this.address = address;
         this.initiatedAt = initiatedAt;
         switch (transactionType) {
-            case INCOMING_CUSTOMER:
-                this.transactionType = "INCOMING";
+            case INCOMING_FAST:
+                this.transactionType = "INCOMING_FAST";
+                break;
+            case INCOMING_SECURE:
+                this.transactionType = "INCOMING_SECURE";
                 break;
             case FORWARD_HOLDINGS:
                 this.transactionType = "FORWARD_HOLDINGS";
@@ -65,7 +68,7 @@ public class TransactionHistory {
         this.actualAmount = actualAmount;
         this.transactionFee = transactionFee;
         this.serviceFee = serviceFee;
-        this.btcUsd = btcUsd;
+        this.btcEuro = btcEuro;
         this.amount = amount;
         this.confidences = confidences;
         this.timeAgo = timeAgo;
@@ -153,12 +156,12 @@ public class TransactionHistory {
         this.serviceFee = serviceFee;
     }
 
-    public Double getBtcUsd() {
-        return btcUsd;
+    public Double getBtcEuro() {
+        return btcEuro;
     }
 
-    public void setBtcUsd(Double btcUsd) {
-        this.btcUsd = btcUsd;
+    public void setBtcEuro(Double btcUsd) {
+        this.btcEuro = btcUsd;
     }
 
     public Double getAmount() {
@@ -227,8 +230,8 @@ public class TransactionHistory {
             transactionFee +
             ", serviceFee=" +
             serviceFee +
-            ", btcUsd=" +
-            btcUsd +
+            ", btcEuro=" +
+            btcEuro +
             ", amount=" +
             amount +
             ", confidences=" +

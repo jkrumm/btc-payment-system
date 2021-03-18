@@ -39,36 +39,44 @@ public class TxService {
     @Autowired
     private TransactionMapper transactionMapper;
 
-    TransactionDTO initTx(Principal principal, Double amount) throws IOException {
+    TransactionDTO initTx(Principal principal, Double amount, String type) throws IOException {
         log.info("Called initTx() in TxService");
+        // Get User object
         Optional<User> user = repos.user.findOneByLogin(principal.getName());
         log.info(user.toString());
         if (user.isPresent()) {
+            // Generate new receive Bitcoin address
             Address address = walletService.newAddress();
-
+            // Get BTC/Euro Price
             Double eurBtcPrice = getBtcEuroPrice();
             log.info("initTx: eurBtcPrice: " + eurBtcPrice);
-
+            // Get User and Merchant data
             UserDTO userDTO = new UserDTO();
             userDTO.setId(user.get().getId());
             userDTO.setLogin(user.get().getLogin());
             log.info("initTx: userDTO: " + userDTO.toString());
-
             Merchant merchant = repos.merchantUser.findMerchantUserByUser(user).getMerchant();
-            MerchantDTO merchantDTO = merchantMapper.toDto(merchant);
             log.info("initTx: merchantDTO: " + merchant.toString());
 
-            Double btcAmount = getEuroToBtc(amount);
-            Double serviceFee = btcAmount * (merchant.getFee().getPercent().doubleValue() / 100);
-
+            // Construct and persist Transaction object
             TransactionDTO txDto = new TransactionDTO();
+            Double btcAmount = getEuroToBtc(amount);
+            Double serviceFee = 0.0;
+            if (type.equals("fast")) {
+                txDto.setTransactionType(TransactionType.INCOMING_FAST);
+                serviceFee = btcAmount * (merchant.getFee().getPercent().doubleValue() / 100);
+            } else if (type.equals("secure")) {
+                txDto.setTransactionType(TransactionType.INCOMING_SECURE);
+                serviceFee = btcAmount * (merchant.getFee().getPercentSecure().doubleValue() / 100);
+            } else {
+                log.error("initTx() from " + principal.getName() + " with amount " + amount + " has incorrect type: " + type);
+                return null;
+            }
             txDto.setInitiatedAt(Instant.now());
-            txDto.setTransactionType(TransactionType.INCOMING_CUSTOMER);
             txDto.setExpectedAmount(toSats(btcAmount - serviceFee));
             txDto.setServiceFee(toSats(serviceFee));
-            txDto.setBtcUsd(eurBtcPrice);
+            txDto.setBtcEuro(eurBtcPrice);
             txDto.setUser(userDTO);
-            txDto.setMerchant(merchantDTO);
             txDto.setAddress(address.toString());
             txDto.setAmount(amount);
             log.info(txDto.toString());

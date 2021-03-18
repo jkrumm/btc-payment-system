@@ -209,9 +209,8 @@ const Transaction = (props: ITransactionProps) => {
           <WhiteSpace size={'lg'} />
           <Button
             onClick={() => {
-              cl('initTX');
-              cl(amount);
-              props.initTx(amount);
+              cl('initTX amount: ' + amount + ' type: ' + transactionType);
+              props.initTx(amount, transactionType);
               setStep(1);
             }}
             type={'primary'}
@@ -239,6 +238,8 @@ const Transaction = (props: ITransactionProps) => {
             <WhiteSpace size={'md'} />
             <Statistic title="Betrag in BTC" value={currentTx.expectedAmount / 100000000} suffix={' BTC'} precision={8} className="small" />
             <WhiteSpace size={'md'} />
+            <Statistic title="Transaktionsart" value={currentTx.transactionType} className="small" />
+            <WhiteSpace size={'md'} />
             <Statistic title="Servicegebühren" value={serviceFee} suffix={' %'} precision={2} className="small" />
           </Card>
           <WhiteSpace size={'lg'} />
@@ -250,19 +251,42 @@ const Transaction = (props: ITransactionProps) => {
       {step === 2 && (
         <>
           <Card title="Bitcoins erhalten">
-            {confirmation.confidence.confidenceType === 'CONFIRMED' && (
-              <Alert
-                message="Transaktion abgeschlossen!"
-                description="Transaktion wurde erfolgreich validiert jedoch noch nicht bestätigt."
-                type="success"
-              />
+            {confirmation.confidence.transaction.transactionType === 'INCOMING_FAST' && (
+              <>
+                {confirmation.confidence.confidenceType === 'CONFIRMED' && (
+                  <Alert
+                    message="Transaktion abgeschlossen!"
+                    description="Transaktion wurde erfolgreich validiert jedoch noch nicht bestätigt."
+                    type="success"
+                  />
+                )}
+                {confirmation.confidence.confidenceType === 'BUILDING' && (
+                  <Alert
+                    message="Transaktion im Mempool!"
+                    description="Transaktion wurde gefunden jedoch noch nicht validiert."
+                    type="info"
+                  />
+                )}
+              </>
             )}
-            {confirmation.confidence.confidenceType === 'BUILDING' && (
-              <Alert
-                message="Transaktion im Mempool!"
-                description="Transaktion wurde gefunden jedoch noch nicht validiert."
-                type="warning"
-              />
+            {confirmation.confidence.transaction.transactionType === 'INCOMING_SECURE' && (
+              <>
+                <Alert
+                  message="Sichere Transaktion!"
+                  description="Die Transaktion wird erst mit dem nächsten Block validiert!"
+                  type="error"
+                />
+                {confirmation.confidence.confidenceType === 'BUILDING' && (
+                  <>
+                    <WhiteSpace size={'md'} />
+                    <Alert
+                      message="Transaktion im Mempool!"
+                      description="Transaktion wurde gefunden jedoch noch nicht validiert."
+                      type="info"
+                    />
+                  </>
+                )}
+              </>
             )}
             <WhiteSpace size={'xl'} />
             <Statistic title="Betrag in Euro" value={currentTx.amount} suffix={' €'} precision={2} className="small" />

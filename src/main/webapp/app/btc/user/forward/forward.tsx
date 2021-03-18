@@ -4,8 +4,8 @@ import { IRootState } from 'app/shared/reducers';
 import { logout } from 'app/shared/reducers/authentication';
 import { getMerchantWallet, forward } from 'app/btc/user.reducer';
 
-import { WhiteSpace } from 'antd-mobile';
-import { Card, Statistic, Button } from 'antd';
+import { WhiteSpace, Button } from 'antd-mobile';
+import { Card, Statistic } from 'antd';
 import { Heading } from 'app/shared/util/ui-components';
 import { faHandshake } from '@fortawesome/free-regular-svg-icons';
 
@@ -43,7 +43,9 @@ const Forward = (props: IProfileProps) => {
         />
       </Card>
       <WhiteSpace size="lg" />
-      <Button onClick={() => props.forward()}>Forward</Button>
+      <Button onClick={() => props.forward()} type={'primary'}>
+        Zahle verfügbare Bitcoin aus. ({merchantWallet.spendableUsd} €)
+      </Button>
     </div>
   );
 };

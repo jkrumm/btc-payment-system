@@ -14,9 +14,7 @@ import './profile.scss';
 export interface IProfileProps extends StateProps, DispatchProps {}
 
 const Profile = (props: IProfileProps) => {
-  const { account, merchantUser, merchant, merchantWallet } = props;
-
-  console.log(merchantUser);
+  const { account, merchant, merchantWallet } = props;
   console.log(merchant);
   console.log(account);
 
@@ -44,9 +42,9 @@ const Profile = (props: IProfileProps) => {
         <WhiteSpace size={'xs'} />
         <Statistic title="Servicegebühr" value={merchant.fee.feeType} className={'small'} />
         <WhiteSpace size={'xs'} />
-        <Statistic title="Servicegebühr prozent" value={merchant.fee.percent} suffix=" %" className={'small'} />
+        <Statistic title="Servicegebühr" value={merchant.fee.percent} suffix=" %" className={'small'} />
         <WhiteSpace size={'xs'} />
-        <Statistic title="Servicegebühr prozent sicher" value={merchant.fee.percentSecure} suffix=" %" className={'small'} />
+        <Statistic title="Servicegebühr sicher" value={merchant.fee.percentSecure} suffix=" %" className={'small'} />
         <WhiteSpace size={'xs'} />
         <Statistic title="Angefallene Servicegebühren" value={merchantWallet.serviceFeeUsd} suffix=" €" className={'small'} />
       </Card>
@@ -54,9 +52,8 @@ const Profile = (props: IProfileProps) => {
   );
 };
 
-const mapStateToProps = ({ authentication, merchantUser, merchant, user }: IRootState) => ({
+const mapStateToProps = ({ authentication, user }: IRootState) => ({
   account: authentication.account,
-  merchantUser,
   merchant: user.merchant,
   merchantWallet: user.merchantWallet,
 });

@@ -60,7 +60,7 @@ const initialState = {
           actualAmount: null,
           address: '',
           amount: 0,
-          btcUsd: 0,
+          btcEuro: 0,
           expectedAmount: 0,
           initiatedAt: null,
           merchant: {
@@ -94,7 +94,7 @@ const initialState = {
     actualAmount: 0,
     address: '',
     amount: 0,
-    btcUsd: 0,
+    btcEuro: 0,
     expectedAmount: 0,
     initiatedAt: null,
     merchant: {
@@ -119,7 +119,7 @@ const initialState = {
       initiatedAt: null,
       actualAmount: 0,
       amount: 0,
-      btcUsd: 0,
+      btcEuro: 0,
       expectedAmount: 0,
       confidences: [
         {
@@ -259,9 +259,9 @@ export const getTransactions = () => ({
   payload: axios.get('/api/user/transactions'),
 });
 
-export const initTx = amount => ({
+export const initTx = (amount, type) => ({
   type: ACTION_TYPES.INIT_TX,
-  payload: axios.get('/api/user/initTx/' + amount),
+  payload: axios.get('/api/user/initTx?amount=' + amount + '&type=' + type),
 });
 
 export const getBtcPrice = () => ({

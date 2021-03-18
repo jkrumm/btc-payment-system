@@ -14,6 +14,7 @@ import com.jkrumm.btcpay.btc.websocket.dto.blockcypher.BlockCypherDTO;
 import com.jkrumm.btcpay.domain.Confidence;
 import com.jkrumm.btcpay.domain.Transaction;
 import com.jkrumm.btcpay.domain.enumeration.ConfidenceType;
+import com.jkrumm.btcpay.domain.enumeration.TransactionType;
 import com.jkrumm.btcpay.service.dto.ConfidenceDTO;
 import com.jkrumm.btcpay.service.dto.TransactionDTO;
 import com.jkrumm.btcpay.service.mapper.ConfidenceMapper;
@@ -247,7 +248,9 @@ public class WalletService {
                                         Address address = script.getToAddress(walletAppKit.wallet().getNetworkParameters(), true);
                                         log.info("Confirmed tx by peers for address " + address.toString());
                                         Transaction txDb = repos.transaction.findByAddress(address.toString()).get(0);
-
+                                        if (txDb.getTransactionType() == TransactionType.INCOMING_SECURE) {
+                                            return;
+                                        }
                                         // Persist updated Transaction and Confirmation to db
                                         Confidence confidence = new Confidence();
                                         confidence.setChangeAt(Instant.now());

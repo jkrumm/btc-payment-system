@@ -29,9 +29,6 @@ const Wallet = (props: ITransactionProps) => {
     const interval = setInterval(() => {
       const date = new Date();
       const dateDiff = new DateDiff(date.getTime(), new Date(wallet.blockMinedAt));
-      if (dateDiff.seconds < 0) {
-        setRefresh(refresh + 1);
-      }
       setTimeAgo(dateDiff);
     }, 1000);
     return () => clearInterval(interval);
@@ -40,9 +37,11 @@ const Wallet = (props: ITransactionProps) => {
   const getTxHistoryClass = item => {
     if (item.transactionType === 'FORWARD') {
       return 'primary';
-    } else if (item.confirmations > 0 && item.confidenceType === 'CONFIRMED') {
+    } else if ((item.transactionType === 'INCOMING_FAST' || item.confirmations > 0) && item.confidenceType === 'CONFIRMED') {
       return 'success';
     } else if (item.confidenceType === 'CONFIRMED') {
+      return 'warning';
+    } else if (item.confidenceType === 'BUILDING') {
       return 'warning';
     } else {
       return 'danger';
@@ -156,7 +155,7 @@ const Wallet = (props: ITransactionProps) => {
                       <Statistic title="Bestätigungen" value={item.confirmations} className="tiny" />
                       <WhiteSpace size={'md'} />
                       <Statistic title="Preis" value={item.amount} suffix={' €'} precision={2} className="tiny" />
-                      <Statistic title="BTC / Euro" value={item.btcUsd} suffix={' €'} precision={2} className="tiny" />
+                      <Statistic title="BTC / Euro" value={item.btcEuro} suffix={' €'} precision={2} className="tiny" />
                       <Statistic
                         title="Erwartete BTC"
                         value={item.expectedAmount / 100000000}
@@ -184,7 +183,11 @@ const Wallet = (props: ITransactionProps) => {
                       {item.confidences.map(conf => (
                         <div key={conf.id} className={conf.confidenceType !== 'CONFIRMED' ? 'conf warning' : 'conf success'}>
                           <span>{dayjs(conf.changeAt).format('DD.MM.YY HH:mm:ss')}</span>
-                          <span>{conf.confidenceType}</span>
+                          <span>
+                            {item.transactionType === 'INCOMING_FAST' && conf.confirmations === 0 && conf.confidenceType === 'CONFIRMED'
+                              ? 'CONFIRMED_FAST'
+                              : conf.confidenceType}
+                          </span>
                           <span>{conf.confirmations}</span>
                         </div>
                       ))}

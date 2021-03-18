@@ -118,7 +118,7 @@ public class ProfileService {
                         tx.getActualAmount(),
                         tx.getTransactionFee(),
                         tx.getServiceFee(),
-                        tx.getBtcUsd(),
+                        tx.getBtcEuro(),
                         tx.getAmount(),
                         transactionHistoryConfidences,
                         timeAgoString,

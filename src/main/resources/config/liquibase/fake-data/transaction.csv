@@ -1,1 +1,1 @@
-id;initiated_at;transaction_type;tx_hash;expected_amount;actual_amount;transaction_fee;service_fee;btc_usd;address;amount
+id;initiated_at;transaction_type;tx_hash;expected_amount;actual_amount;transaction_fee;service_fee;btc_euro;address;amount
