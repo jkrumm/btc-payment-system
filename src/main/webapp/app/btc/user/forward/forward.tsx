@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { IRootState } from 'app/shared/reducers';
 import { logout } from 'app/shared/reducers/authentication';
-import { getMerchantWallet, sendForward } from 'app/btc/user.reducer';
+import { getMerchantWallet, sendForward, getAddressWallet } from 'app/btc/user.reducer';
 
 import { WhiteSpace, Button } from 'antd-mobile';
 import { Card, Statistic, Collapse } from 'antd';
@@ -14,11 +14,12 @@ import './forward.scss';
 export interface IProfileProps extends StateProps, DispatchProps {}
 
 const Forward = (props: IProfileProps) => {
-  const { merchantWallet, merchant, forward, transactions } = props;
+  const { btcPrice, wallet, merchantWallet, merchant, forward, transactions, addressWallet } = props;
 
   useEffect(() => {
     props.getMerchantWallet();
-  }, []);
+    props.getAddressWallet(merchant.forward);
+  }, [forward, wallet]);
 
   return (
     <div>
@@ -26,13 +27,15 @@ const Forward = (props: IProfileProps) => {
       <WhiteSpace size="xl" />
       <Card title="Wallet">
         <Statistic title="Auszahlung Addresse" value={merchant.forward} className="small small-text" />
-        <Statistic
-          title="Erwartet"
-          value={merchantWallet.estimated / 100000000 + ' BTC'}
-          suffix={merchantWallet.estimatedUsd + ' €'}
-          precision={8}
-          className="small suffix"
-        />
+        {wallet.pending > 1 && (
+          <Statistic
+            title="Erwartet"
+            value={merchantWallet.estimated / 100000000 + ' BTC'}
+            suffix={merchantWallet.estimatedUsd + ' €'}
+            precision={8}
+            className="small suffix"
+          />
+        )}
         <WhiteSpace size={'xs'} />
         <Statistic
           title="Verfügbar"
@@ -61,7 +64,26 @@ const Forward = (props: IProfileProps) => {
           </Card>
         </div>
       )}
-      <WhiteSpace size={'xl'} />
+      <WhiteSpace size={'lg'} />
+      <Card title="Auszahlung Wallet">
+        {addressWallet.unconfirmed_balance > 0 && (
+          <Statistic
+            title="Erwartet"
+            value={(addressWallet.balance + addressWallet.unconfirmed_balance) / 100000000 + ' BTC'}
+            suffix={Math.round(((addressWallet.balance + addressWallet.unconfirmed_balance) / 100000000) * btcPrice) + ' €'}
+            precision={8}
+            className="small suffix"
+          />
+        )}
+        <Statistic
+          title="Verfügbar"
+          value={addressWallet.balance / 100000000 + ' BTC'}
+          suffix={Math.round((addressWallet.balance / 100000000) * btcPrice) + ' €'}
+          precision={8}
+          className="small suffix"
+        />
+      </Card>
+      <WhiteSpace size={'md'} />
       <Card title="Auszahlungen" className="no-padding">
         <Collapse>
           {transactions[0] !== undefined && transactions[0] !== null && transactions[0].expectedAmount !== 0 ? (
@@ -109,14 +131,14 @@ const Forward = (props: IProfileProps) => {
                       {item.transactionType !== 'FORWARD' ? (
                         <>
                           <Statistic
-                            title="Erwartete BTC"
+                            title="Erwartet"
                             value={item.expectedAmount / 100000000}
                             suffix={' BTC'}
                             precision={8}
                             className="tiny"
                           />
                           <Statistic
-                            title="Erhaltene BTC"
+                            title="Erhalten"
                             value={item.actualAmount / 100000000}
                             suffix={' BTC'}
                             precision={8}
@@ -177,13 +199,16 @@ const Forward = (props: IProfileProps) => {
 };
 
 const mapStateToProps = ({ user }: IRootState) => ({
+  btcPrice: user.btcPrice,
+  wallet: user.wallet,
   merchantWallet: user.merchantWallet,
   merchant: user.merchant,
   forward: user.forward,
   transactions: user.transactions,
+  addressWallet: user.addressWallet,
 });
 
-const mapDispatchToProps = { getMerchantWallet, sendForward };
+const mapDispatchToProps = { getMerchantWallet, sendForward, getAddressWallet };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

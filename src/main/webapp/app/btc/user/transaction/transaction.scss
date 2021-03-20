@@ -28,6 +28,22 @@ img {
     }
   }
 }
+
 .smaller {
   margin: 14px auto 19px;
+}
+
+.am-number-keyboard-item.keyboard-confirm {
+  color: #108ee9 !important;
+
+  &:after {
+    content: '€';
+    color: white;
+    font-size: 31px;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    display: block;
+    left: calc(50% + 3px);
+    top: 50%;
+  }
 }

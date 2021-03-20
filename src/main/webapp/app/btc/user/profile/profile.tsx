@@ -14,9 +14,7 @@ import './profile.scss';
 export interface IProfileProps extends StateProps, DispatchProps {}
 
 const Profile = (props: IProfileProps) => {
-  const { account, merchant, merchantWallet } = props;
-  console.log(merchant);
-  console.log(account);
+  const { account, merchant, merchantWallet, addressWallet, btcPrice } = props;
 
   useEffect(() => {
     props.getMerchant();
@@ -39,6 +37,8 @@ const Profile = (props: IProfileProps) => {
         <Statistic title="Name" value={merchant.name} className={'small'} />
         <WhiteSpace size={'xs'} />
         <Statistic title="E-Mail" value={merchant.email} className={'small'} />
+        <WhiteSpace size={'xs'} />
+        <Statistic title="Auszahlung Addresse" value={merchant.forward} className="small small-text" />
         <WhiteSpace size={'xs'} />
         <Statistic title="Servicegebühr" value={merchant.fee.feeType} className={'small'} />
         <WhiteSpace size={'xs'} />
@@ -69,6 +69,13 @@ const Profile = (props: IProfileProps) => {
           precision={8}
           className="small suffix"
         />
+        <Statistic
+          title="Auszahlung Wallet"
+          value={addressWallet.balance / 100000000 + ' BTC'}
+          suffix={Math.round((addressWallet.balance / 100000000) * btcPrice) + ' €'}
+          precision={8}
+          className="small suffix"
+        />
       </Card>
     </div>
   );
@@ -76,8 +83,10 @@ const Profile = (props: IProfileProps) => {
 
 const mapStateToProps = ({ authentication, user }: IRootState) => ({
   account: authentication.account,
+  btcPrice: user.btcPrice,
   merchant: user.merchant,
   merchantWallet: user.merchantWallet,
+  addressWallet: user.addressWallet,
 });
 
 const mapDispatchToProps = { logout, getMerchant, getMerchantWallet };

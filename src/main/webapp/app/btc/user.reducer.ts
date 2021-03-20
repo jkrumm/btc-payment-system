@@ -296,7 +296,7 @@ export const getBtcPrice = () => ({
 
 export const getAddressWallet = address => ({
   type: ACTION_TYPES.GET_ADDRESS_WALLET,
-  payload: axios.get('"https://api.blockcypher.com/v1/btc/test3/addrs/' + address + '/balance?token=4309e288604540068f4395ae1a54a907'),
+  payload: axios.get('https://api.blockcypher.com/v1/btc/test3/addrs/' + address + '/balance?token=4309e288604540068f4395ae1a54a907'),
 });
 
 export const sendForward = () => ({

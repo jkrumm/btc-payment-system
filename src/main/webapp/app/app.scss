@@ -150,6 +150,10 @@ Generic styles
   background-color: white;
 }
 
+.am-tab-bar-tab {
+  cursor: pointer;
+}
+
 /* padding helpers */
 
 @mixin pad($size, $side) {

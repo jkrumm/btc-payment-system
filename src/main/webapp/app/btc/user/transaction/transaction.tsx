@@ -71,7 +71,6 @@ class H5NumberInputExample extends React.Component<INumberInputProps, INumberInp
 }
 
 import { Steps, WingBlank } from 'antd-mobile';
-import set = Reflect.set;
 
 const Step = Steps.Step;
 

@@ -97,13 +97,15 @@ const Wallet = (props: ITransactionProps) => {
       </Collapse>
       <WhiteSpace size={'md'} />
       <Card title="Wallet">
-        <Statistic
-          title="Erwartet"
-          value={merchantWallet.estimated / 100000000 + ' BTC'}
-          suffix={merchantWallet.estimatedUsd + ' €'}
-          precision={8}
-          className="small suffix"
-        />
+        {wallet.pending > 1 && (
+          <Statistic
+            title="Erwartet"
+            value={merchantWallet.estimated / 100000000 + ' BTC'}
+            suffix={merchantWallet.estimatedUsd + ' €'}
+            precision={8}
+            className="small suffix"
+          />
+        )}
         <WhiteSpace size={'xs'} />
         <Statistic
           title="Verfügbar"
@@ -161,14 +163,14 @@ const Wallet = (props: ITransactionProps) => {
                       {item.transactionType !== 'FORWARD' ? (
                         <>
                           <Statistic
-                            title="Erwartete BTC"
+                            title="Erwartet"
                             value={item.expectedAmount / 100000000}
                             suffix={' BTC'}
                             precision={8}
                             className="tiny"
                           />
                           <Statistic
-                            title="Erhaltene BTC"
+                            title="Erhalten"
                             value={item.actualAmount / 100000000}
                             suffix={' BTC'}
                             precision={8}
