@@ -37,56 +37,53 @@ public class TxService {
     private MerchantMapperImpl merchantMapper;
 
     @Autowired
+    private ProfileService profileService;
+
+    @Autowired
     private TransactionMapper transactionMapper;
 
     TransactionDTO initTx(Principal principal, Double amount, String type) throws IOException {
         log.info("Called initTx() in TxService");
-        // Get User object
-        Optional<User> user = repos.user.findOneByLogin(principal.getName());
-        log.info(user.toString());
-        if (user.isPresent()) {
-            // Generate new receive Bitcoin address
-            Address address = walletService.newAddress();
-            // Get BTC/Euro Price
-            Double eurBtcPrice = getBtcEuroPrice();
-            log.info("initTx: eurBtcPrice: " + eurBtcPrice);
-            // Get User and Merchant data
-            UserDTO userDTO = new UserDTO();
-            userDTO.setId(user.get().getId());
-            userDTO.setLogin(user.get().getLogin());
-            log.info("initTx: userDTO: " + userDTO.toString());
-            Merchant merchant = repos.merchantUser.findMerchantUserByUser(user).getMerchant();
-            log.info("initTx: merchantDTO: " + merchant.toString());
+        // Generate new receive Bitcoin address
+        Address address = walletService.newAddress();
+        // Get BTC/Euro Price
+        Double eurBtcPrice = getBtcEuroPrice();
+        log.info("initTx: eurBtcPrice: " + eurBtcPrice);
+        // Get User and Merchant data
+        User user = profileService.getUser(principal);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setLogin(user.getLogin());
+        log.info("initTx: userDTO: " + userDTO.toString());
+        Merchant merchant = repos.merchantUser.findMerchantUserByUser(user).getMerchant();
+        log.info("initTx: merchantDTO: " + merchant.toString());
 
-            // Construct and persist Transaction object
-            TransactionDTO txDto = new TransactionDTO();
-            Double btcAmount = getEuroToBtc(amount);
-            Double serviceFee = 0.0;
-            if (type.equals("fast")) {
-                txDto.setTransactionType(TransactionType.INCOMING_FAST);
-                serviceFee = btcAmount * (merchant.getFee().getPercent().doubleValue() / 100);
-            } else if (type.equals("secure")) {
-                txDto.setTransactionType(TransactionType.INCOMING_SECURE);
-                serviceFee = btcAmount * (merchant.getFee().getPercentSecure().doubleValue() / 100);
-            } else {
-                log.error("initTx() from " + principal.getName() + " with amount " + amount + " has incorrect type: " + type);
-                return null;
-            }
-            txDto.setInitiatedAt(Instant.now());
-            txDto.setExpectedAmount(toSats(btcAmount - serviceFee));
-            txDto.setServiceFee(toSats(serviceFee));
-            txDto.setBtcEuro(eurBtcPrice);
-            txDto.setUser(userDTO);
-            txDto.setAddress(address.toString());
-            txDto.setAmount(amount);
-            log.info(txDto.toString());
-            log.info("initTx: txDto: " + txDto.toString());
-            Transaction transaction = repos.transaction.save(transactionMapper.toEntity(txDto));
-            log.info("initTx: txSaved: " + transaction.toString());
-            return txDto;
+        // Construct and persist Transaction object
+        TransactionDTO txDto = new TransactionDTO();
+        Double btcAmount = getEuroToBtc(amount);
+        Double serviceFee = 0.0;
+        if (type.equals("fast")) {
+            txDto.setTransactionType(TransactionType.INCOMING_FAST);
+            serviceFee = btcAmount * (merchant.getFee().getPercent().doubleValue() / 100);
+        } else if (type.equals("secure")) {
+            txDto.setTransactionType(TransactionType.INCOMING_SECURE);
+            serviceFee = btcAmount * (merchant.getFee().getPercentSecure().doubleValue() / 100);
         } else {
-            throw new NullPointerException();
+            log.error("initTx() from " + principal.getName() + " with amount " + amount + " has incorrect type: " + type);
+            return null;
         }
+        txDto.setInitiatedAt(Instant.now());
+        txDto.setExpectedAmount(toSats(btcAmount - serviceFee));
+        txDto.setServiceFee(toSats(serviceFee));
+        txDto.setBtcEuro(eurBtcPrice);
+        txDto.setUser(userDTO);
+        txDto.setAddress(address.toString());
+        txDto.setAmount(amount);
+        log.info(txDto.toString());
+        log.info("initTx: txDto: " + txDto.toString());
+        Transaction transaction = repos.transaction.save(transactionMapper.toEntity(txDto));
+        log.info("initTx: txSaved: " + transaction.toString());
+        return txDto;
     }
 
     Double getEuroToBtc(Double amount) throws IOException {
@@ -113,6 +110,14 @@ public class TxService {
 
     Double getBtcEuroPrice() throws IOException {
         return 10000 / getEuroToBtc(10000.0);
+    }
+
+    Double getBtcFromEuro(Long sats) throws IOException {
+        return getBtcEuroPrice() * (sats / 100000000);
+    }
+
+    Double getBtcToEuro(Long btc) throws IOException {
+        return Math.round(((btc.doubleValue() / 100000000) * getBtcEuroPrice()) * 100) / 100.0;
     }
 
     Long toSats(Double amount) {

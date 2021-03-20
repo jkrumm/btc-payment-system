@@ -1,17 +1,21 @@
 package com.jkrumm.btcpay.btc.dto;
 
+import java.time.Instant;
+
 public class Forward {
 
     private Long amount;
     private String to;
     private String txHash;
     private Long fee;
+    private Instant initiatedAt;
 
     public Forward(Long amount, String to, String txHash, Long fee) {
         this.amount = amount;
         this.to = to;
         this.txHash = txHash;
         this.fee = fee;
+        this.initiatedAt = Instant.now();
     }
 
     public Long getAmount() {
@@ -46,8 +50,31 @@ public class Forward {
         this.fee = fee;
     }
 
+    public Instant getInitiatedAt() {
+        return initiatedAt;
+    }
+
+    public void setInitiatedAt(Instant initiatedAt) {
+        this.initiatedAt = initiatedAt;
+    }
+
     @Override
     public String toString() {
-        return "Forward{" + "amount='" + amount + '\'' + ", to='" + to + '\'' + ", txHash='" + txHash + '\'' + ", fee='" + fee + '\'' + '}';
+        return (
+            "Forward{" +
+            "amount=" +
+            amount +
+            ", to='" +
+            to +
+            '\'' +
+            ", txHash='" +
+            txHash +
+            '\'' +
+            ", fee=" +
+            fee +
+            ", initiatedAt=" +
+            initiatedAt +
+            '}'
+        );
     }
 }

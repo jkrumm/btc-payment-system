@@ -34,7 +34,8 @@ public class WalletController {
     @PostMapping("/send")
     public ResponseEntity<String> send(@RequestParam String amount, @RequestParam String address) throws URISyntaxException {
         log.debug("REST request to send btc");
-        walletService.send(amount, address);
+        log.error("Message not setup!");
+        /* walletService.send(amount, address); */
         return ResponseEntity.ok().body("Sent " + amount + " BTC to " + address);
     }
 

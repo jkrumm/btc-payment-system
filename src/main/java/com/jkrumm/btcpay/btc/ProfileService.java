@@ -3,9 +3,11 @@ package com.jkrumm.btcpay.btc;
 import com.jkrumm.btcpay.btc.dto.*;
 import com.jkrumm.btcpay.domain.*;
 import com.jkrumm.btcpay.domain.enumeration.ConfidenceType;
+import com.jkrumm.btcpay.domain.enumeration.TransactionType;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import org.bitcoinj.wallet.Wallet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,34 +28,31 @@ public class ProfileService {
     @Autowired
     private WalletService WalletService;
 
-    Merchant getMerchant(Principal principal) {
-        log.info("Called getMerchant() in ProfileService");
+    User getUser(Principal principal) {
+        log.info("Called getUser() in ProfileService");
         Optional<User> user = repos.user.findOneByLogin(principal.getName());
-        log.info(user.toString());
         if (user.isPresent()) {
-            Merchant merchant = repos.merchantUser.findMerchantUserByUser(user).getMerchant();
-            log.info(merchant.toString());
-            return merchant;
+            return user.get();
         } else {
             throw new NullPointerException();
         }
     }
 
+    Merchant getMerchant(Principal principal) {
+        log.info("Called getMerchant() in ProfileService");
+        return repos.merchantUser.findMerchantUserByUser(getUser(principal)).getMerchant();
+    }
+
     List<Transaction> getMerchantTransactions(Principal principal) {
         log.info("Called getMerchantTransactions() in ProfileService");
-        Optional<User> user = repos.user.findOneByLogin(principal.getName());
-        log.info(user.toString());
-        if (user.isPresent()) {
-            Merchant merchant = repos.merchantUser.findMerchantUserByUser(user).getMerchant();
-            List<MerchantUser> merchantUsers = repos.merchantUser.findByMerchant(merchant);
-            List<User> users = new ArrayList<>();
-            for (MerchantUser mu : merchantUsers) {
-                users.add(mu.getUser());
-            }
-            log.info("getMerchantTransactions(): " + repos.transaction.findByUserIsIn(users).toString());
-            return repos.transaction.findByUserIsIn(users);
+        Merchant merchant = repos.merchantUser.findMerchantUserByUser(getUser(principal)).getMerchant();
+        List<MerchantUser> merchantUsers = repos.merchantUser.findByMerchant(merchant);
+        List<User> users = new ArrayList<>();
+        for (MerchantUser mu : merchantUsers) {
+            users.add(mu.getUser());
         }
-        return null;
+        log.info("getMerchantTransactions(): " + repos.transaction.findByUserIsIn(users).toString());
+        return repos.transaction.findByUserIsIn(users);
     }
 
     MerchantWallet getWallet(Principal principal) throws IOException {
@@ -63,7 +62,9 @@ public class ProfileService {
         for (Transaction tx : transactions) {
             if (tx.getActualAmount() != null) {
                 List<Confidence> confidences = repos.confidence.findByTransactionOrderByChangeAtDesc(tx);
-                if (confidences.size() > 0 && confidences.get(0).getConfirmations() > 0) {
+                if (tx.getTransactionType().equals(TransactionType.FORWARD_MERCHANT)) {
+                    merchantWallet.setForward(merchantWallet.getForward() + tx.getActualAmount());
+                } else if (confidences.size() > 0 && confidences.get(0).getConfirmations() > 0) {
                     merchantWallet.setEstimated(merchantWallet.getEstimated() + tx.getActualAmount() - tx.getServiceFee());
                     merchantWallet.setSpendable(merchantWallet.getSpendable() + tx.getActualAmount() - tx.getServiceFee());
                     merchantWallet.setServiceFee(merchantWallet.getServiceFee() + tx.getServiceFee());
@@ -73,10 +74,14 @@ public class ProfileService {
                 }
             }
         }
-        Double btcUsd = txService.getBtcEuroPrice();
-        merchantWallet.setEstimatedUsd(Math.round(((merchantWallet.getEstimated().doubleValue() / 100000000) * btcUsd) * 100) / 100.0);
-        merchantWallet.setSpendableUsd(Math.round(((merchantWallet.getSpendable().doubleValue() / 100000000) * btcUsd) * 100) / 100.0);
-        merchantWallet.setServiceFeeUsd(Math.round(((merchantWallet.getServiceFee().doubleValue() / 100000000) * btcUsd) * 100) / 100.0);
+        merchantWallet.setTotal(merchantWallet.getEstimated());
+        merchantWallet.setEstimated(merchantWallet.getEstimated() - merchantWallet.getForward());
+        merchantWallet.setSpendable(merchantWallet.getSpendable() - merchantWallet.getForward());
+        merchantWallet.setTotalUsd(txService.getBtcToEuro(merchantWallet.getTotal()));
+        merchantWallet.setForwardUsd(txService.getBtcToEuro(merchantWallet.getForward()));
+        merchantWallet.setEstimatedUsd(txService.getBtcToEuro(merchantWallet.getEstimated()));
+        merchantWallet.setSpendableUsd(txService.getBtcToEuro(merchantWallet.getSpendable()));
+        merchantWallet.setServiceFeeUsd(txService.getBtcToEuro(merchantWallet.getServiceFee()));
         log.info("getWallet(): " + merchantWallet.toString());
         return merchantWallet;
     }
@@ -146,7 +151,7 @@ public class ProfileService {
             " to " +
             merchant.getForward()
         );
-        Wallet.SendResult sendResult = WalletService.send(spendable, merchant.getForward());
+        Wallet.SendResult sendResult = WalletService.sendMerchant(getUser(principal), spendable, merchant.getForward());
         Forward forward = new Forward(
             Long.valueOf(spendable),
             merchant.getForward(),

@@ -11,6 +11,7 @@ export const ACTION_TYPES = {
   FETCH_TRANSACTIONS: 'user/FETCH_TRANSACTIONS',
   INIT_TX: 'user/INIT_TX',
   GET_BTC_PRICE: 'user/GET_BTC_PRICE',
+  GET_ADDRESS_WALLET: 'user/GET_ADDRESS_WALLET',
   FORWARD: 'user/FORWARD',
 };
 
@@ -40,6 +41,17 @@ const initialState = {
       percentSecure: 0,
     },
   },
+  addressWallet: {
+    address: '',
+    total_received: 0,
+    total_sent: 0,
+    balance: 0,
+    unconfirmed_balance: 0,
+    final_balance: 0,
+    n_tx: 0,
+    unconfirmed_n_tx: 0,
+    final_n_tx: 0,
+  },
   merchantWallet: {
     estimated: 0,
     estimatedUsd: 0,
@@ -47,6 +59,10 @@ const initialState = {
     spendableUsd: 0,
     serviceFee: 0,
     serviceFeeUsd: 0,
+    forward: 0,
+    forwardUsd: 0,
+    total: 0,
+    totalUsd: 0,
   },
   tx: [
     {
@@ -143,6 +159,7 @@ const initialState = {
     to: '',
     txHash: '',
     fee: 0,
+    initiatedAt: 0,
   },
 };
 
@@ -158,6 +175,7 @@ export default (state: UserState = initialState, action): UserState => {
     REQUEST(ACTION_TYPES.FETCH_TRANSACTIONS),
     REQUEST(ACTION_TYPES.INIT_TX),
     REQUEST(ACTION_TYPES.GET_BTC_PRICE),
+    REQUEST(ACTION_TYPES.GET_ADDRESS_WALLET),
     REQUEST(ACTION_TYPES.FORWARD)):
       return {
         ...state,
@@ -170,6 +188,7 @@ export default (state: UserState = initialState, action): UserState => {
     FAILURE(ACTION_TYPES.FETCH_TRANSACTIONS),
     FAILURE(ACTION_TYPES.INIT_TX),
     FAILURE(ACTION_TYPES.GET_BTC_PRICE),
+    FAILURE(ACTION_TYPES.GET_ADDRESS_WALLET),
     FAILURE(ACTION_TYPES.FORWARD)):
       return {
         ...state,
@@ -211,6 +230,12 @@ export default (state: UserState = initialState, action): UserState => {
         ...state,
         loading: false,
         btcPrice: 10000 / action.payload.data,
+      };
+    case SUCCESS(ACTION_TYPES.GET_ADDRESS_WALLET):
+      return {
+        ...state,
+        loading: false,
+        addressWallet: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.FORWARD):
       return {
@@ -269,7 +294,12 @@ export const getBtcPrice = () => ({
   payload: axios.get('https://blockchain.info/tobtc?currency=EUR&value=10000'),
 });
 
-export const forward = () => ({
+export const getAddressWallet = address => ({
+  type: ACTION_TYPES.GET_ADDRESS_WALLET,
+  payload: axios.get('"https://api.blockcypher.com/v1/btc/test3/addrs/' + address + '/balance?token=4309e288604540068f4395ae1a54a907'),
+});
+
+export const sendForward = () => ({
   type: ACTION_TYPES.FORWARD,
   payload: axios.get('/api/user/forward'),
 });

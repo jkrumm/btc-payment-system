@@ -46,7 +46,29 @@ const Profile = (props: IProfileProps) => {
         <WhiteSpace size={'xs'} />
         <Statistic title="Servicegebühr sicher" value={merchant.fee.percentSecure} suffix=" %" className={'small'} />
         <WhiteSpace size={'xs'} />
-        <Statistic title="Angefallene Servicegebühren" value={merchantWallet.serviceFeeUsd} suffix=" €" className={'small'} />
+        <Statistic
+          title="Gesamte Zahlungen"
+          value={merchantWallet.total / 100000000 + ' BTC'}
+          suffix={merchantWallet.totalUsd + ' €'}
+          precision={8}
+          className="small suffix"
+        />
+        <WhiteSpace size={'xs'} />
+        <Statistic
+          title="Bereits Ausgezahlt"
+          value={merchantWallet.forward / 100000000 + ' BTC'}
+          suffix={merchantWallet.forwardUsd + ' €'}
+          precision={8}
+          className="small suffix"
+        />
+        <WhiteSpace size={'xs'} />
+        <Statistic
+          title="Angefallene Servicegebühren"
+          value={merchantWallet.serviceFee / 100000000 + ' BTC'}
+          suffix={merchantWallet.serviceFeeUsd + ' €'}
+          precision={8}
+          className="small suffix"
+        />
       </Card>
     </div>
   );

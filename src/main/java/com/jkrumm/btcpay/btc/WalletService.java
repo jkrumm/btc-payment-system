@@ -13,6 +13,7 @@ import com.jkrumm.btcpay.btc.websocket.dto.blockcypher.BlockCypherCompactDTO;
 import com.jkrumm.btcpay.btc.websocket.dto.blockcypher.BlockCypherDTO;
 import com.jkrumm.btcpay.domain.Confidence;
 import com.jkrumm.btcpay.domain.Transaction;
+import com.jkrumm.btcpay.domain.User;
 import com.jkrumm.btcpay.domain.enumeration.ConfidenceType;
 import com.jkrumm.btcpay.domain.enumeration.TransactionType;
 import com.jkrumm.btcpay.service.dto.ConfidenceDTO;
@@ -21,11 +22,9 @@ import com.jkrumm.btcpay.service.mapper.ConfidenceMapper;
 import com.jkrumm.btcpay.service.mapper.TransactionMapper;
 import java.io.IOException;
 import java.net.URL;
+import java.security.Principal;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.script.ScriptException;
 import org.bitcoinj.core.*;
@@ -52,6 +51,9 @@ public class WalletService {
 
     @Autowired
     private BtcRepositoryContainer.Container repos;
+
+    @Autowired
+    private TxService txService;
 
     @Autowired
     private WalletWsService walletWsService;
@@ -329,14 +331,35 @@ public class WalletService {
         return walletAppKit.wallet().freshReceiveAddress();
     }
 
-    public Wallet.SendResult send(String value, String to) {
+    public Wallet.SendResult sendMerchant(User user, String value, String to) {
         try {
-            Address toAddress = LegacyAddress.fromBase58(networkParameters, to);
-            SendRequest sendRequest = SendRequest.to(toAddress, Coin.parseCoin(value));
+            Address toAddress = SegwitAddress.fromBech32(networkParameters, to);
+            SendRequest sendRequest = SendRequest.to(toAddress, Coin.valueOf(Long.parseLong(value)));
             sendRequest.feePerKb = Coin.parseCoin("0.00015");
             Wallet.SendResult sendResult = walletAppKit.wallet().sendCoins(walletAppKit.peerGroup(), sendRequest);
             sendResult.broadcastComplete.addListener(
-                () -> System.out.println("Sent coins onwards! Transaction hash is " + sendResult.tx.getTxId()),
+                () -> {
+                    System.out.println("Sent coins onwards! Transaction hash is " + sendResult.tx.getTxId());
+                    Transaction tx = new Transaction();
+                    tx.setInitiatedAt(Instant.now());
+                    tx.setTransactionType(TransactionType.FORWARD_MERCHANT);
+                    tx.setTxHash(sendResult.tx.getTxId().toString());
+                    Long amount = sendResult.tx.getValue(walletAppKit.wallet()).getValue();
+                    tx.setExpectedAmount(amount);
+                    tx.setActualAmount(amount);
+                    tx.setServiceFee(0L);
+                    tx.setTransactionFee(sendResult.tx.getFee().getValue());
+                    try {
+                        tx.setBtcEuro(txService.getBtcEuroPrice());
+                        tx.setAmount(txService.getBtcToEuro(Long.parseLong(value)));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    tx.setAddress(to);
+                    tx.setUser(user);
+                    log.info("Forward transaction: " + tx.toString());
+                    repos.transaction.save(tx);
+                },
                 MoreExecutors.directExecutor()
             );
             return sendResult;

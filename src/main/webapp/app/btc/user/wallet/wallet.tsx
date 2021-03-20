@@ -127,7 +127,7 @@ const Wallet = (props: ITransactionProps) => {
                       header={
                         <div>
                           <div>
-                            <span>{item.amount}€</span>
+                            <span>{item.amount} €</span>
                             <span>{item.confirmations}</span>
                             <span>{item.transactionType}</span>
                           </div>
@@ -144,7 +144,7 @@ const Wallet = (props: ITransactionProps) => {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <Statistic title="Transaktion Hash" value={item.txHash} className="tiny margin-top" />
+                        <Statistic title="Transaktionshash" value={item.txHash} className="tiny margin-top" />
                       </a>
                       <Statistic
                         title="Transaktion initiiert"
@@ -154,30 +154,53 @@ const Wallet = (props: ITransactionProps) => {
                       <Statistic title="Validierung" value={item.confidenceType} className="tiny" />
                       <Statistic title="Bestätigungen" value={item.confirmations} className="tiny" />
                       <WhiteSpace size={'md'} />
-                      <Statistic title="Preis" value={item.amount} suffix={' €'} precision={2} className="tiny" />
+                      {item.transactionType !== 'FORWARD' && (
+                        <Statistic title="Preis" value={item.amount} suffix={' €'} precision={2} className="tiny" />
+                      )}
                       <Statistic title="BTC / Euro" value={item.btcEuro} suffix={' €'} precision={2} className="tiny" />
-                      <Statistic
-                        title="Erwartete BTC"
-                        value={item.expectedAmount / 100000000}
-                        suffix={' BTC'}
-                        precision={8}
-                        className="tiny"
-                      />
-                      <Statistic
-                        title="Erhaltene BTC"
-                        value={item.actualAmount / 100000000}
-                        suffix={' BTC'}
-                        precision={8}
-                        className="tiny"
-                      />
-                      <Statistic
-                        title="Transaktionskosten"
-                        value={item.transactionFee / 100000000}
-                        suffix={' BTC'}
-                        precision={8}
-                        className="tiny"
-                      />
-                      <Statistic title="Servicekosten" value={item.serviceFee / 100000000} suffix={' BTC'} precision={8} className="tiny" />
+                      {item.transactionType !== 'FORWARD' ? (
+                        <>
+                          <Statistic
+                            title="Erwartete BTC"
+                            value={item.expectedAmount / 100000000}
+                            suffix={' BTC'}
+                            precision={8}
+                            className="tiny"
+                          />
+                          <Statistic
+                            title="Erhaltene BTC"
+                            value={item.actualAmount / 100000000}
+                            suffix={' BTC'}
+                            precision={8}
+                            className="tiny"
+                          />
+                          <Statistic
+                            title="Transaktionskosten"
+                            value={item.transactionFee / 100000000}
+                            suffix={' BTC'}
+                            precision={8}
+                            className="tiny"
+                          />
+                          <Statistic
+                            title="Servicekosten"
+                            value={item.serviceFee / 100000000}
+                            suffix={' BTC'}
+                            precision={8}
+                            className="tiny"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <Statistic
+                            title="Transaktionskosten"
+                            value={item.transactionFee / 100000000}
+                            suffix={' BTC'}
+                            precision={8}
+                            className="tiny"
+                          />
+                          <Statistic title="Menge" value={item.actualAmount / 100000000} suffix={' BTC'} precision={8} className="tiny" />
+                        </>
+                      )}
                       <WhiteSpace size={'md'} />
                       <h6>Bestätigungen</h6>
                       {item.confidences.map(conf => (

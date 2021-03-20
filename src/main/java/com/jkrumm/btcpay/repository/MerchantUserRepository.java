@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface MerchantUserRepository extends JpaRepository<MerchantUser, Long> {
-    MerchantUser findMerchantUserByUser(Optional<User> user);
+    MerchantUser findMerchantUserByUser(User user);
 
     List<MerchantUser> findByMerchant(Merchant merchant);
 }
