@@ -1,10 +1,10 @@
 package com.jkrumm.btcpay.btc;
 
+import com.jkrumm.btcpay.btc.dto.Forward;
 import com.jkrumm.btcpay.domain.Merchant;
 import com.jkrumm.btcpay.domain.Transaction;
 import com.jkrumm.btcpay.domain.User;
 import com.jkrumm.btcpay.domain.enumeration.TransactionType;
-import com.jkrumm.btcpay.service.dto.MerchantDTO;
 import com.jkrumm.btcpay.service.dto.TransactionDTO;
 import com.jkrumm.btcpay.service.dto.UserDTO;
 import com.jkrumm.btcpay.service.mapper.MerchantMapperImpl;
@@ -15,8 +15,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.Principal;
 import java.time.*;
-import java.util.Optional;
 import org.bitcoinj.core.Address;
+import org.bitcoinj.wallet.Wallet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,6 @@ public class TxService {
         log.info("initTx: userDTO: " + userDTO.toString());
         Merchant merchant = repos.merchantUser.findMerchantUserByUser(user).getMerchant();
         log.info("initTx: merchantDTO: " + merchant.toString());
-
         // Construct and persist Transaction object
         TransactionDTO txDto = new TransactionDTO();
         Double btcAmount = getEuroToBtc(amount);
@@ -79,11 +78,33 @@ public class TxService {
         txDto.setUser(userDTO);
         txDto.setAddress(address.toString());
         txDto.setAmount(amount);
-        log.info(txDto.toString());
-        log.info("initTx: txDto: " + txDto.toString());
         Transaction transaction = repos.transaction.save(transactionMapper.toEntity(txDto));
         log.info("initTx: txSaved: " + transaction.toString());
         return txDto;
+    }
+
+    Forward send(Principal principal) throws IOException {
+        Merchant merchant = profileService.getMerchant(principal);
+        String spendable = profileService.getWallet(principal).getSpendable().toString();
+        log.info(
+            "Merchant: " +
+            merchant.getName() +
+            " | User: " +
+            principal.getName() +
+            " | Forward " +
+            spendable +
+            " to " +
+            merchant.getForward()
+        );
+        Wallet.SendResult sendResult = walletService.sendMerchant(profileService.getUser(principal), spendable, merchant.getForward());
+        Forward forward = new Forward(
+            Long.valueOf(spendable),
+            merchant.getForward(),
+            sendResult.tx.getTxId().toString(),
+            sendResult.tx.getFee().getValue()
+        );
+        log.info(forward.toString());
+        return forward;
     }
 
     Double getEuroToBtc(Double amount) throws IOException {

@@ -51,10 +51,4 @@ public class ProfileController {
         log.debug("REST request to get all merchant transactions");
         return profileService.getTransactions(principal);
     }
-
-    @GetMapping("/forward")
-    public Forward forward(Principal principal) throws IOException {
-        log.debug("REST request to send user btc");
-        return profileService.send(principal);
-    }
 }

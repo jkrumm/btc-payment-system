@@ -77,23 +77,20 @@ public class WalletService {
             .addCoinsReceivedEventListener(
                 (wallet, tx, prevBalance, newBalance) -> {
                     log.info("Triggered: addCoinsReceivedEventListener");
-                    Coin value = tx.getValueSentToMe(wallet);
-                    log.info("Received tx for " + value.toFriendlyString());
+                    // Validate if incoming Transaction is relevant
                     for (TransactionOutput output : tx.getOutputs()) {
                         if (output.isMine(wallet)) {
+                            // Update Transaction object
                             Script script = output.getScriptPubKey();
                             Address address = script.getToAddress(walletAppKit.wallet().getNetworkParameters(), true);
                             log.info("Received tx for address " + address.toString());
                             Transaction transaction = repos.transaction.findByAddress(address.toString()).get(0);
                             transaction.setTxHash(tx.getTxId().toString());
                             if (tx.getFee() != null) {
-                                log.info("tx.getFee().getValue() " + tx.getFee().getValue());
                                 transaction.setTransactionFee(tx.getFee().getValue());
                             }
-                            log.error("Fee null");
-                            log.info("tx.getValue(wallet).getValue() " + tx.getValue(wallet).getValue());
                             transaction.setActualAmount(tx.getValue(wallet).getValue());
-                            log.info("Updated Tx: " + transaction.toString());
+                            // Create initial Confidence
                             Confidence confidence = new Confidence();
                             confidence.setChangeAt(Instant.now());
                             confidence.setConfidenceType(ConfidenceType.BUILDING);
@@ -101,9 +98,11 @@ public class WalletService {
                             confidence.setTransaction(transaction);
                             confidence = repos.confidence.save(confidence);
                             log.info("Saved confidence: " + confidence.toString());
+                            // Update Transaction in db
                             transaction.addConfidence(confidence);
                             transaction = repos.transaction.save(transaction);
                             log.info("Saved Tx: " + transaction.toString());
+                            // Send new confirmation to frontend
                             ConfirmationDTO confirmationDTO = new ConfirmationDTO(
                                 address.toString(),
                                 confidenceMapper.toDto(confidence),
@@ -122,24 +121,6 @@ public class WalletService {
                             @Override
                             public void onSuccess(TransactionConfidence result) {
                                 System.out.println("Received tx " + tx.getTxId() + " is confirmed.");
-                                /*
-                                for (TransactionOutput output : tx.getOutputs()) {
-                                    if (output.isMine(wallet)) {
-                                        Script script = output.getScriptPubKey();
-                                        Address address = script.getToAddress(walletAppKit.wallet().getNetworkParameters(), true);
-                                        log.info("Confirmed tx by blockchain for address " + address.toString());
-                                        Transaction txDb = repos.transaction.findByAddress(address.toString()).get(0);
-                                        Confidence confidence = new Confidence();
-                                        confidence.setChangeAt(Instant.now());
-                                        confidence.setConfidenceType(ConfidenceType.CONFIRMED);
-                                        confidence.setConfirmations(1);
-                                        txDb.addConfidence(confidence);
-                                        log.info("Saved Tx: " + txDb.toString());
-                                        txWsService.sendMessage(transactionMapper.toDto(txDb));
-                                    } else {
-                                        log.error("Received tx NOT for this wallet!");
-                                    }
-                                }*/
                             }
 
                             @Override
@@ -351,7 +332,10 @@ public class WalletService {
                     tx.setTransactionFee(sendResult.tx.getFee().getValue());
                     try {
                         tx.setBtcEuro(txService.getBtcEuroPrice());
+                        log.info("senMerchant long " + value);
+                        log.info("senMerchant long 1 " + Long.parseLong(value));
                         tx.setAmount(txService.getBtcToEuro(Long.parseLong(value)));
+                        log.info("senMerchant long 2 " + tx.getAmount());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

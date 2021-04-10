@@ -1,6 +1,7 @@
 package com.jkrumm.btcpay.btc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.jkrumm.btcpay.btc.dto.Forward;
 import com.jkrumm.btcpay.service.dto.TransactionDTO;
 import com.jkrumm.btcpay.web.rest.MerchantResource;
 import java.io.IOException;
@@ -42,5 +43,11 @@ public class TxController {
         double price = txService.getBtcEuroPrice();
         log.info("get btc price : " + String.valueOf(price));
         return price;
+    }
+
+    @GetMapping("/forward")
+    public Forward forward(Principal principal) throws IOException {
+        log.debug("REST request to send user btc");
+        return txService.send(principal);
     }
 }

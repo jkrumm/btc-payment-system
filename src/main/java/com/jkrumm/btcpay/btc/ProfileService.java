@@ -63,7 +63,7 @@ public class ProfileService {
             if (tx.getActualAmount() != null) {
                 List<Confidence> confidences = repos.confidence.findByTransactionOrderByChangeAtDesc(tx);
                 if (tx.getTransactionType().equals(TransactionType.FORWARD_MERCHANT)) {
-                    merchantWallet.setForward(merchantWallet.getForward() + tx.getActualAmount());
+                    merchantWallet.setForward(merchantWallet.getForward() + tx.getActualAmount() * -1);
                 } else if (confidences.size() > 0 && confidences.get(0).getConfirmations() > 0) {
                     merchantWallet.setEstimated(merchantWallet.getEstimated() + tx.getActualAmount() - tx.getServiceFee());
                     merchantWallet.setSpendable(merchantWallet.getSpendable() + tx.getActualAmount() - tx.getServiceFee());
@@ -87,7 +87,7 @@ public class ProfileService {
     }
 
     List<TransactionHistory> getTransactions(Principal principal) {
-        log.info("Called getTransactions() in ProfileService");
+        log.info(principal.getName() + " called getTransactions() in ProfileService");
         List<Transaction> transactions = getMerchantTransactions(principal);
         List<TransactionHistory> transactionHistories = new ArrayList<>();
         for (Transaction tx : transactions) {
@@ -134,31 +134,7 @@ public class ProfileService {
             }
         }
         Collections.reverse(transactionHistories);
-        log.info("getTransactions(): " + transactionHistories.size());
+        log.info(principal.getName() + " getTransactions(): " + transactionHistories.size());
         return transactionHistories;
-    }
-
-    Forward send(Principal principal) throws IOException {
-        Merchant merchant = getMerchant(principal);
-        String spendable = getWallet(principal).getSpendable().toString();
-        log.info(
-            "Merchant: " +
-            merchant.getName() +
-            " | User: " +
-            principal.getName() +
-            " | Forward " +
-            spendable +
-            " to " +
-            merchant.getForward()
-        );
-        Wallet.SendResult sendResult = WalletService.sendMerchant(getUser(principal), spendable, merchant.getForward());
-        Forward forward = new Forward(
-            Long.valueOf(spendable),
-            merchant.getForward(),
-            sendResult.tx.getTxId().toString(),
-            sendResult.tx.getFee().getValue()
-        );
-        log.info(forward.toString());
-        return forward;
     }
 }
