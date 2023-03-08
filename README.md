@@ -5,9 +5,11 @@ Author: Johannes Krumm
 This project is part of my bachelors thesis together with Rubean AG: **Implementation of a prototype for payment processing with Bitcoin and evaluating the integration into PhonePos**
 
 This Java application listens to the Bitcoin Blockchain. It manages a wallet and generates new addresses to receive payments. 
+
 **Unique is the way of validating a transaction as secure as possible before the first block containing the transcation has been validated by a miner.**
 
 The corresponding frontend can be found here: [btc-payment-system-frontend](https://github.com/jkrumm/btc-payment-system-frontend)
+
 A simplified POC application can be found here: [btc-payment-system-poc](https://github.com/jkrumm/btc-payment-system-poc)
 
 ---
